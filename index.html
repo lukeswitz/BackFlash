@@ -8,7 +8,7 @@
     <link href="https://typeface.nytimes.com/css/zam5nzz.css" rel="stylesheet" />
     <style>
       *, *::before, *::after { box-sizing: border-box; }
-      
+
       html, body {
         margin: 0;
         padding: 0;
@@ -17,8 +17,7 @@
         font-family: "nyt-franklin", arial, helvetica, sans-serif;
         min-height: 100%;
       }
-      
-      /* ── TOP NAV ── */
+
       #top-bar {
         position: fixed;
         top: 0;
@@ -28,7 +27,7 @@
         background: #fff;
         border-bottom: 1px solid #e2e0d6;
       }
-      
+
       #nav-inner {
         max-width: 600px;
         margin: 0 auto;
@@ -37,12 +36,12 @@
         gap: 8px;
         padding: 10px 16px;
       }
-      
+
       #search-container {
         position: relative;
         flex: 1;
       }
-      
+
       #search-input-wrap {
         display: flex;
         align-items: center;
@@ -52,19 +51,19 @@
         padding: 0 10px;
         transition: border-color 0.15s;
       }
-      
+
       #search-input-wrap:focus-within {
         border-color: #333;
         background: #fff;
       }
-      
+
       #search-icon {
         color: #aaa;
         font-size: 14px;
         margin-right: 7px;
         flex-shrink: 0;
       }
-      
+
       #search-input {
         flex: 1;
         border: none;
@@ -76,9 +75,9 @@
         color: #333;
         min-width: 0;
       }
-      
+
       #search-input::placeholder { color: #aaa; }
-      
+
       #search-clear {
         cursor: pointer;
         color: #aaa;
@@ -87,9 +86,9 @@
         padding: 0 0 0 6px;
         display: none;
       }
-      
+
       #search-clear:hover { color: #333; }
-      
+
       #search-spinner {
         width: 13px;
         height: 13px;
@@ -100,9 +99,9 @@
         display: none;
         margin-left: 6px;
       }
-      
+
       @keyframes spin { to { transform: rotate(360deg); } }
-      
+
       #search-dropdown {
         position: absolute;
         top: calc(100% + 6px);
@@ -117,7 +116,7 @@
         display: none;
         z-index: 400;
       }
-      
+
       .dropdown-section-label {
         padding: 8px 14px 3px;
         font-size: 10px;
@@ -126,7 +125,7 @@
         letter-spacing: 0.07em;
         color: #aaa;
       }
-      
+
       .dropdown-item {
         padding: 10px 14px;
         cursor: pointer;
@@ -134,15 +133,15 @@
         flex-direction: column;
         gap: 2px;
       }
-      
+
       .dropdown-item:hover { background: #f7f7f5; }
-      
+
       .dropdown-item-label {
         font-size: 14px;
         color: #222;
         font-weight: 600;
       }
-      
+
       .dropdown-item-desc {
         font-size: 11px;
         color: #999;
@@ -150,7 +149,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      
+
       #btn-random {
         display: flex;
         align-items: center;
@@ -168,18 +167,18 @@
         transition: background 0.15s;
         flex-shrink: 0;
       }
-      
+
       #btn-random:hover { background: #111; }
       #btn-random.loading { background: #999; pointer-events: none; }
-      
+
       #btn-random svg {
         width: 13px;
         height: 13px;
         fill: currentColor;
       }
-      
+
       #btn-random.loading svg { animation: spin 0.7s linear infinite; }
-      
+
       #btn-mode {
         display: flex;
         align-items: center;
@@ -197,11 +196,11 @@
         transition: all 0.15s;
         flex-shrink: 0;
       }
-      
+
       #btn-mode:hover { border-color: #333; color: #333; }
       #btn-mode.active { border-color: #333; color: #333; background: #f0f0ec; }
       #btn-mode svg { width: 12px; height: 12px; fill: currentColor; }
-      
+
       #game-title {
         font-size: 12px;
         color: #999;
@@ -213,40 +212,45 @@
         display: none;
         flex-shrink: 1;
       }
-      
-      /* ── BANK ── */
+
       #bank-area {
         position: fixed;
+        top: 0;
         left: 0;
         width: 100%;
         background: #fff;
         border-bottom: 1px solid #e2e0d6;
         z-index: 100;
-        padding: 10px 0 10px;
+        padding: 10px 0 20px;
         display: flex;
-        align-items: center;
-        min-height: 56px;
+        align-items: flex-start;
         transition: background 0.15s;
       }
       
+
       #bank-area.drag-over { background: #f7f7f5; }
-      
+
       #bank-scroll {
         display: flex;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         gap: 8px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        padding: 0 16px;
+        padding: 0 16px 8px;
         width: 100%;
-        scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
         justify-content: center;
-        align-items: stretch;
+        align-items: flex-start;
       }
-      
-      #bank-scroll::-webkit-scrollbar { display: none; }
-      
+
+      #bank-scroll::-webkit-scrollbar { width: 4px; }
+      #bank-scroll::-webkit-scrollbar-thumb { background: #d8d6cc; border-radius: 4px; }
+
+      #bank-scroll.single-mode {
+        flex-direction: column;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 10px;
+      }
+
       #bank-empty-hint {
         display: flex;
         align-items: center;
@@ -255,25 +259,23 @@
         font-style: italic;
         padding: 0 16px;
       }
-      
+
       #bank-counter {
-        flex-shrink: 0;
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 700;
         color: #aaa;
         font-family: "nyt-franklin", arial, sans-serif;
-        padding: 0 8px;
         white-space: nowrap;
-        align-self: center;
+        text-align: center;
+        padding: 2px 0 4px;
       }
-      
+
       .bank-card {
         flex: 0 0 auto;
         width: 100px;
         background: #fff;
         border: 1.5px solid #e2e0d6;
         border-radius: 8px;
-        overflow: hidden;
         cursor: grab;
         user-select: none;
         transition: box-shadow 0.15s, transform 0.15s;
@@ -281,14 +283,45 @@
         flex-direction: column;
       }
       
+      .bank-card .img-wrap {
+        width: 100%;
+        height: 66px;
+        background: #f0efe9;
+        overflow: hidden;
+        flex-shrink: 0;
+        border-radius: 7px 7px 0 0;
+      }
+
       .bank-card:hover {
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         transform: translateY(-2px);
       }
-      
+
       .bank-card:active { cursor: grabbing; }
       .bank-card.dragging { opacity: 0.3; transform: scale(0.96); }
-      
+
+      .bank-card.single {
+        width: min(320px, calc(100vw - 48px));
+        flex-direction: row;
+        align-items: stretch;
+        height: 96px;
+        border-radius: 10px;
+      }
+
+      .bank-card.single .img-wrap {
+        width: 120px;
+        height: 100%;
+        flex-shrink: 0;
+      }
+
+      .bank-card.single .card-desc {
+        font-size: 13px;
+        padding: 10px 12px;
+        -webkit-line-clamp: 4;
+        display: flex;
+        align-items: center;
+      }
+
       .bank-card .img-wrap {
         width: 100%;
         height: 66px;
@@ -296,7 +329,7 @@
         overflow: hidden;
         flex-shrink: 0;
       }
-      
+
       .bank-card .img-wrap img {
         width: 100%;
         height: 100%;
@@ -304,7 +337,7 @@
         display: block;
         pointer-events: none;
       }
-      
+
       .bank-card .card-desc {
         padding: 6px 7px;
         font-size: 11px;
@@ -312,26 +345,20 @@
         line-height: 1.3;
         user-select: none;
         cursor: grab;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
         flex: 1;
         color: #222;
       }
-      
-      /* ── PAGE ── */
+
       #page-content {
         padding-bottom: 100px;
       }
-      
+
       #timeline-wrap {
         max-width: 560px;
         margin: 0 auto;
         padding: 0 16px;
       }
-      
-      /* ── TIMELINE ── */
+
       .tl-label {
         text-align: center;
         color: #bbb;
@@ -341,7 +368,7 @@
         text-transform: uppercase;
         padding: 16px 0 6px;
       }
-      
+
       .tl-drop-zone {
         height: 6px;
         border-radius: 4px;
@@ -349,14 +376,14 @@
         transition: height 0.15s, background 0.15s;
         position: relative;
       }
-      
+
       .tl-drop-zone.active {
         height: 72px;
         background: #f5e9c8;
         border: 2px dashed #e0c87a;
         border-radius: 8px;
       }
-      
+
       .tl-card {
         background: #fff;
         border: 1.5px solid #e8e6de;
@@ -370,11 +397,11 @@
         user-select: none;
         transition: box-shadow 0.15s;
       }
-      
+
       .tl-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
       .tl-card:active { cursor: grabbing; }
       .tl-card.dragging { opacity: 0.3; }
-      
+
       .tl-card .img-wrap {
         width: 72px;
         height: 54px;
@@ -383,7 +410,7 @@
         flex-shrink: 0;
         background: #f0efe9;
       }
-      
+
       .tl-card .img-wrap img {
         width: 100%;
         height: 100%;
@@ -391,7 +418,7 @@
         display: block;
         pointer-events: none;
       }
-      
+
       .tl-card .card-desc {
         flex: 1;
         font-size: 13px;
@@ -401,7 +428,7 @@
         user-select: none;
         color: #222;
       }
-      
+
       .year-badge {
         border-radius: 6px;
         padding: 4px 10px;
@@ -412,14 +439,13 @@
         background: #e8e6de;
         color: #666;
       }
-      
+
       .tl-card.correct { border-color: #b8dfc8; background: #f3fbf7; }
       .tl-card.correct .year-badge { background: #4caf78; color: #fff; }
-      
+
       .tl-card.incorrect { border-color: #f0c4c4; background: #fdf5f5; }
       .tl-card.incorrect .year-badge { background: #d04f4f; color: #fff; }
-      
-      /* ── SUBMIT BAR ── */
+
       #submit-bar {
         position: fixed;
         bottom: 0;
@@ -437,13 +463,13 @@
         flex-wrap: wrap;
         backdrop-filter: blur(6px);
       }
-      
+
       #results-text {
         font-size: 14px;
         color: #555;
         font-family: "nyt-franklin", arial, sans-serif;
       }
-      
+
       #btn-submit {
         background: #333;
         color: #fff;
@@ -456,9 +482,9 @@
         cursor: pointer;
         transition: background 0.15s;
       }
-      
+
       #btn-submit:hover { background: #111; }
-      
+
       #btn-restart {
         background: transparent;
         border: 1.5px solid #333;
@@ -472,10 +498,9 @@
         display: none;
         transition: background 0.15s, color 0.15s;
       }
-      
+
       #btn-restart:hover { background: #333; color: #fff; }
-      
-      /* ── MESSAGE ── */
+
       #message {
         position: fixed;
         bottom: 80px;
@@ -493,8 +518,7 @@
         font-size: 13px;
         font-weight: 500;
       }
-      
-      /* ── GHOST ── */
+
       #drag-ghost {
         position: fixed;
         pointer-events: none;
@@ -509,21 +533,21 @@
         display: none;
         width: 100px;
       }
-      
+
       #drag-ghost .img-wrap {
         width: 100%;
         height: 66px;
         overflow: hidden;
         background: #f0efe9;
       }
-      
+
       #drag-ghost .img-wrap img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         display: block;
       }
-      
+
       #drag-ghost .card-desc {
         padding: 6px 7px;
         font-size: 11px;
@@ -535,14 +559,13 @@
         overflow: hidden;
         color: #222;
       }
-      
-      /* ── EMPTY STATE ── */
+
       #empty-state {
         text-align: center;
         padding: 80px 24px 0;
         display: none;
       }
-      
+
       #empty-state h2 {
         font-family: "nyt-imperial", georgia, serif;
         font-size: 26px;
@@ -550,21 +573,44 @@
         color: #222;
         margin: 0 0 10px;
       }
-      
+
       #empty-state p {
         font-size: 15px;
         color: #888;
         margin: 0;
         line-height: 1.6;
       }
-      
+
       @media (max-width: 480px) {
         #nav-inner { padding: 8px 10px; gap: 6px; }
         #btn-random { padding: 8px 12px; font-size: 12px; }
         #btn-mode   { padding: 7px 10px; font-size: 11px; }
         #game-title { display: none !important; }
-        .bank-card  { width: 88px; }
+
+        .bank-card {
+          width: calc(33.333% - 6px);
+          min-width: 80px;
+          max-width: 110px;
+        }
+
+        .bank-card.single {
+          width: min(300px, calc(100vw - 32px));
+          max-width: none;
+        }
+
         .bank-card .img-wrap { height: 58px; }
+
+        #bank-scroll {
+          max-height: 38vh;
+          gap: 6px;
+          padding: 0 10px 6px;
+          justify-content: flex-start;
+        }
+
+        #bank-scroll.single-mode {
+          justify-content: center;
+        }
+
         #drag-ghost { width: 88px; }
         #drag-ghost .img-wrap { height: 58px; }
       }
@@ -587,23 +633,23 @@
           </div>
           <div id="search-dropdown"></div>
         </div>
-        
+
         <button id="btn-random">
           <svg viewBox="0 0 24 24"><path d="M17 4l4 4-4 4V9h-3.08A8 8 0 0 1 20 19l-1.42 1.42A6 6 0 0 0 6.68 9H9V7H3v6h2v-2.1A8 8 0 0 1 13.92 9H17V4zm-7.42 11.58A6 6 0 0 0 18.32 11H16V9h6v6h-2v-2.1a8 8 0 0 1-6.08 8.52L12.5 23 9 19l4-4-.42 3.58z"/></svg>
           Random
         </button>
-        
+
         <button id="btn-mode">
           <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm4 5h12v2H8zm4 5h8v2h-8z"/></svg>
           Single
         </button>
-        
+
         <span id="game-title"></span>
       </div>
     </div>
-    
+
     <div id="bank-area"></div>
-    
+
     <div id="page-content">
       <div id="empty-state">
         <h2>Flashback</h2>
@@ -613,24 +659,24 @@
         <div id="timeline"></div>
       </div>
     </div>
-    
+
     <div id="submit-bar">
       <span id="results-text"></span>
       <button id="btn-submit">Check Answers</button>
       <button id="btn-restart">Play Again</button>
     </div>
-    
+
     <div id="message"></div>
-    
+
     <script>
       const SPARQL_ENDPOINT = "https://query.wikidata.org/sparql";
       const WIKIDATA_API    = "https://www.wikidata.org/w/api.php";
       const UA              = "FlashbackQuiz/1.0 (https://localhost)";
-      
+
       async function sparqlFetch(sparql, retries = 2) {
         const url =
-        `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}` +
-        `&format=json&useragent=${encodeURIComponent(UA)}`;
+          `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}` +
+          `&format=json&useragent=${encodeURIComponent(UA)}`;
         for (let attempt = 0; attempt <= retries; attempt++) {
           try {
             const res = await fetch(url, {
@@ -655,7 +701,7 @@
           }
         }
       }
-      
+
       const SEEDS = [
         { value: "Q11424",   label: "Films" },
         { value: "Q482994",  label: "Music Albums" },
@@ -701,41 +747,12 @@
         { value: "Q991",     label: "Dostoyevsky's Works",    prop: "P50" },
         { value: "Q7243",    label: "Tolstoy's Works",        prop: "P50" },
       ];
-      
-      async function discoverAndEnqueue() {
-        const deck  = getDeck();
-        const spent = getSpent();
-        const used  = new Set([...deck, ...spent].map((g) => g.value));
-        const remaining = SEEDS.filter((s) => !used.has(s.value));
-        const pool  = remaining.length ? remaining : SEEDS;
-        const pick  = pool[Math.floor(Math.random() * pool.length)];
-        try {
-          await fetchGameEvents(pick.value, pick.prop ?? null);
-          addToDeck(pick);
-          return pick;
-        } catch {
-          return null;
-        }
-      }
-      
-      async function nextTopic() {
-        const fromDeck = popFromDeck();
-        if (fromDeck) {
-          discoverAndEnqueue().catch(() => {});
-          return fromDeck;
-        }
-        for (let i = 0; i < SEEDS.length; i++) {
-          const game = await discoverAndEnqueue();
-          if (game) { popFromDeck(); return game; }
-        }
-        throw new Error("Could not find a playable topic");
-      }
-      
+
       const KEY_HISTORY = "fbq_history";
       const KEY_GAME    = "fbq_game";
       const KEY_DECK    = "fbq_deck";
       const KEY_SPENT   = "fbq_spent";
-      
+
       const state = {
         game: null,
         events: [],
@@ -749,31 +766,31 @@
         searchOpen: false,
         oneAtATime: false,
       };
-      
+
       function safeGet(key) {
         try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; }
         catch { return null; }
       }
-      
+
       function safeSet(key, val) {
         try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
       }
-      
+
       function loadHistory()  { return safeGet(KEY_HISTORY) ?? []; }
-      
+
       function pushHistory(game) {
         const h = loadHistory().filter((g) => g.value !== game.value);
         safeSet(KEY_HISTORY, [game, ...h].slice(0, 20));
       }
-      
+
       function getDeck()  { return safeGet(KEY_DECK)  ?? []; }
       function getSpent() { return safeGet(KEY_SPENT) ?? []; }
-      
+
       function popFromDeck() {
         let deck = getDeck();
         const spent = getSpent();
         if (!deck.length && spent.length) {
-          deck = shuffle(spent);
+          deck = shuffle([...spent]);
           safeSet(KEY_SPENT, []);
           safeSet(KEY_DECK, deck);
         }
@@ -782,21 +799,21 @@
         safeSet(KEY_DECK, deck);
         return item;
       }
-      
+
       function addToDeck(game) {
         const deck  = getDeck();
         const spent = getSpent();
         if ([...deck, ...spent].some((g) => g.value === game.value)) return;
         safeSet(KEY_DECK, [...deck, game]);
       }
-      
+
       function markSpent(game) {
         safeSet(KEY_DECK, getDeck().filter((g) => g.value !== game.value));
         const spent = getSpent();
         if (!spent.some((g) => g.value === game.value))
           safeSet(KEY_SPENT, [...spent, game]);
       }
-      
+
       function shuffle(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
@@ -805,57 +822,78 @@
         }
         return a;
       }
-      
+
+      async function nextTopic() {
+        const deck  = getDeck();
+        const spent = getSpent();
+        const used  = new Set([...deck, ...spent].map((g) => g.value));
+
+        if (deck.length) {
+          const pick = popFromDeck();
+          const remaining = SEEDS.filter((s) => !used.has(s.value));
+          const pool = remaining.length ? remaining : SEEDS;
+          const next = pool[Math.floor(Math.random() * pool.length)];
+          addToDeck(next);
+          return pick;
+        }
+
+        const remaining = SEEDS.filter((s) => !used.has(s.value));
+        const pool = remaining.length ? remaining : shuffle([...SEEDS]);
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        addToDeck(pick);
+        return popFromDeck();
+      }
+
       function parseYear(iso) {
         if (!iso) return null;
         if (iso.startsWith("-")) return -parseInt(iso.slice(1, 5), 10);
         return parseInt(iso.slice(0, 4), 10);
       }
-      
+
       function toDisplayYear(y) {
         return y < 0 ? `${Math.abs(y)} BC` : String(y);
       }
-      
+
       function fixImageUrl(url) {
         return url.replace("http://", "https://") + "?width=120";
       }
-      
+
       function setMessage(msg) {
         const el = document.getElementById("message");
         el.textContent = msg;
         el.style.display = msg ? "block" : "none";
       }
-      
+
       function adjustLayout() {
         const topBar  = document.getElementById("top-bar");
         const bankArea = document.getElementById("bank-area");
         const content  = document.getElementById("page-content");
-        const topH  = topBar.getBoundingClientRect().height;
-        const bankH = bankArea.getBoundingClientRect().height;
-        bankArea.style.top = `${topH}px`;
+        const topH  = topBar.offsetHeight;
+        const bankH = bankArea.offsetHeight;
+        bankArea.style.top       = `${topH}px`;
         content.style.paddingTop = `${topH + bankH + 12}px`;
       }
-      
+
       function cleanLabel(s) {
         return s
-        .replace(/^\d{4}\s+/, "")
-        .replace(/\s+of\s+\d{4}([–\-]\d{2,4})?/gi, "")
-        .replace(/\s+\d{4}[–\-]\d{2,4}/g, "")
-        .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)/g, "")
-        .trim();
+          .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)\s*$/g, "")
+          .replace(/\s+\d{4}[–\-]\d{2,4}\s*$/g, "")
+          .trim();
       }
-      
+
       function cleanDesc(s) {
         return s
-        .replace(/\bfrom\s+\d{4}\s+to\s+\d{4}\b/gi, "")
-        .replace(/\b\d{4}[–\-]\d{2,4}\b/g, "")
-        .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, "")
-        .replace(/\s{2,}/g, " ")
-        .replace(/\s+([,.])/g, "$1")
-        .replace(/^[–\-,\s]+/, "")
-        .trim();
+          .replace(/\bfrom\s+\d{4}\s+to\s+\d{4}\b/gi, "")
+          .replace(/\b(in|since|until|before|after|around|circa|c\.|by|on)\s+\d{4}([–\-]\d{2,4})?\b/gi, "")
+          .replace(/\b\d{4}[–\-]\d{2,4}\b/g, "")
+          .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, "")
+          .replace(/\s{2,}/g, " ")
+          .replace(/\s+([,.])/g, "$1")
+          .replace(/,\s*$/, "")
+          .replace(/^[\s,–\-]+/, "")
+          .trim();
       }
-      
+
       async function searchEntities(query) {
         const p = new URLSearchParams({
           action: "wbsearchentities",
@@ -875,56 +913,26 @@
           description: r.description ?? "",
         }));
       }
-      
-      async function validateEntityIds(ids) {
-        if (!ids.length) return new Set();
-        const values = ids.map((id) => `wd:${id}`).join(" ");
-        const sparql = `
-SELECT ?entity WHERE {
-  VALUES ?entity { ${values} }
-  ?item wdt:P31/wdt:P279* ?entity;
-        wdt:P18 ?image.
-  {?item wdt:P571 ?date.} UNION
-  {?item wdt:P577 ?date.} UNION
-  {?item wdt:P580 ?date.} UNION
-  {?item wdt:P569 ?date.}
-  FILTER(YEAR(?date) > 0)
-}
-GROUP BY ?entity
-HAVING (COUNT(DISTINCT ?item) >= 2)
-`;
-        try {
-          const json = await sparqlFetch(sparql);
-          return new Set(
-            json.results.bindings.map((b) => b.entity.value.split("/").pop())
-          );
-        } catch {
-          return new Set(ids);
-        }
-      }
-      
+
       async function resolveToPlayableClass(qid) {
         const sparql = `
 SELECT ?class ?classLabel WHERE {
   wd:${qid} wdt:P31 ?class.
   SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
 }
-LIMIT 10
-`;
+LIMIT 10`;
         try {
           const json = await sparqlFetch(sparql);
           const candidates = json.results.bindings.map((b) => ({
             value: b.class.value.split("/").pop(),
             label: b.classLabel?.value ?? b.class.value.split("/").pop(),
           }));
-          if (!candidates.length) return null;
-          const validIds = await validateEntityIds(candidates.map((c) => c.value));
-          return candidates.find((c) => validIds.has(c.value)) ?? null;
+          return candidates[0] ?? null;
         } catch {
           return null;
         }
       }
-      
+
       function buildSparql(entityId, prop) {
         const dateClause = `
   {?item wdt:P571 ?date.} UNION
@@ -952,12 +960,12 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
   ${label}
 } LIMIT 60`;
       }
-      
+
       async function fetchGameEvents(entityId, prop = null) {
         const json     = await sparqlFetch(buildSparql(entityId, prop));
         const bindings = json.results.bindings;
         if (!bindings.length) throw new Error("No results for that topic");
-        
+
         const seen = new Set();
         const deduped = [];
         for (const b of bindings) {
@@ -968,12 +976,12 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           seen.add(id);
           deduped.push({ ...b, _year: year });
         }
-        
+
         if (deduped.length < 2) throw new Error("Not enough dated items with images");
-        
+
         const selected = shuffle(deduped).slice(0, 8);
         selected.sort((a, b) => a._year - b._year);
-        
+
         return selected.map((b, i) => {
           const year  = b._year;
           const label = cleanLabel(b.itemLabel.value);
@@ -987,28 +995,28 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           };
         });
       }
-      
+
       async function loadGame(game) {
-        state.game      = game;
-        state.submitted = false;
-        state.dragging  = null;
+        state.game         = game;
+        state.submitted    = false;
+        state.dragging     = null;
         state.dragOverZone = null;
-        state.events    = [];
-        state.bank      = [];
-        state.timeline  = [];
-        
+        state.events       = [];
+        state.bank         = [];
+        state.timeline     = [];
+
         safeSet(KEY_GAME, game);
         pushHistory(game);
         state.history = loadHistory();
-        
+
         const titleEl = document.getElementById("game-title");
         titleEl.textContent = game.label;
         titleEl.style.display = "block";
-        
+
         document.getElementById("empty-state").style.display = "none";
         setMessage(`Loading ${game.label}…`);
         render();
-        
+
         try {
           const events = await fetchGameEvents(game.value, game.prop ?? null);
           state.events   = events;
@@ -1020,15 +1028,15 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         }
         render();
       }
-      
+
       function getCorrectOrder() {
         return [...state.events].sort((a, b) => a.year - b.year);
       }
-      
+
       function getCardStatus(event, index) {
         return event.id === getCorrectOrder()[index]?.id ? "correct" : "incorrect";
       }
-      
+
       function getScore() {
         const correct = getCorrectOrder();
         let score = 0;
@@ -1037,46 +1045,44 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         }
         return { score, total: state.events.length };
       }
-      
+
       function cardHtml(ev) {
         return `
-        <div class="img-wrap">
-          <img src="${ev.image}" alt="" loading="lazy"
-            onerror="this.parentElement.style.display='none'" />
-        </div>
-        <div class="card-desc">${ev.description}</div>
-      `;
+          <div class="img-wrap">
+            <img src="${ev.image}" alt="" loading="lazy"
+              onerror="this.parentElement.style.display='none'" />
+          </div>
+          <div class="card-desc">${ev.description}</div>
+        `;
       }
-      
+
       function renderBank() {
         const el = document.getElementById("bank-area");
-        
+
         if (!state.events.length || state.submitted) {
           el.innerHTML = "";
           return;
         }
-        
+
         if (!state.bank.length) {
           el.innerHTML = '<span id="bank-empty-hint">All placed — check your answers</span>';
           return;
         }
-        
+
         const visible   = state.oneAtATime ? state.bank.slice(0, 1) : state.bank;
         const remaining = state.bank.length;
-        
+
         const scroll = document.createElement("div");
         scroll.id = "bank-scroll";
-        
+        if (state.oneAtATime) scroll.classList.add("single-mode");
+
         visible.forEach((ev) => {
           const card = document.createElement("div");
-          card.className  = "bank-card";
+          card.className  = state.oneAtATime ? "bank-card single" : "bank-card";
           card.draggable  = true;
           card.dataset.id = ev.id;
           card.innerHTML  = cardHtml(ev);
-          if (state.oneAtATime) {
-            card.style.width = "280px";
-            card.querySelector(".img-wrap").style.height = "160px";
-          }
+
           card.addEventListener("dragstart", (e) => {
             state.dragging = { id: ev.id, from: "bank" };
             e.dataTransfer.effectAllowed = "move";
@@ -1093,26 +1099,26 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           });
           scroll.appendChild(card);
         });
-        
+
         if (state.oneAtATime && remaining > 1) {
-          const ctr = document.createElement("span");
+          const ctr = document.createElement("div");
           ctr.id = "bank-counter";
-          ctr.textContent = `${remaining} left`;
+          ctr.textContent = `${remaining} remaining`;
           scroll.appendChild(ctr);
         }
-        
+
         el.innerHTML = "";
         el.appendChild(scroll);
       }
-      
+
       function renderTimeline() {
         const el = document.getElementById("timeline");
         if (!state.events.length) { el.innerHTML = ""; return; }
-        
+
         const { timeline, dragOverZone, submitted } = state;
         let html = `<div class="tl-label">EARLIEST</div>`;
         if (!submitted) html += dropZoneHtml(0, dragOverZone);
-        
+
         for (let i = 0; i < timeline.length; i++) {
           const ev     = timeline[i];
           const status = submitted ? getCardStatus(ev, i) : "";
@@ -1128,12 +1134,12 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           `;
           if (!submitted) html += dropZoneHtml(i + 1, dragOverZone);
         }
-        
+
         html += `<div class="tl-label">LATEST</div>`;
         el.innerHTML = html;
-        
+
         if (submitted) return;
-        
+
         el.querySelectorAll(".tl-card").forEach((card) => {
           const id = parseInt(card.dataset.id, 10);
           card.addEventListener("dragstart", (e) => {
@@ -1151,7 +1157,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             }
           });
         });
-        
+
         el.querySelectorAll(".tl-drop-zone").forEach((zone) => {
           const z = parseInt(zone.dataset.zone, 10);
           zone.addEventListener("dragenter", (e) => {
@@ -1192,22 +1198,22 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           });
         });
       }
-      
+
       function dropZoneHtml(index, activeZone) {
         const active = activeZone === index && state.dragging !== null;
         return `<div class="tl-drop-zone${active ? " active" : ""}" data-zone="${index}"></div>`;
       }
-      
+
       function renderSubmitBar() {
         const bar         = document.getElementById("submit-bar");
         const btnSubmit   = document.getElementById("btn-submit");
         const btnRestart  = document.getElementById("btn-restart");
         const resultsText = document.getElementById("results-text");
-        
+
         if (!state.events.length) { bar.style.display = "none"; return; }
-        
+
         bar.style.display = "flex";
-        
+
         if (state.submitted) {
           const { score, total } = getScore();
           resultsText.textContent = `${score} of ${total} correct`;
@@ -1215,39 +1221,39 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           btnRestart.style.display = "inline-block";
           return;
         }
-        
+
         resultsText.textContent  = "";
         btnRestart.style.display = "none";
-        
+
         if (state.bank.length === 0 && state.timeline.length > 0) {
           btnSubmit.style.display = "inline-block";
         } else {
           bar.style.display = "none";
         }
       }
-      
+
       function render() {
         renderBank();
         renderTimeline();
         renderSubmitBar();
         requestAnimationFrame(adjustLayout);
       }
-      
+
       let debounceTimer = null;
-      
+
       function renderDropdown() {
         const dropdown = document.getElementById("search-dropdown");
         const query    = document.getElementById("search-input").value.trim();
         const history  = state.history;
         const results  = state.searchResults;
-        
+
         if (!state.searchOpen || (!query && !history.length)) {
           dropdown.style.display = "none";
           return;
         }
-        
+
         let html = "";
-        
+
         if (!query && history.length) {
           html += `<div class="dropdown-section-label">Recent</div>`;
           for (const g of history) {
@@ -1256,7 +1262,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             </div>`;
           }
         }
-        
+
         if (query && results.length) {
           html += `<div class="dropdown-section-label">Results</div>`;
           for (const r of results) {
@@ -1266,14 +1272,14 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             </div>`;
           }
         }
-        
+
         if (!html) { dropdown.style.display = "none"; return; }
-        
+
         dropdown.innerHTML = html;
         dropdown.style.display = "block";
-        
+
         dropdown.querySelectorAll(".dropdown-item").forEach((item) => {
-          item.addEventListener("mousedown", (e) => {
+          item.addEventListener("mousedown", async (e) => {
             e.preventDefault();
             const id    = item.dataset.id;
             const label = item.dataset.label;
@@ -1282,42 +1288,56 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             state.searchResults = [];
             state.searchOpen    = false;
             dropdown.style.display = "none";
-            loadGame({ label, value: id });
+
+            const knownSeed = SEEDS.find((s) => s.value === id);
+            if (knownSeed) {
+              loadGame(knownSeed);
+              return;
+            }
+
+            setMessage(`Resolving "${label}"…`);
+            const resolved = await resolveToPlayableClass(id);
+            setMessage("");
+            if (resolved) {
+              loadGame({ label: resolved.label, value: resolved.value });
+            } else {
+              loadGame({ label, value: id });
+            }
           });
         });
       }
-      
+
       function escapeHtml(s) {
         return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
       }
-      
+
       function escapeAttr(s) {
         return s.replace(/"/g, "&quot;");
       }
-      
+
       function initTouchDrag() {
         const ghost = document.createElement("div");
         ghost.id = "drag-ghost";
         document.body.appendChild(ghost);
-        
+
         let touchDrag = null;
-        
+
         function cardFromTouch(el) {
           return el.closest(".bank-card, .tl-card");
         }
-        
+
         function buildGhost(card) {
           const img  = card.querySelector("img");
           const desc = card.querySelector(".card-desc");
           ghost.innerHTML = `
-    <div class="img-wrap">${img ? `<img src="${img.src}" />` : ""}</div>
-    <div class="card-desc">${desc ? desc.innerHTML : ""}</div>
-  `;
-          ghost.style.width = state.oneAtATime ? "280px" : "100px";
+            <div class="img-wrap">${img ? `<img src="${img.src}" />` : ""}</div>
+            <div class="card-desc">${desc ? desc.innerHTML : ""}</div>
+          `;
+          ghost.style.width = state.oneAtATime ? "200px" : "100px";
           const wrap = ghost.querySelector(".img-wrap");
-          if (wrap) wrap.style.height = state.oneAtATime ? "160px" : "66px";
+          if (wrap) wrap.style.height = state.oneAtATime ? "100px" : "66px";
         }
-        
+
         function zoneFromPoint(x, y) {
           ghost.style.display = "none";
           const el = document.elementFromPoint(x, y);
@@ -1329,14 +1349,14 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           if (bank) return bank;
           return null;
         }
-        
+
         function clearHighlights() {
           document.querySelectorAll(".tl-drop-zone.active").forEach((z) =>
             z.classList.remove("active")
           );
           document.getElementById("bank-area").classList.remove("drag-over");
         }
-        
+
         document.addEventListener("touchstart", (e) => {
           const card = cardFromTouch(e.target);
           if (!card || state.submitted) return;
@@ -1352,7 +1372,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           card.classList.add("dragging");
           e.preventDefault();
         }, { passive: false });
-        
+
         document.addEventListener("touchmove", (e) => {
           if (!touchDrag) return;
           const t = e.touches[0];
@@ -1371,21 +1391,21 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           }
           e.preventDefault();
         }, { passive: false });
-        
+
         document.addEventListener("touchend", (e) => {
           if (!touchDrag) return;
           ghost.style.display = "none";
           clearHighlights();
-          
+
           const t      = e.changedTouches[0];
           const target = zoneFromPoint(t.clientX, t.clientY);
           const { id, from } = touchDrag;
           touchDrag      = null;
           state.dragging = null;
-          
+
           document.querySelectorAll(".bank-card.dragging, .tl-card.dragging")
-          .forEach((c) => c.classList.remove("dragging"));
-          
+            .forEach((c) => c.classList.remove("dragging"));
+
           if (target?.classList.contains("tl-drop-zone")) {
             const z = parseInt(target.dataset.zone, 10);
             let ev;
@@ -1409,12 +1429,12 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             render();
             return;
           }
-          
+
           state.dragOverZone = null;
           render();
         });
       }
-      
+
       function initSearch() {
         const input      = document.getElementById("search-input");
         const spinner    = document.getElementById("search-spinner");
@@ -1424,9 +1444,9 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         const btnRestart = document.getElementById("btn-restart");
         const btnMode    = document.getElementById("btn-mode");
         const bankArea   = document.getElementById("bank-area");
-        
+
         state.history = loadHistory();
-        
+
         bankArea.addEventListener("dragover", (e) => {
           if (state.dragging?.from === "timeline") {
             e.preventDefault();
@@ -1434,12 +1454,12 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             bankArea.classList.add("drag-over");
           }
         });
-        
+
         bankArea.addEventListener("dragleave", (e) => {
           if (!bankArea.contains(e.relatedTarget))
             bankArea.classList.remove("drag-over");
         });
-        
+
         bankArea.addEventListener("drop", (e) => {
           e.preventDefault();
           bankArea.classList.remove("drag-over");
@@ -1452,19 +1472,19 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           state.dragging = null;
           render();
         });
-        
+
         input.addEventListener("focus", () => {
           state.searchOpen = true;
           renderDropdown();
         });
-        
+
         input.addEventListener("blur", () => {
           setTimeout(() => {
             state.searchOpen = false;
             document.getElementById("search-dropdown").style.display = "none";
           }, 150);
         });
-        
+
         input.addEventListener("input", () => {
           const q = input.value;
           clearBtn.style.display = q ? "block" : "none";
@@ -1478,8 +1498,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           spinner.style.display = "block";
           debounceTimer = setTimeout(async () => {
             try {
-              const raw = await searchEntities(q);
-              state.searchResults = raw;
+              state.searchResults = await searchEntities(q);
             } catch {
               state.searchResults = [];
             }
@@ -1487,7 +1506,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             renderDropdown();
           }, 300);
         });
-        
+
         clearBtn.addEventListener("click", () => {
           input.value = "";
           clearBtn.style.display = "none";
@@ -1496,18 +1515,19 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           renderDropdown();
           input.focus();
         });
-        
+
         document.addEventListener("click", (e) => {
           if (!document.getElementById("search-container").contains(e.target)) {
             state.searchOpen = false;
             document.getElementById("search-dropdown").style.display = "none";
           }
         });
-        
+
         btnRandom.addEventListener("click", async () => {
           btnRandom.classList.add("loading");
           try {
             const game = await nextTopic();
+            if (!game) throw new Error("No topics available");
             markSpent(game);
             await loadGame(game);
           } catch (err) {
@@ -1516,44 +1536,46 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             btnRandom.classList.remove("loading");
           }
         });
-        
+
         btnSubmit.addEventListener("click", () => {
           if (state.bank.length > 0) return;
           state.submitted = true;
           render();
         });
-        
+
         btnRestart.addEventListener("click", () => {
-          state.bank      = shuffle([...state.events]);
-          state.timeline  = [];
-          state.submitted = false;
-          state.dragging  = null;
+          state.bank         = shuffle([...state.events]);
+          state.timeline     = [];
+          state.submitted    = false;
+          state.dragging     = null;
           state.dragOverZone = null;
           render();
         });
-        
+
         btnMode.addEventListener("click", () => {
           state.oneAtATime = !state.oneAtATime;
           btnMode.classList.toggle("active", state.oneAtATime);
           render();
         });
-        
-        window.addEventListener("resize", () => {
-          requestAnimationFrame(adjustLayout);
-        });
-        
+
+        window.addEventListener("resize", adjustLayout);
+
+        const layoutObserver = new ResizeObserver(() => adjustLayout());
+        layoutObserver.observe(document.getElementById("top-bar"));
+        layoutObserver.observe(document.getElementById("bank-area"));
+
         initTouchDrag();
-        
+
         const savedGame = safeGet(KEY_GAME);
         if (savedGame) {
           loadGame(savedGame);
         } else {
           document.getElementById("empty-state").style.display = "block";
-          requestAnimationFrame(adjustLayout);
+          adjustLayout();
         }
       }
-      
+
       initSearch();
-      </script>
-      </body>
-      </html>
+    </script>
+  </body>
+</html>

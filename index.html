@@ -4,101 +4,105 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex,nofollow" />
-    <title>Flashback Quiz</title>
+    <title>Flashback</title>
     <link href="https://typeface.nytimes.com/css/zam5nzz.css" rel="stylesheet" />
     <style>
       *, *::before, *::after { box-sizing: border-box; }
-
+      
       html, body {
         margin: 0;
         padding: 0;
-        background: #f2f1e8;
+        background: #f7f7f5;
         color: #333;
         font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        min-height: 100%;
       }
-
+      
+      /* ── TOP NAV ── */
       #top-bar {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         z-index: 200;
-        background: #f2f1e8;
-        border-bottom: 2px solid #e2e0d6;
+        background: #fff;
+        border-bottom: 1px solid #e2e0d6;
       }
-
-      #search-row {
+      
+      #nav-inner {
+        max-width: 600px;
+        margin: 0 auto;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         padding: 10px 16px;
       }
-
+      
       #search-container {
         position: relative;
         flex: 1;
-        max-width: 380px;
       }
-
+      
       #search-input-wrap {
         display: flex;
         align-items: center;
-        background: #fff;
-        border: 2px solid #e2e0d6;
-        border-radius: 25px;
-        padding: 0 12px;
+        background: #f7f7f5;
+        border: 1.5px solid #d8d6cc;
+        border-radius: 8px;
+        padding: 0 10px;
         transition: border-color 0.15s;
       }
-
-      #search-input-wrap:focus-within { border-color: #6171c3; }
-
+      
+      #search-input-wrap:focus-within {
+        border-color: #333;
+        background: #fff;
+      }
+      
       #search-icon {
-        color: #b1aea5;
-        font-size: 15px;
+        color: #aaa;
+        font-size: 14px;
         margin-right: 7px;
         flex-shrink: 0;
       }
-
+      
       #search-input {
         flex: 1;
         border: none;
         outline: none;
-        padding: 8px 0;
+        padding: 9px 0;
         font-size: 14px;
         font-family: "nyt-franklin", arial, helvetica, sans-serif;
         background: transparent;
         color: #333;
         min-width: 0;
       }
-
-      #search-input::placeholder { color: #b1aea5; }
-
+      
+      #search-input::placeholder { color: #aaa; }
+      
       #search-clear {
         cursor: pointer;
-        color: #b1aea5;
+        color: #aaa;
         font-size: 18px;
         line-height: 1;
         padding: 0 0 0 6px;
         display: none;
-        flex-shrink: 0;
       }
-
+      
       #search-clear:hover { color: #333; }
-
+      
       #search-spinner {
-        width: 14px;
-        height: 14px;
+        width: 13px;
+        height: 13px;
         border: 2px solid #e2e0d6;
-        border-top-color: #6171c3;
+        border-top-color: #333;
         border-radius: 50%;
         animation: spin 0.6s linear infinite;
         display: none;
-        flex-shrink: 0;
         margin-left: 6px;
       }
-
+      
       @keyframes spin { to { transform: rotate(360deg); } }
-
+      
       #search-dropdown {
         position: absolute;
         top: calc(100% + 6px);
@@ -107,75 +111,73 @@
         background: #fff;
         border: 1px solid #e2e0d6;
         border-radius: 10px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-        max-height: 320px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+        max-height: 300px;
         overflow-y: auto;
         display: none;
         z-index: 400;
       }
-
+      
       .dropdown-section-label {
-        padding: 7px 12px 3px;
+        padding: 8px 14px 3px;
         font-size: 10px;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: #b1aea5;
+        letter-spacing: 0.07em;
+        color: #aaa;
       }
-
+      
       .dropdown-item {
-        padding: 9px 12px;
+        padding: 10px 14px;
         cursor: pointer;
         display: flex;
         flex-direction: column;
         gap: 2px;
       }
-
-      .dropdown-item:hover { background: #f2f1e8; }
-
+      
+      .dropdown-item:hover { background: #f7f7f5; }
+      
       .dropdown-item-label {
         font-size: 14px;
-        color: #333;
-        font-weight: 500;
+        color: #222;
+        font-weight: 600;
       }
-
+      
       .dropdown-item-desc {
         font-size: 11px;
-        color: #888;
+        color: #999;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-
+      
       #btn-random {
         display: flex;
         align-items: center;
         gap: 6px;
-        background: #5d72c9;
+        background: #333;
         color: #fff;
         border: none;
-        border-radius: 25px;
-        padding: 8px 16px;
+        border-radius: 8px;
+        padding: 9px 16px;
         font-size: 13px;
         font-weight: 700;
         font-family: "nyt-franklin", arial, helvetica, sans-serif;
         cursor: pointer;
         white-space: nowrap;
-        transition: background 0.15s, transform 0.1s;
+        transition: background 0.15s;
         flex-shrink: 0;
       }
-
-      #btn-random:hover { background: #4a5eb0; }
-      #btn-random:active { transform: scale(0.97); }
-      #btn-random.loading { background: #a0a8d8; pointer-events: none; }
-
+      
+      #btn-random:hover { background: #111; }
+      #btn-random.loading { background: #999; pointer-events: none; }
+      
       #btn-random svg {
         width: 13px;
         height: 13px;
         fill: currentColor;
-        flex-shrink: 0;
       }
-
+      
       #btn-random.loading svg { animation: spin 0.7s linear infinite; }
       
       #btn-mode {
@@ -183,183 +185,249 @@
         align-items: center;
         gap: 5px;
         background: transparent;
-        border: 2px solid #c8c5bb;
-        border-radius: 25px;
-        padding: 6px 13px;
+        border: 1.5px solid #d8d6cc;
+        border-radius: 8px;
+        padding: 8px 12px;
         font-size: 12px;
         font-weight: 700;
         font-family: "nyt-franklin", arial, helvetica, sans-serif;
         color: #888;
         cursor: pointer;
         white-space: nowrap;
-        transition: border-color 0.15s, color 0.15s, background 0.15s;
+        transition: all 0.15s;
         flex-shrink: 0;
       }
-      #btn-mode:hover { border-color: #5d72c9; color: #5d72c9; }
-      #btn-mode.active { border-color: #5d72c9; color: #5d72c9; background: #eef0fa; }
-      #btn-mode svg { width: 12px; height: 12px; fill: currentColor; flex-shrink: 0; }
+      
+      #btn-mode:hover { border-color: #333; color: #333; }
+      #btn-mode.active { border-color: #333; color: #333; background: #f0f0ec; }
+      #btn-mode svg { width: 12px; height: 12px; fill: currentColor; }
       
       #game-title {
         font-size: 12px;
-        color: #666;
+        color: #999;
         font-style: italic;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 160px;
+        max-width: 100px;
         display: none;
+        flex-shrink: 1;
       }
-
+      
+      /* ── BANK ── */
       #bank-area {
         position: fixed;
         left: 0;
         width: 100%;
-        background: #f2f1e8;
-        border-bottom: 2px solid #e2e0d6;
+        background: #fff;
+        border-bottom: 1px solid #e2e0d6;
         z-index: 100;
-        padding: 8px 12px;
+        padding: 10px 0 10px;
         display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        justify-content: center;
-        min-height: 48px;
+        align-items: center;
+        min-height: 56px;
         transition: background 0.15s;
-        position: relative;
       }
-
-      #bank-area.drag-over { background: #ece9d4; }
-
+      
+      #bank-area.drag-over { background: #f7f7f5; }
+      
+      #bank-scroll {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0 16px;
+        width: 100%;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        justify-content: center;
+        align-items: stretch;
+      }
+      
+      #bank-scroll::-webkit-scrollbar { display: none; }
+      
       #bank-empty-hint {
         display: flex;
         align-items: center;
-        color: #b1aea5;
+        color: #aaa;
         font-size: 13px;
         font-style: italic;
+        padding: 0 16px;
       }
-
+      
+      #bank-counter {
+        flex-shrink: 0;
+        font-size: 11px;
+        font-weight: 700;
+        color: #aaa;
+        font-family: "nyt-franklin", arial, sans-serif;
+        padding: 0 8px;
+        white-space: nowrap;
+        align-self: center;
+      }
+      
       .bank-card {
+        flex: 0 0 auto;
+        width: 100px;
         background: #fff;
-        border-radius: 6px;
+        border: 1.5px solid #e2e0d6;
+        border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         cursor: grab;
         user-select: none;
-        flex-shrink: 0;
-        width: var(--card-w, 130px);
-        transition: box-shadow 0.15s;
+        transition: box-shadow 0.15s, transform 0.15s;
+        display: flex;
+        flex-direction: column;
       }
-
+      
+      .bank-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        transform: translateY(-2px);
+      }
+      
       .bank-card:active { cursor: grabbing; }
-      .bank-card.dragging { opacity: 0.35; }
-
-      .bank-card img {
+      .bank-card.dragging { opacity: 0.3; transform: scale(0.96); }
+      
+      .bank-card .img-wrap {
         width: 100%;
-        aspect-ratio: 4 / 3;
-        object-fit: cover;
-        display: block;
-        min-height: 0;
+        height: 66px;
+        background: #f0efe9;
+        overflow: hidden;
         flex-shrink: 0;
       }
       
+      .bank-card .img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        pointer-events: none;
+      }
+      
       .bank-card .card-desc {
-        padding: 5px 6px;
-        font-size: clamp(9px, 1.1vw, 12px);
+        padding: 6px 7px;
+        font-size: 11px;
         font-family: "nyt-imperial", georgia, serif;
         line-height: 1.3;
         user-select: none;
         cursor: grab;
         display: -webkit-box;
-/*      -webkit-line-clamp: 3;*/
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
-/*      overflow: hidden;*/
+        overflow: hidden;
+        flex: 1;
+        color: #222;
       }
-
+      
+      /* ── PAGE ── */
       #page-content {
-        padding-bottom: 80px;
+        padding-bottom: 100px;
       }
-
+      
       #timeline-wrap {
-        max-width: 540px;
+        max-width: 560px;
         margin: 0 auto;
-        padding: 0 12px;
+        padding: 0 16px;
       }
-
+      
+      /* ── TIMELINE ── */
       .tl-label {
         text-align: center;
-        color: #999;
-        font-size: 11px;
+        color: #bbb;
+        font-size: 10px;
         font-weight: 700;
-        letter-spacing: 0.08em;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        padding: 10px 0 4px;
+        padding: 16px 0 6px;
       }
-
+      
       .tl-drop-zone {
-        height: 8px;
-        border-radius: 6px;
-        transition: height 0.12s, background 0.12s;
+        height: 6px;
+        border-radius: 4px;
+        margin: 2px 0;
+        transition: height 0.15s, background 0.15s;
+        position: relative;
       }
-
+      
       .tl-drop-zone.active {
-        height: 68px;
-        background: #f4da93;
+        height: 72px;
+        background: #f5e9c8;
+        border: 2px dashed #e0c87a;
+        border-radius: 8px;
       }
-
+      
       .tl-card {
-        background: #e3e0d5;
-        border-radius: 6px;
+        background: #fff;
+        border: 1.5px solid #e8e6de;
+        border-radius: 10px;
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 8px 10px;
-        margin: 3px 0;
+        gap: 12px;
+        padding: 10px 12px;
+        margin: 4px 0;
         cursor: grab;
         user-select: none;
+        transition: box-shadow 0.15s;
       }
-
+      
+      .tl-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
       .tl-card:active { cursor: grabbing; }
-      .tl-card.dragging { opacity: 0.35; }
-
-      .tl-card img {
-        width: 68px;
-        height: 51px;
-        object-fit: cover;
-        border-radius: 4px;
+      .tl-card.dragging { opacity: 0.3; }
+      
+      .tl-card .img-wrap {
+        width: 72px;
+        height: 54px;
+        border-radius: 6px;
+        overflow: hidden;
         flex-shrink: 0;
+        background: #f0efe9;
       }
-
+      
+      .tl-card .img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        pointer-events: none;
+      }
+      
       .tl-card .card-desc {
         flex: 1;
         font-size: 13px;
         font-family: "nyt-imperial", georgia, serif;
-        line-height: 1.3;
+        line-height: 1.35;
         min-width: 0;
         user-select: none;
-        cursor: grab;
+        color: #222;
       }
-
+      
       .year-badge {
-        background: #b1aea5;
-        color: #fff;
-        border-radius: 8px;
-        padding: 3px 8px;
-        font-size: 12px;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 13px;
         font-weight: 700;
         flex-shrink: 0;
         font-family: "nyt-franklin", arial, sans-serif;
+        background: #e8e6de;
+        color: #666;
       }
-
-      .tl-card.correct .year-badge { background: #5cb887; }
-      .tl-card.incorrect .year-badge { background: #d25353; }
-
+      
+      .tl-card.correct { border-color: #b8dfc8; background: #f3fbf7; }
+      .tl-card.correct .year-badge { background: #4caf78; color: #fff; }
+      
+      .tl-card.incorrect { border-color: #f0c4c4; background: #fdf5f5; }
+      .tl-card.incorrect .year-badge { background: #d04f4f; color: #fff; }
+      
+      /* ── SUBMIT BAR ── */
       #submit-bar {
         position: fixed;
         bottom: 0;
         left: 0;
         width: 100%;
-        background: rgba(242, 241, 232, 0.97);
-        border-top: 2px solid #e2e0d6;
-        padding: 10px 20px;
+        background: rgba(255,255,255,0.97);
+        border-top: 1px solid #e2e0d6;
+        padding: 12px 20px;
         text-align: center;
         z-index: 200;
         display: none;
@@ -367,35 +435,36 @@
         align-items: center;
         justify-content: center;
         flex-wrap: wrap;
+        backdrop-filter: blur(6px);
       }
-
+      
       #results-text {
         font-size: 14px;
-        color: #444;
+        color: #555;
         font-family: "nyt-franklin", arial, sans-serif;
       }
-
+      
       #btn-submit {
-        background: #5d72c9;
+        background: #333;
         color: #fff;
         border: none;
-        border-radius: 25px;
-        padding: 9px 32px;
+        border-radius: 8px;
+        padding: 10px 36px;
         font-size: 14px;
         font-weight: 700;
         font-family: "nyt-franklin", arial, helvetica, sans-serif;
         cursor: pointer;
         transition: background 0.15s;
       }
-
-      #btn-submit:hover { background: #4a5eb0; }
-
+      
+      #btn-submit:hover { background: #111; }
+      
       #btn-restart {
         background: transparent;
-        border: 2px solid #5d72c9;
-        color: #5d72c9;
-        border-radius: 25px;
-        padding: 7px 24px;
+        border: 1.5px solid #333;
+        color: #333;
+        border-radius: 8px;
+        padding: 9px 24px;
         font-size: 14px;
         font-weight: 700;
         font-family: "nyt-franklin", arial, helvetica, sans-serif;
@@ -403,30 +472,107 @@
         display: none;
         transition: background 0.15s, color 0.15s;
       }
-
-      #btn-restart:hover { background: #5d72c9; color: #fff; }
-
+      
+      #btn-restart:hover { background: #333; color: #fff; }
+      
+      /* ── MESSAGE ── */
       #message {
         position: fixed;
-        bottom: 20px;
+        bottom: 80px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 300;
-        color: #616161;
-        font-style: italic;
-        background: rgba(255, 255, 255, 0.97);
-        padding: 10px 20px;
-        border-radius: 15px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        color: #444;
+        background: #fff;
+        padding: 10px 22px;
+        border-radius: 20px;
+        border: 1px solid #e2e0d6;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.10);
         display: none;
         white-space: nowrap;
-        font-size: 14px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      
+      /* ── GHOST ── */
+      #drag-ghost {
+        position: fixed;
+        pointer-events: none;
+        z-index: 999;
+        opacity: 0.9;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.20);
+        background: #fff;
+        border: 1.5px solid #e2e0d6;
+        transform: translate(-50%, -50%) scale(1.06);
+        display: none;
+        width: 100px;
+      }
+      
+      #drag-ghost .img-wrap {
+        width: 100%;
+        height: 66px;
+        overflow: hidden;
+        background: #f0efe9;
+      }
+      
+      #drag-ghost .img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      
+      #drag-ghost .card-desc {
+        padding: 6px 7px;
+        font-size: 11px;
+        font-family: "nyt-imperial", georgia, serif;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: #222;
+      }
+      
+      /* ── EMPTY STATE ── */
+      #empty-state {
+        text-align: center;
+        padding: 80px 24px 0;
+        display: none;
+      }
+      
+      #empty-state h2 {
+        font-family: "nyt-imperial", georgia, serif;
+        font-size: 26px;
+        font-weight: 700;
+        color: #222;
+        margin: 0 0 10px;
+      }
+      
+      #empty-state p {
+        font-size: 15px;
+        color: #888;
+        margin: 0;
+        line-height: 1.6;
+      }
+      
+      @media (max-width: 480px) {
+        #nav-inner { padding: 8px 10px; gap: 6px; }
+        #btn-random { padding: 8px 12px; font-size: 12px; }
+        #btn-mode   { padding: 7px 10px; font-size: 11px; }
+        #game-title { display: none !important; }
+        .bank-card  { width: 88px; }
+        .bank-card .img-wrap { height: 58px; }
+        #drag-ghost { width: 88px; }
+        #drag-ghost .img-wrap { height: 58px; }
       }
     </style>
   </head>
   <body>
     <div id="top-bar">
-      <div id="search-row">
+      <div id="nav-inner">
         <div id="search-container">
           <div id="search-input-wrap">
             <span id="search-icon">&#9906;</span>
@@ -441,59 +587,75 @@
           </div>
           <div id="search-dropdown"></div>
         </div>
-
+        
         <button id="btn-random">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M17 4l4 4-4 4V9h-3.08A8 8 0 0 1 20 19l-1.42 1.42A6 6 0 0 0 6.68 9H9V7H3v6h2v-2.1A8 8 0 0 1 13.92 9H17V4zm-7.42 11.58A6 6 0 0 0 18.32 11H16V9h6v6h-2v-2.1a8 8 0 0 1-6.08 8.52L12.5 23 9 19l4-4-.42 3.58z"
-            />
-          </svg>
+          <svg viewBox="0 0 24 24"><path d="M17 4l4 4-4 4V9h-3.08A8 8 0 0 1 20 19l-1.42 1.42A6 6 0 0 0 6.68 9H9V7H3v6h2v-2.1A8 8 0 0 1 13.92 9H17V4zm-7.42 11.58A6 6 0 0 0 18.32 11H16V9h6v6h-2v-2.1a8 8 0 0 1-6.08 8.52L12.5 23 9 19l4-4-.42 3.58z"/></svg>
           Random
         </button>
         
-        <button id="btn-mode" title="Toggle one-at-a-time mode">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M4 6h16v2H4zm4 5h12v2H8zm4 5h8v2h-8z"/>
-          </svg>
+        <button id="btn-mode">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm4 5h12v2H8zm4 5h8v2h-8z"/></svg>
           Single
         </button>
-
+        
         <span id="game-title"></span>
       </div>
     </div>
-
+    
     <div id="bank-area"></div>
-
+    
     <div id="page-content">
+      <div id="empty-state">
+        <h2>Flashback</h2>
+        <p>Drag the cards into chronological order.<br/>Hit Random to start, or search any topic.</p>
+      </div>
       <div id="timeline-wrap">
         <div id="timeline"></div>
       </div>
     </div>
-
+    
     <div id="submit-bar">
       <span id="results-text"></span>
-      <button id="btn-submit">Submit</button>
+      <button id="btn-submit">Check Answers</button>
       <button id="btn-restart">Play Again</button>
     </div>
-
+    
     <div id="message"></div>
-
+    
     <script>
       const SPARQL_ENDPOINT = "https://query.wikidata.org/sparql";
-      const WIKIDATA_API = "https://www.wikidata.org/w/api.php";
-      const UA = "FlashbackQuiz/1.0 (https://localhost)";
-
-      async function sparqlFetch(sparql) {
+      const WIKIDATA_API    = "https://www.wikidata.org/w/api.php";
+      const UA              = "FlashbackQuiz/1.0 (https://localhost)";
+      
+      async function sparqlFetch(sparql, retries = 2) {
         const url =
-          `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}` +
-          `&format=json&useragent=${encodeURIComponent(UA)}`;
-        const res = await fetch(url, {
-          headers: { Accept: "application/sparql-results+json" },
-        });
-        if (!res.ok) throw new Error(`SPARQL ${res.status}`);
-        return res.json();
+        `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}` +
+        `&format=json&useragent=${encodeURIComponent(UA)}`;
+        for (let attempt = 0; attempt <= retries; attempt++) {
+          try {
+            const res = await fetch(url, {
+              headers: { Accept: "application/sparql-results+json" },
+              signal: AbortSignal.timeout(12000),
+            });
+            if (res.status === 429 || res.status === 504) {
+              if (attempt < retries) {
+                await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+                continue;
+              }
+              throw new Error(`SPARQL ${res.status}`);
+            }
+            if (!res.ok) throw new Error(`SPARQL ${res.status}`);
+            return res.json();
+          } catch (err) {
+            if (attempt < retries && !(err instanceof SyntaxError)) {
+              await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+              continue;
+            }
+            throw err;
+          }
+        }
       }
-
+      
       const SEEDS = [
         { value: "Q11424",   label: "Films" },
         { value: "Q482994",  label: "Music Albums" },
@@ -539,14 +701,14 @@
         { value: "Q991",     label: "Dostoyevsky's Works",    prop: "P50" },
         { value: "Q7243",    label: "Tolstoy's Works",        prop: "P50" },
       ];
-
+      
       async function discoverAndEnqueue() {
-        const deck = getDeck();
+        const deck  = getDeck();
         const spent = getSpent();
-        const used = new Set([...deck, ...spent].map((g) => g.value));
+        const used  = new Set([...deck, ...spent].map((g) => g.value));
         const remaining = SEEDS.filter((s) => !used.has(s.value));
-        const pool = remaining.length ? remaining : SEEDS;
-        const pick = pool[Math.floor(Math.random() * pool.length)];
+        const pool  = remaining.length ? remaining : SEEDS;
+        const pick  = pool[Math.floor(Math.random() * pool.length)];
         try {
           await fetchGameEvents(pick.value, pick.prop ?? null);
           addToDeck(pick);
@@ -555,7 +717,7 @@
           return null;
         }
       }
-
+      
       async function nextTopic() {
         const fromDeck = popFromDeck();
         if (fromDeck) {
@@ -564,19 +726,16 @@
         }
         for (let i = 0; i < SEEDS.length; i++) {
           const game = await discoverAndEnqueue();
-          if (game) {
-            popFromDeck();
-            return game;
-          }
+          if (game) { popFromDeck(); return game; }
         }
         throw new Error("Could not find a playable topic");
       }
-
+      
       const KEY_HISTORY = "fbq_history";
       const KEY_GAME    = "fbq_game";
       const KEY_DECK    = "fbq_deck";
       const KEY_SPENT   = "fbq_spent";
-
+      
       const state = {
         game: null,
         events: [],
@@ -590,39 +749,26 @@
         searchOpen: false,
         oneAtATime: false,
       };
-
+      
       function safeGet(key) {
-        try {
-          const r = localStorage.getItem(key);
-          return r ? JSON.parse(r) : null;
-        } catch {
-          return null;
-        }
+        try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; }
+        catch { return null; }
       }
-
+      
       function safeSet(key, val) {
-        try {
-          localStorage.setItem(key, JSON.stringify(val));
-        } catch {}
+        try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
       }
-
-      function loadHistory() {
-        return safeGet(KEY_HISTORY) ?? [];
-      }
-
+      
+      function loadHistory()  { return safeGet(KEY_HISTORY) ?? []; }
+      
       function pushHistory(game) {
         const h = loadHistory().filter((g) => g.value !== game.value);
         safeSet(KEY_HISTORY, [game, ...h].slice(0, 20));
       }
-
-      function getDeck() {
-        return safeGet(KEY_DECK) ?? [];
-      }
-
-      function getSpent() {
-        return safeGet(KEY_SPENT) ?? [];
-      }
-
+      
+      function getDeck()  { return safeGet(KEY_DECK)  ?? []; }
+      function getSpent() { return safeGet(KEY_SPENT) ?? []; }
+      
       function popFromDeck() {
         let deck = getDeck();
         const spent = getSpent();
@@ -636,22 +782,21 @@
         safeSet(KEY_DECK, deck);
         return item;
       }
-
+      
       function addToDeck(game) {
-        const deck = getDeck();
+        const deck  = getDeck();
         const spent = getSpent();
         if ([...deck, ...spent].some((g) => g.value === game.value)) return;
         safeSet(KEY_DECK, [...deck, game]);
       }
-
+      
       function markSpent(game) {
         safeSet(KEY_DECK, getDeck().filter((g) => g.value !== game.value));
         const spent = getSpent();
-        if (!spent.some((g) => g.value === game.value)) {
+        if (!spent.some((g) => g.value === game.value))
           safeSet(KEY_SPENT, [...spent, game]);
-        }
       }
-
+      
       function shuffle(arr) {
         const a = [...arr];
         for (let i = a.length - 1; i > 0; i--) {
@@ -660,34 +805,27 @@
         }
         return a;
       }
-
+      
       function parseYear(iso) {
         if (!iso) return null;
         if (iso.startsWith("-")) return -parseInt(iso.slice(1, 5), 10);
         return parseInt(iso.slice(0, 4), 10);
       }
-
+      
       function toDisplayYear(y) {
         return y < 0 ? `${Math.abs(y)} BC` : String(y);
       }
-
+      
       function fixImageUrl(url) {
-        return url.replace("http://", "https://") + "?width=160";
+        return url.replace("http://", "https://") + "?width=120";
       }
-
+      
       function setMessage(msg) {
         const el = document.getElementById("message");
         el.textContent = msg;
         el.style.display = msg ? "block" : "none";
       }
-
-      function getCardWidth() {
-        const available = Math.min(window.innerWidth, 540) - 24;
-        const count = Math.min(state.events.length || 8, 8);
-        const gaps = (count - 1) * 6;
-        return Math.max(90, Math.min(148, (available - gaps) / count));
-      }
-
+      
       function adjustLayout() {
         const topBar  = document.getElementById("top-bar");
         const bankArea = document.getElementById("bank-area");
@@ -695,9 +833,29 @@
         const topH  = topBar.getBoundingClientRect().height;
         const bankH = bankArea.getBoundingClientRect().height;
         bankArea.style.top = `${topH}px`;
-        content.style.paddingTop = `${topH + bankH + 10}px`;
+        content.style.paddingTop = `${topH + bankH + 12}px`;
       }
-
+      
+      function cleanLabel(s) {
+        return s
+        .replace(/^\d{4}\s+/, "")
+        .replace(/\s+of\s+\d{4}([–\-]\d{2,4})?/gi, "")
+        .replace(/\s+\d{4}[–\-]\d{2,4}/g, "")
+        .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)/g, "")
+        .trim();
+      }
+      
+      function cleanDesc(s) {
+        return s
+        .replace(/\bfrom\s+\d{4}\s+to\s+\d{4}\b/gi, "")
+        .replace(/\b\d{4}[–\-]\d{2,4}\b/g, "")
+        .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, "")
+        .replace(/\s{2,}/g, " ")
+        .replace(/\s+([,.])/g, "$1")
+        .replace(/^[–\-,\s]+/, "")
+        .trim();
+      }
+      
       async function searchEntities(query) {
         const p = new URLSearchParams({
           action: "wbsearchentities",
@@ -717,7 +875,7 @@
           description: r.description ?? "",
         }));
       }
-
+      
       async function validateEntityIds(ids) {
         if (!ids.length) return new Set();
         const values = ids.map((id) => `wd:${id}`).join(" ");
@@ -744,102 +902,6 @@ HAVING (COUNT(DISTINCT ?item) >= 2)
           return new Set(ids);
         }
       }
-
-      function buildSparql(entityId, prop) {
-        if (prop) {
-          return `
-SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-  ?item wdt:${prop} wd:${entityId};
-        wdt:P18 ?image.
-  {?item wdt:P571 ?date.} UNION
-  {?item wdt:P577 ?date.} UNION
-  {?item wdt:P580 ?date.} UNION
-  {?item wdt:P569 ?date.}
-  FILTER(YEAR(?date) > 0)
-  SERVICE wikibase:label {
-    bd:serviceParam wikibase:language "en".
-  }
-}
-LIMIT 60
-`;
-        }
-        return `
-SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-  ?item wdt:P31/wdt:P279* wd:${entityId};
-        wdt:P18 ?image.
-  {?item wdt:P571 ?date.} UNION
-  {?item wdt:P577 ?date.} UNION
-  {?item wdt:P580 ?date.} UNION
-  {?item wdt:P569 ?date.}
-  FILTER(YEAR(?date) > 0)
-  SERVICE wikibase:label {
-    bd:serviceParam wikibase:language "en".
-  }
-}
-LIMIT 60
-`;
-      }
-      
-      function cleanLabel(s) {
-        return s
-        .replace(/^\d{4}\s+/, "")
-        .replace(/\s+of\s+\d{4}([–\-]\d{2,4})?/gi, "")
-        .replace(/\s+\d{4}[–\-]\d{2,4}/g, "")
-        .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)/g, "")
-        .trim();
-      }
-      
-      function cleanDesc(s) {
-        return s
-        .replace(/\bfrom\s+\d{4}\s+to\s+\d{4}\b/gi, "")
-        .replace(/\b\d{4}[–\-]\d{2,4}\b/g, "")
-        .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, "")
-        .replace(/\s{2,}/g, " ")
-        .replace(/\s+([,.])/g, "$1")
-        .replace(/^[–\-,\s]+/, "")
-        .trim();
-      }
-
-      async function fetchGameEvents(entityId, prop = null) {
-        const sparql = buildSparql(entityId, prop);
-        const json = await sparqlFetch(sparql);
-        const bindings = json.results.bindings;
-        if (!bindings.length) throw new Error("No results for that topic");
-        
-        const seen = new Set();
-        const deduped = [];
-        for (const b of bindings) {
-          const id = b.item?.value;
-          if (!id || !b.date?.value || !b.itemLabel?.value || !b.image?.value)
-            continue;
-          const year = parseYear(b.date.value);
-          if (year === null) continue;
-          if (seen.has(id)) continue;
-          seen.add(id);
-          deduped.push({ ...b, _year: year });
-        }
-        
-        if (deduped.length < 2)
-          throw new Error("Not enough dated items with images");
-        
-        const selected = shuffle(deduped).slice(0, 8);
-        selected.sort((a, b) => a._year - b._year);
-        
-        return selected.map((b, i) => {
-          const year  = b._year;
-          const label = cleanLabel(b.itemLabel.value);
-          const desc  = cleanDesc(b.itemDescription?.value ?? "");
-          return {
-            id: i + 1,
-            year,
-            displayYear: toDisplayYear(year),
-            description: desc
-            ? `<b>${label}</b> — ${desc}`
-            : `<b>${label}</b>`,
-            image: fixImageUrl(b.image.value),
-          };
-        });
-      }
       
       async function resolveToPlayableClass(qid) {
         const sparql = `
@@ -862,47 +924,111 @@ LIMIT 10
           return null;
         }
       }
-
+      
+      function buildSparql(entityId, prop) {
+        const dateClause = `
+  {?item wdt:P571 ?date.} UNION
+  {?item wdt:P577 ?date.} UNION
+  {?item wdt:P580 ?date.} UNION
+  {?item wdt:P569 ?date.}`;
+        const label = `
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }`;
+        if (prop) {
+          return `
+SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
+  ?item wdt:${prop} wd:${entityId};
+        wdt:P18 ?image.
+  ${dateClause}
+  FILTER(YEAR(?date) > 0)
+  ${label}
+} LIMIT 60`;
+        }
+        return `
+SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
+  ?item wdt:P31/wdt:P279* wd:${entityId};
+        wdt:P18 ?image.
+  ${dateClause}
+  FILTER(YEAR(?date) > 0)
+  ${label}
+} LIMIT 60`;
+      }
+      
+      async function fetchGameEvents(entityId, prop = null) {
+        const json     = await sparqlFetch(buildSparql(entityId, prop));
+        const bindings = json.results.bindings;
+        if (!bindings.length) throw new Error("No results for that topic");
+        
+        const seen = new Set();
+        const deduped = [];
+        for (const b of bindings) {
+          const id = b.item?.value;
+          if (!id || !b.date?.value || !b.itemLabel?.value || !b.image?.value) continue;
+          const year = parseYear(b.date.value);
+          if (year === null || seen.has(id)) continue;
+          seen.add(id);
+          deduped.push({ ...b, _year: year });
+        }
+        
+        if (deduped.length < 2) throw new Error("Not enough dated items with images");
+        
+        const selected = shuffle(deduped).slice(0, 8);
+        selected.sort((a, b) => a._year - b._year);
+        
+        return selected.map((b, i) => {
+          const year  = b._year;
+          const label = cleanLabel(b.itemLabel.value);
+          const desc  = cleanDesc(b.itemDescription?.value ?? "");
+          return {
+            id: i + 1,
+            year,
+            displayYear: toDisplayYear(year),
+            description: desc ? `<b>${label}</b> — ${desc}` : `<b>${label}</b>`,
+            image: fixImageUrl(b.image.value),
+          };
+        });
+      }
+      
       async function loadGame(game) {
-        state.game = game;
+        state.game      = game;
         state.submitted = false;
-        state.dragging = null;
+        state.dragging  = null;
         state.dragOverZone = null;
-        state.events = [];
-        state.bank = [];
-        state.timeline = [];
-
+        state.events    = [];
+        state.bank      = [];
+        state.timeline  = [];
+        
         safeSet(KEY_GAME, game);
         pushHistory(game);
         state.history = loadHistory();
-
+        
         const titleEl = document.getElementById("game-title");
         titleEl.textContent = game.label;
         titleEl.style.display = "block";
-
-        setMessage(`Loading ${game.label}...`);
+        
+        document.getElementById("empty-state").style.display = "none";
+        setMessage(`Loading ${game.label}…`);
         render();
-
+        
         try {
           const events = await fetchGameEvents(game.value, game.prop ?? null);
-          state.events = events;
-          state.bank = shuffle([...events]);
+          state.events   = events;
+          state.bank     = shuffle([...events]);
           state.timeline = [];
           setMessage("");
         } catch (err) {
-          setMessage(`Failed: ${err.message}. Try another topic.`);
+          setMessage(`No playable data for "${game.label}". Try another topic.`);
         }
         render();
       }
-
+      
       function getCorrectOrder() {
         return [...state.events].sort((a, b) => a.year - b.year);
       }
-
+      
       function getCardStatus(event, index) {
         return event.id === getCorrectOrder()[index]?.id ? "correct" : "incorrect";
       }
-
+      
       function getScore() {
         const correct = getCorrectOrder();
         let score = 0;
@@ -911,11 +1037,19 @@ LIMIT 10
         }
         return { score, total: state.events.length };
       }
-
+      
+      function cardHtml(ev) {
+        return `
+        <div class="img-wrap">
+          <img src="${ev.image}" alt="" loading="lazy"
+            onerror="this.parentElement.style.display='none'" />
+        </div>
+        <div class="card-desc">${ev.description}</div>
+      `;
+      }
+      
       function renderBank() {
         const el = document.getElementById("bank-area");
-        const w  = getCardWidth();
-        document.documentElement.style.setProperty("--card-w", `${w}px`);
         
         if (!state.events.length || state.submitted) {
           el.innerHTML = "";
@@ -923,33 +1057,87 @@ LIMIT 10
         }
         
         if (!state.bank.length) {
-          el.innerHTML =
-          '<span id="bank-empty-hint">All placed — submit when ready</span>';
+          el.innerHTML = '<span id="bank-empty-hint">All placed — check your answers</span>';
           return;
         }
         
-        const visible = state.oneAtATime ? state.bank.slice(0, 1) : state.bank;
+        const visible   = state.oneAtATime ? state.bank.slice(0, 1) : state.bank;
         const remaining = state.bank.length;
         
-        el.innerHTML =
-        visible
-        .map(
-          (ev) => `
-        <div class="bank-card" draggable="true" data-id="${ev.id}">
-          <img src="${ev.image}" alt="" onerror="this.style.display='none'" />
-          <div class="card-desc">${ev.description}</div>
-        </div>
-      `
-        )
-        .join("") +
-        (state.oneAtATime && remaining > 1
-          ? `<span id="bank-counter">${remaining} left</span>`
-        : "");
+        const scroll = document.createElement("div");
+        scroll.id = "bank-scroll";
         
-        el.querySelectorAll(".bank-card").forEach((card) => {
+        visible.forEach((ev) => {
+          const card = document.createElement("div");
+          card.className  = "bank-card";
+          card.draggable  = true;
+          card.dataset.id = ev.id;
+          card.innerHTML  = cardHtml(ev);
+          if (state.oneAtATime) {
+            card.style.width = "280px";
+            card.querySelector(".img-wrap").style.height = "160px";
+          }
+          card.addEventListener("dragstart", (e) => {
+            state.dragging = { id: ev.id, from: "bank" };
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", String(ev.id));
+            setTimeout(() => card.classList.add("dragging"), 0);
+          });
+          card.addEventListener("dragend", () => {
+            card.classList.remove("dragging");
+            if (state.dragging) {
+              state.dragging = null;
+              state.dragOverZone = null;
+              renderTimeline();
+            }
+          });
+          scroll.appendChild(card);
+        });
+        
+        if (state.oneAtATime && remaining > 1) {
+          const ctr = document.createElement("span");
+          ctr.id = "bank-counter";
+          ctr.textContent = `${remaining} left`;
+          scroll.appendChild(ctr);
+        }
+        
+        el.innerHTML = "";
+        el.appendChild(scroll);
+      }
+      
+      function renderTimeline() {
+        const el = document.getElementById("timeline");
+        if (!state.events.length) { el.innerHTML = ""; return; }
+        
+        const { timeline, dragOverZone, submitted } = state;
+        let html = `<div class="tl-label">EARLIEST</div>`;
+        if (!submitted) html += dropZoneHtml(0, dragOverZone);
+        
+        for (let i = 0; i < timeline.length; i++) {
+          const ev     = timeline[i];
+          const status = submitted ? getCardStatus(ev, i) : "";
+          html += `
+            <div class="tl-card ${status}" draggable="${!submitted}" data-id="${ev.id}">
+              <div class="img-wrap">
+                <img src="${ev.image}" alt="" loading="lazy"
+                    onerror="this.parentElement.style.display='none'" />
+              </div>
+              <div class="card-desc">${ev.description}</div>
+              ${submitted ? `<div class="year-badge">${ev.displayYear}</div>` : ""}
+            </div>
+          `;
+          if (!submitted) html += dropZoneHtml(i + 1, dragOverZone);
+        }
+        
+        html += `<div class="tl-label">LATEST</div>`;
+        el.innerHTML = html;
+        
+        if (submitted) return;
+        
+        el.querySelectorAll(".tl-card").forEach((card) => {
           const id = parseInt(card.dataset.id, 10);
           card.addEventListener("dragstart", (e) => {
-            state.dragging = { id, from: "bank" };
+            state.dragging = { id, from: "timeline" };
             e.dataTransfer.effectAllowed = "move";
             e.dataTransfer.setData("text/plain", String(id));
             setTimeout(() => card.classList.add("dragging"), 0);
@@ -963,217 +1151,127 @@ LIMIT 10
             }
           });
         });
+        
+        el.querySelectorAll(".tl-drop-zone").forEach((zone) => {
+          const z = parseInt(zone.dataset.zone, 10);
+          zone.addEventListener("dragenter", (e) => {
+            e.preventDefault();
+            state.dragOverZone = z;
+            el.querySelectorAll(".tl-drop-zone").forEach((dz) => dz.classList.remove("active"));
+            zone.classList.add("active");
+          });
+          zone.addEventListener("dragover", (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+          });
+          zone.addEventListener("dragleave", (e) => {
+            if (!zone.contains(e.relatedTarget)) {
+              zone.classList.remove("active");
+              if (state.dragOverZone === z) state.dragOverZone = null;
+            }
+          });
+          zone.addEventListener("drop", (e) => {
+            e.preventDefault();
+            state.dragOverZone = null;
+            if (!state.dragging) return;
+            const { id, from } = state.dragging;
+            let ev;
+            if (from === "bank") {
+              ev = state.bank.find((b) => b.id === id);
+              if (!ev) return;
+              state.bank = state.bank.filter((b) => b.id !== id);
+            } else {
+              ev = state.timeline.find((t) => t.id === id);
+              if (!ev) return;
+              state.timeline = state.timeline.filter((t) => t.id !== id);
+            }
+            const insertAt = Math.max(0, Math.min(z, state.timeline.length));
+            state.timeline.splice(insertAt, 0, ev);
+            state.dragging = null;
+            render();
+          });
+        });
       }
       
-      function renderTimeline() {
-        const el = document.getElementById("timeline");
-        if (!state.events.length) {
-          el.innerHTML = "";
-          return;
-        }
-
-        const { timeline, dragOverZone, submitted } = state;
-
-        let html = `<div class="tl-label">EARLIEST</div>`;
-
-        if (!submitted) {
-          html += dropZoneHtml(0, dragOverZone);
-        }
-
-        for (let i = 0; i < timeline.length; i++) {
-          const ev     = timeline[i];
-          const status = submitted ? getCardStatus(ev, i) : "";
-          html += `
-            <div class="tl-card ${status}"
-              draggable="${!submitted}"
-              data-id="${ev.id}">
-              <img src="${ev.image}" alt=""
-                onerror="this.style.display='none'" />
-              <div class="card-desc">${ev.description}</div>
-              ${submitted
-                ? `<div class="year-badge">${ev.displayYear}</div>`
-                : ""}
-            </div>
-          `;
-          if (!submitted) {
-            html += dropZoneHtml(i + 1, dragOverZone);
-          }
-        }
-
-        html += `<div class="tl-label">LATEST</div>`;
-        el.innerHTML = html;
-
-        if (!submitted) {
-          el.querySelectorAll(".tl-card").forEach((card) => {
-            const id = parseInt(card.dataset.id, 10);
-            card.addEventListener("dragstart", (e) => {
-              state.dragging = { id, from: "timeline" };
-              e.dataTransfer.effectAllowed = "move";
-              e.dataTransfer.setData("text/plain", String(id));
-              setTimeout(() => card.classList.add("dragging"), 0);
-            });
-            card.addEventListener("dragend", () => {
-              card.classList.remove("dragging");
-              if (state.dragging) {
-                state.dragging = null;
-                state.dragOverZone = null;
-                renderTimeline();
-              }
-            });
-          });
-
-          el.querySelectorAll(".tl-drop-zone").forEach((zone) => {
-            const z = parseInt(zone.dataset.zone, 10);
-
-            zone.addEventListener("dragenter", (e) => {
-              e.preventDefault();
-              state.dragOverZone = z;
-              el.querySelectorAll(".tl-drop-zone").forEach((dz) =>
-                dz.classList.remove("active")
-              );
-              zone.classList.add("active");
-            });
-
-            zone.addEventListener("dragover", (e) => {
-              e.preventDefault();
-              e.dataTransfer.dropEffect = "move";
-            });
-
-            zone.addEventListener("dragleave", (e) => {
-              if (!zone.contains(e.relatedTarget)) {
-                zone.classList.remove("active");
-                if (state.dragOverZone === z) state.dragOverZone = null;
-              }
-            });
-
-            zone.addEventListener("drop", (e) => {
-              e.preventDefault();
-              state.dragOverZone = null;
-              if (!state.dragging) return;
-              const { id, from } = state.dragging;
-              let ev;
-
-              if (from === "bank") {
-                ev = state.bank.find((b) => b.id === id);
-                if (!ev) return;
-                state.bank = state.bank.filter((b) => b.id !== id);
-              } else {
-                ev = state.timeline.find((t) => t.id === id);
-                if (!ev) return;
-                state.timeline = state.timeline.filter((t) => t.id !== id);
-              }
-
-              const insertAt = Math.max(0, Math.min(z, state.timeline.length));
-              state.timeline.splice(insertAt, 0, ev);
-              state.dragging = null;
-              render();
-            });
-          });
-        }
-      }
-
       function dropZoneHtml(index, activeZone) {
         const active = activeZone === index && state.dragging !== null;
-        return `<div class="tl-drop-zone${active ? " active" : ""}"
-          data-zone="${index}"></div>`;
+        return `<div class="tl-drop-zone${active ? " active" : ""}" data-zone="${index}"></div>`;
       }
-
+      
       function renderSubmitBar() {
         const bar         = document.getElementById("submit-bar");
         const btnSubmit   = document.getElementById("btn-submit");
         const btnRestart  = document.getElementById("btn-restart");
         const resultsText = document.getElementById("results-text");
-
-        if (!state.events.length) {
-          bar.style.display = "none";
-          return;
-        }
-
+        
+        if (!state.events.length) { bar.style.display = "none"; return; }
+        
         bar.style.display = "flex";
-
+        
         if (state.submitted) {
           const { score, total } = getScore();
-          resultsText.textContent = `${score} of ${total} in the correct position`;
-          btnSubmit.style.display = "none";
+          resultsText.textContent = `${score} of ${total} correct`;
+          btnSubmit.style.display  = "none";
           btnRestart.style.display = "inline-block";
           return;
         }
-
-        resultsText.textContent = "";
+        
+        resultsText.textContent  = "";
         btnRestart.style.display = "none";
-
+        
         if (state.bank.length === 0 && state.timeline.length > 0) {
           btnSubmit.style.display = "inline-block";
         } else {
           bar.style.display = "none";
         }
       }
-
+      
       function render() {
         renderBank();
         renderTimeline();
         renderSubmitBar();
         requestAnimationFrame(adjustLayout);
       }
-
+      
       let debounceTimer = null;
-
+      
       function renderDropdown() {
         const dropdown = document.getElementById("search-dropdown");
         const query    = document.getElementById("search-input").value.trim();
         const history  = state.history;
         const results  = state.searchResults;
-
+        
         if (!state.searchOpen || (!query && !history.length)) {
           dropdown.style.display = "none";
           return;
         }
-
+        
         let html = "";
-
+        
         if (!query && history.length) {
           html += `<div class="dropdown-section-label">Recent</div>`;
           for (const g of history) {
-            html += `
-              <div class="dropdown-item"
-                data-id="${g.value}"
-                data-label="${escapeAttr(g.label)}">
-                <span class="dropdown-item-label">
-                  ${escapeHtml(g.label)}
-                </span>
-              </div>
-            `;
+            html += `<div class="dropdown-item" data-id="${g.value}" data-label="${escapeAttr(g.label)}">
+              <span class="dropdown-item-label">${escapeHtml(g.label)}</span>
+            </div>`;
           }
         }
-
+        
         if (query && results.length) {
           html += `<div class="dropdown-section-label">Results</div>`;
           for (const r of results) {
-            html += `
-              <div class="dropdown-item"
-                data-id="${r.id}"
-                data-label="${escapeAttr(r.label)}">
-                <span class="dropdown-item-label">
-                  ${escapeHtml(r.label)}
-                </span>
-                ${r.description
-                  ? `<span class="dropdown-item-desc">
-                      ${escapeHtml(r.description)}
-                     </span>`
-                  : ""}
-              </div>
-            `;
+            html += `<div class="dropdown-item" data-id="${r.id}" data-label="${escapeAttr(r.label)}">
+              <span class="dropdown-item-label">${escapeHtml(r.label)}</span>
+              ${r.description ? `<span class="dropdown-item-desc">${escapeHtml(r.description)}</span>` : ""}
+            </div>`;
           }
         }
-
-        if (!html) {
-          dropdown.style.display = "none";
-          return;
-        }
-
+        
+        if (!html) { dropdown.style.display = "none"; return; }
+        
         dropdown.innerHTML = html;
         dropdown.style.display = "block";
-
+        
         dropdown.querySelectorAll(".dropdown-item").forEach((item) => {
           item.addEventListener("mousedown", (e) => {
             e.preventDefault();
@@ -1182,24 +1280,141 @@ LIMIT 10
             document.getElementById("search-input").value = "";
             document.getElementById("search-clear").style.display = "none";
             state.searchResults = [];
-            state.searchOpen = false;
+            state.searchOpen    = false;
             dropdown.style.display = "none";
             loadGame({ label, value: id });
           });
         });
       }
-
+      
       function escapeHtml(s) {
-        return s
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;");
+        return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
       }
-
+      
       function escapeAttr(s) {
         return s.replace(/"/g, "&quot;");
       }
-
+      
+      function initTouchDrag() {
+        const ghost = document.createElement("div");
+        ghost.id = "drag-ghost";
+        document.body.appendChild(ghost);
+        
+        let touchDrag = null;
+        
+        function cardFromTouch(el) {
+          return el.closest(".bank-card, .tl-card");
+        }
+        
+        function buildGhost(card) {
+          const img  = card.querySelector("img");
+          const desc = card.querySelector(".card-desc");
+          ghost.innerHTML = `
+    <div class="img-wrap">${img ? `<img src="${img.src}" />` : ""}</div>
+    <div class="card-desc">${desc ? desc.innerHTML : ""}</div>
+  `;
+          ghost.style.width = state.oneAtATime ? "280px" : "100px";
+          const wrap = ghost.querySelector(".img-wrap");
+          if (wrap) wrap.style.height = state.oneAtATime ? "160px" : "66px";
+        }
+        
+        function zoneFromPoint(x, y) {
+          ghost.style.display = "none";
+          const el = document.elementFromPoint(x, y);
+          ghost.style.display = "block";
+          if (!el) return null;
+          const zone = el.closest(".tl-drop-zone");
+          if (zone) return zone;
+          const bank = el.closest("#bank-area");
+          if (bank) return bank;
+          return null;
+        }
+        
+        function clearHighlights() {
+          document.querySelectorAll(".tl-drop-zone.active").forEach((z) =>
+            z.classList.remove("active")
+          );
+          document.getElementById("bank-area").classList.remove("drag-over");
+        }
+        
+        document.addEventListener("touchstart", (e) => {
+          const card = cardFromTouch(e.target);
+          if (!card || state.submitted) return;
+          const id   = parseInt(card.dataset.id, 10);
+          const from = card.classList.contains("bank-card") ? "bank" : "timeline";
+          touchDrag      = { id, from };
+          state.dragging = { id, from };
+          buildGhost(card);
+          const t = e.touches[0];
+          ghost.style.left    = `${t.clientX}px`;
+          ghost.style.top     = `${t.clientY}px`;
+          ghost.style.display = "block";
+          card.classList.add("dragging");
+          e.preventDefault();
+        }, { passive: false });
+        
+        document.addEventListener("touchmove", (e) => {
+          if (!touchDrag) return;
+          const t = e.touches[0];
+          ghost.style.left = `${t.clientX}px`;
+          ghost.style.top  = `${t.clientY}px`;
+          clearHighlights();
+          const target = zoneFromPoint(t.clientX, t.clientY);
+          if (target?.classList.contains("tl-drop-zone")) {
+            target.classList.add("active");
+            state.dragOverZone = parseInt(target.dataset.zone, 10);
+          } else if (target?.id === "bank-area") {
+            target.classList.add("drag-over");
+            state.dragOverZone = null;
+          } else {
+            state.dragOverZone = null;
+          }
+          e.preventDefault();
+        }, { passive: false });
+        
+        document.addEventListener("touchend", (e) => {
+          if (!touchDrag) return;
+          ghost.style.display = "none";
+          clearHighlights();
+          
+          const t      = e.changedTouches[0];
+          const target = zoneFromPoint(t.clientX, t.clientY);
+          const { id, from } = touchDrag;
+          touchDrag      = null;
+          state.dragging = null;
+          
+          document.querySelectorAll(".bank-card.dragging, .tl-card.dragging")
+          .forEach((c) => c.classList.remove("dragging"));
+          
+          if (target?.classList.contains("tl-drop-zone")) {
+            const z = parseInt(target.dataset.zone, 10);
+            let ev;
+            if (from === "bank") {
+              ev = state.bank.find((b) => b.id === id);
+              if (!ev) return;
+              state.bank = state.bank.filter((b) => b.id !== id);
+            } else {
+              ev = state.timeline.find((t) => t.id === id);
+              if (!ev) return;
+              state.timeline = state.timeline.filter((t) => t.id !== id);
+            }
+            const insertAt = Math.max(0, Math.min(z, state.timeline.length));
+            state.timeline.splice(insertAt, 0, ev);
+          } else if (target?.id === "bank-area" && from === "timeline") {
+            const ev = state.timeline.find((t) => t.id === id);
+            if (!ev) return;
+            state.timeline = state.timeline.filter((t) => t.id !== id);
+            state.bank = [...state.bank, ev];
+          } else {
+            render();
+            return;
+          }
+          
+          state.dragOverZone = null;
+          render();
+        });
+      }
+      
       function initSearch() {
         const input      = document.getElementById("search-input");
         const spinner    = document.getElementById("search-spinner");
@@ -1207,10 +1422,11 @@ LIMIT 10
         const btnRandom  = document.getElementById("btn-random");
         const btnSubmit  = document.getElementById("btn-submit");
         const btnRestart = document.getElementById("btn-restart");
+        const btnMode    = document.getElementById("btn-mode");
         const bankArea   = document.getElementById("bank-area");
-
+        
         state.history = loadHistory();
-
+        
         bankArea.addEventListener("dragover", (e) => {
           if (state.dragging?.from === "timeline") {
             e.preventDefault();
@@ -1218,13 +1434,12 @@ LIMIT 10
             bankArea.classList.add("drag-over");
           }
         });
-
+        
         bankArea.addEventListener("dragleave", (e) => {
-          if (!bankArea.contains(e.relatedTarget)) {
+          if (!bankArea.contains(e.relatedTarget))
             bankArea.classList.remove("drag-over");
-          }
         });
-
+        
         bankArea.addEventListener("drop", (e) => {
           e.preventDefault();
           bankArea.classList.remove("drag-over");
@@ -1233,16 +1448,16 @@ LIMIT 10
           const ev = state.timeline.find((t) => t.id === id);
           if (!ev) return;
           state.timeline = state.timeline.filter((t) => t.id !== id);
-          state.bank = [...state.bank, ev];
+          state.bank     = [...state.bank, ev];
           state.dragging = null;
           render();
         });
-
+        
         input.addEventListener("focus", () => {
           state.searchOpen = true;
           renderDropdown();
         });
-
+        
         input.addEventListener("blur", () => {
           setTimeout(() => {
             state.searchOpen = false;
@@ -1250,13 +1465,6 @@ LIMIT 10
           }, 150);
         });
         
-        const btnMode = document.getElementById("btn-mode");
-        btnMode.addEventListener("click", () => {
-          state.oneAtATime = !state.oneAtATime;
-          btnMode.classList.toggle("active", state.oneAtATime);
-          render();
-        });
-
         input.addEventListener("input", () => {
           const q = input.value;
           clearBtn.style.display = q ? "block" : "none";
@@ -1271,12 +1479,7 @@ LIMIT 10
           debounceTimer = setTimeout(async () => {
             try {
               const raw = await searchEntities(q);
-              if (raw.length) {
-                const validIds = await validateEntityIds(raw.map((r) => r.id));
-                state.searchResults = raw.filter((r) => validIds.has(r.id));
-              } else {
-                state.searchResults = [];
-              }
+              state.searchResults = raw;
             } catch {
               state.searchResults = [];
             }
@@ -1284,24 +1487,23 @@ LIMIT 10
             renderDropdown();
           }, 300);
         });
-
+        
         clearBtn.addEventListener("click", () => {
           input.value = "";
           clearBtn.style.display = "none";
           state.searchResults = [];
-          state.searchOpen = true;
+          state.searchOpen    = true;
           renderDropdown();
           input.focus();
         });
-
+        
         document.addEventListener("click", (e) => {
-          const container = document.getElementById("search-container");
-          if (!container.contains(e.target)) {
+          if (!document.getElementById("search-container").contains(e.target)) {
             state.searchOpen = false;
             document.getElementById("search-dropdown").style.display = "none";
           }
         });
-
+        
         btnRandom.addEventListener("click", async () => {
           btnRandom.classList.add("loading");
           try {
@@ -1314,32 +1516,44 @@ LIMIT 10
             btnRandom.classList.remove("loading");
           }
         });
-
+        
         btnSubmit.addEventListener("click", () => {
           if (state.bank.length > 0) return;
           state.submitted = true;
           render();
         });
-
+        
         btnRestart.addEventListener("click", () => {
-          state.bank = shuffle([...state.events]);
-          state.timeline = [];
+          state.bank      = shuffle([...state.events]);
+          state.timeline  = [];
           state.submitted = false;
-          state.dragging = null;
+          state.dragging  = null;
           state.dragOverZone = null;
           render();
         });
-
+        
+        btnMode.addEventListener("click", () => {
+          state.oneAtATime = !state.oneAtATime;
+          btnMode.classList.toggle("active", state.oneAtATime);
+          render();
+        });
+        
         window.addEventListener("resize", () => {
-          renderBank();
           requestAnimationFrame(adjustLayout);
         });
-
+        
+        initTouchDrag();
+        
         const savedGame = safeGet(KEY_GAME);
-        if (savedGame) loadGame(savedGame);
+        if (savedGame) {
+          loadGame(savedGame);
+        } else {
+          document.getElementById("empty-state").style.display = "block";
+          requestAnimationFrame(adjustLayout);
+        }
       }
-
+      
       initSearch();
-    </script>
-  </body>
-</html>
+      </script>
+      </body>
+      </html>

@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Flashback Quiz</title>
+    <link href="https://typeface.nytimes.com/css/zam5nzz.css" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+      
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #f2f1e8;
+        color: #333;
+        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+      }
+      
+      #top-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 200;
+        background: #f2f1e8;
+        border-bottom: 2px solid #e2e0d6;
+      }
+      
+      #search-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        border-bottom: 1px solid #e2e0d6;
+      }
+      
+      #search-container {
+        position: relative;
+        flex: 1;
+        max-width: 420px;
+      }
+      
+      #search-input-wrap {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border: 2px solid #e2e0d6;
+        border-radius: 25px;
+        padding: 0 14px;
+        transition: border-color 0.15s;
+      }
+      
+      #search-input-wrap:focus-within {
+        border-color: #6171c3;
+      }
+      
+      #search-icon {
+        color: #b1aea5;
+        font-size: 16px;
+        margin-right: 8px;
+        flex-shrink: 0;
+      }
+      
+      #search-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 9px 0;
+        font-size: 15px;
+        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        background: transparent;
+        color: #333;
+        min-width: 0;
+      }
+      
+      #search-input::placeholder { color: #b1aea5; }
+      
+      #search-clear {
+        cursor: pointer;
+        color: #b1aea5;
+        font-size: 18px;
+        line-height: 1;
+        padding: 0 0 0 6px;
+        display: none;
+        flex-shrink: 0;
+      }
+      
+      #search-clear:hover { color: #333; }
+      
+      #search-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid #e2e0d6;
+        border-top-color: #6171c3;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        display: none;
+        flex-shrink: 0;
+        margin-left: 6px;
+      }
+      
+      @keyframes spin { to { transform: rotate(360deg); } }
+      
+      #search-dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        width: 100%;
+        background: #fff;
+        border: 1px solid #e2e0d6;
+        border-radius: 10px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        max-height: 360px;
+        overflow-y: auto;
+        display: none;
+        z-index: 400;
+      }
+      
+      .dropdown-section-label {
+        padding: 8px 14px 4px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #b1aea5;
+      }
+      
+      .dropdown-item {
+        padding: 10px 14px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      
+      .dropdown-item:hover { background: #f2f1e8; }
+      
+      .dropdown-item-label {
+        font-size: 15px;
+        color: #333;
+        font-weight: 500;
+      }
+      
+      .dropdown-item-desc {
+        font-size: 12px;
+        color: #888;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      #btn-random {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: #5d72c9;
+        color: #fff;
+        border: none;
+        border-radius: 25px;
+        padding: 9px 18px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s, transform 0.1s;
+        flex-shrink: 0;
+      }
+      
+      #btn-random:hover { background: #4a5eb0; }
+      #btn-random:active { transform: scale(0.97); }
+      
+      #btn-random.loading {
+        background: #a0a8d8;
+        pointer-events: none;
+      }
+      
+      #btn-random svg {
+        width: 14px;
+        height: 14px;
+        fill: currentColor;
+        flex-shrink: 0;
+      }
+      
+      #btn-random.loading svg {
+        animation: spin 0.7s linear infinite;
+      }
+      
+      #game-title {
+        font-size: 13px;
+        color: #666;
+        font-style: italic;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+        display: none;
+      }
+      
+      #bottom { padding-top: 220px; }
+      
+      #message {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 300;
+        color: #616161;
+        font-style: italic;
+        background: rgba(255,255,255,0.95);
+        padding: 10px 20px;
+        border-radius: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        display: none;
+        max-width: 320px;
+      }
+      
+      #progress-bar {
+        margin: 8px auto;
+        text-align: center;
+        font-weight: 700;
+        font-size: 16px;
+        color: #333;
+        min-height: 26px;
+      }
+      
+      .marker {
+        display: inline-block;
+        width: 50px;
+        height: 8px;
+        margin: 0 5px;
+        border-radius: 5px;
+        vertical-align: middle;
+        background: #e2e0d6;
+      }
+      
+      .marker.correct { background: #5cb887; }
+      .marker.incorrect { background: #d25353; }
+      .marker.active { border: 2px solid #6171c3; }
+      .progress-index { display: inline-block; margin-right: 10px; }
+      .progress-points { display: inline-block; margin-left: 10px; }
+      
+      #guessing { margin: 0 auto; text-align: center; }
+      
+      .box-event-guess {
+        width: 420px;
+        background: #fff;
+        border-radius: 5px;
+        padding: 15px 2px 11px;
+        margin: 6px auto;
+        box-shadow: 0 4px 5px 0 #b1aea5;
+        user-select: none;
+        cursor: grab;
+        display: inline-block;
+      }
+      
+      .box-event-guess:active { cursor: grabbing; }
+      
+      .event-data { position: relative; padding: 0; }
+      
+      .event-data img {
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 10px;
+        width: 100px;
+        height: 75px;
+        object-fit: cover;
+      }
+      
+      .event-description {
+        display: inline-block;
+        vertical-align: top;
+        width: 270px;
+        text-align: left;
+        font-family: "nyt-imperial", georgia, "times new roman", times, serif;
+        font-size: 15px;
+      }
+      
+      .event-points {
+        position: absolute;
+        bottom: 0;
+        right: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #b1aea5;
+      }
+      
+      #results {
+        margin: 20px auto;
+        border: 2px solid #e2e0d6;
+        border-radius: 10px;
+        width: 320px;
+        padding: 30px;
+        background: #fff;
+        font-size: 24px;
+        font-weight: 400;
+        font-family: "nyt-cheltenham", georgia, "times new roman", times, serif;
+        text-align: center;
+        line-height: 1.2em;
+        display: none;
+      }
+      
+      .btn-restart {
+        background: #5d72c9;
+        border-radius: 25px;
+        padding: 10px;
+        margin: 20px auto 0;
+        text-align: center;
+        font-weight: 700;
+        font-size: 18px;
+        color: #fff;
+        width: 120px;
+        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        cursor: pointer;
+      }
+      
+      #timeline {
+        margin: 0 auto;
+        width: 600px;
+        text-align: center;
+      }
+      
+      .timeline-label {
+        color: #666;
+        font-size: 16px;
+        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+      }
+      
+      .box-drop {
+        position: relative;
+        width: 420px;
+        margin: 10px auto;
+        border-radius: 8px;
+        height: 10px;
+        transition: height 0.15s, background 0.15s;
+      }
+      
+      .box-drop.active {
+        background: #f4da93;
+        height: 120px;
+      }
+      
+      .box-event-placed {
+        width: 400px;
+        background: #e3e0d5;
+        border-radius: 5px;
+        padding: 15px 0 11px;
+        margin: 15px auto;
+        user-select: none;
+        color: #5b5a56;
+      }
+      
+      .box-event-placed .event-data img {
+        width: 80px;
+        height: 60px;
+        object-fit: cover;
+        margin-right: 10px;
+        margin-left: 0;
+      }
+      
+      .box-event-placed .event-description { width: 270px; }
+      
+      .event-year {
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        margin-top: -28px;
+        background: #b1aea5;
+        text-align: center;
+        color: #fff;
+        padding: 4px 8px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 16px;
+        z-index: 100;
+      }
+      
+      .event-year.correct { background: #74b68b; }
+      .event-year.incorrect { background: #c35b57; }
+      
+      .event-data-inner {
+        position: relative;
+        margin-top: -20px;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div id="top-bar">
+      <div id="search-row">
+        <div id="search-container">
+          <div id="search-input-wrap">
+            <span id="search-icon">&#9906;</span>
+            <input id="search-input" type="text" placeholder="Search any topic..." autocomplete="off" />
+            <span id="search-clear" title="Clear">&times;</span>
+            <div id="search-spinner"></div>
+          </div>
+          <div id="search-dropdown"></div>
+        </div>
+        
+        <button id="btn-random">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 4l4 4-4 4V9h-3.08A8 8 0 0 1 20 19l-1.42 1.42A6 6 0 0 0 6.68 9H9V7H3v6h2v-2.1A8 8 0 0 1 13.92 9H17V4zm-7.42 11.58A6 6 0 0 0 18.32 11H16V9h6v6h-2v-2.1a8 8 0 0 1-6.08 8.52L12.5 23 9 19l4-4-.42 3.58z"/>
+          </svg>
+          Random
+        </button>
+        
+        <span id="game-title"></span>
+      </div>
+      
+      <div id="progress-bar"></div>
+      <div id="guessing"></div>
+      <div id="results"></div>
+    </div>
+    
+    <div id="message"></div>
+    
+    <div id="bottom">
+      <div id="timeline"></div>
+    </div>
+    
+    <script>
+      const SPARQL_ENDPOINT = "https://query.wikidata.org/sparql";
+      const WIKIDATA_API = "https://www.wikidata.org/w/api.php";
+      const WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php";
+      
+      const KEY_DECK = "fbq_deck";
+      const KEY_SPENT = "fbq_spent";
+      
+      const KEY_HISTORY = "fbq_history";
+      const KEY_GAME = "fbq_game";
+      const progressKey = (id) => `fbq_progress_${id}`;
+      
+      const state = {
+        game: null,
+        events: [],
+        index: 0,
+        dragOverZone: -1,
+        history: [],
+        searchResults: [],
+        searchOpen: false,
+      };
+      
+      function safeGet(key) {
+        try {
+          const r = localStorage.getItem(key);
+          return r ? JSON.parse(r) : null;
+        } catch { return null; }
+      }
+      
+      function safeSet(key, val) {
+        try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+      }
+      
+      function loadHistory() { return safeGet(KEY_HISTORY) ?? []; }
+      
+      function pushHistory(game) {
+        const h = loadHistory().filter((g) => g.value !== game.value);
+        safeSet(KEY_HISTORY, [game, ...h].slice(0, 20));
+      }
+      
+      function saveProgress() {
+        if (!state.game || !state.events.length) return;
+        safeSet(progressKey(state.game.value), {
+          events: state.events,
+          index: state.index,
+        });
+      }
+      
+      function clearProgress(id) {
+        try { localStorage.removeItem(progressKey(id)); } catch {}
+      }
+      
+      async function searchEntities(query) {
+        const p = new URLSearchParams({
+          action: "wbsearchentities",
+          search: query,
+          language: "en",
+          limit: "10",
+          format: "json",
+          origin: "*",
+          type: "item",
+        });
+        const res = await fetch(`${WIKIDATA_API}?${p}`);
+        if (!res.ok) throw new Error(`${res.status}`);
+        const json = await res.json();
+        return (json.search ?? []).map((r) => ({
+          id: r.id,
+          label: r.label ?? r.id,
+          description: r.description ?? "",
+        }));
+      }
+      
+      
+      function buildSparql(entityId) {
+        return `
+    SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
+      ?item wdt:P31/wdt:P279* wd:${entityId}.
+      ?item wdt:P18 ?image.
+      {?item wdt:P571 ?date.} UNION
+      {?item wdt:P577 ?date.} UNION
+      {?item wdt:P580 ?date.} UNION
+      {?item wdt:P569 ?date.}
+      FILTER(YEAR(?date) > 0)
+      SERVICE wikibase:label {
+        bd:serviceParam wikibase:language "en".
+      }
+    }
+    LIMIT 60
+  `;
+      }
+      
+      function parseYear(iso) {
+        if (!iso) return null;
+        if (iso.startsWith("-")) return -parseInt(iso.slice(1, 5), 10);
+        return parseInt(iso.slice(0, 4), 10);
+      }
+      
+      function toDisplayYear(y) {
+        return y < 0 ? `${Math.abs(y)} BC` : String(y);
+      }
+      
+      function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+      
+      function fixImageUrl(url) {
+        return url.replace("http://", "https://") + "?width=320";
+      }
+      
+      async function fetchGameEvents(entityId) {
+        const sparql = buildSparql(entityId);
+        const url = `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}&format=json`;
+        const res = await fetch(url, {
+          headers: {
+            Accept: "application/sparql-results+json",
+            "User-Agent": "FlashbackQuiz/1.0",
+          },
+        });
+        if (!res.ok) throw new Error(`Wikidata error: ${res.status}`);
+        const json = await res.json();
+        const bindings = json.results.bindings;
+        if (!bindings.length) throw new Error("No results for that topic");
+        
+        const seen = new Set();
+        const deduped = [];
+        for (const b of bindings) {
+          const id = b.item?.value;
+          if (!id || !b.date?.value || !b.itemLabel?.value || !b.image?.value) continue;
+          const year = parseYear(b.date.value);
+          if (year === null) continue;
+          if (seen.has(id)) continue;
+          seen.add(id);
+          deduped.push({ ...b, _year: year });
+        }
+        
+        if (deduped.length < 2) throw new Error("Not enough dated items with images");
+        
+        const selected = shuffle(deduped).slice(0, 9);
+        selected.sort((a, b) => a._year - b._year);
+        
+        return selected.map((b, i) => {
+          const year = b._year;
+          const label = b.itemLabel.value;
+          const desc = b.itemDescription?.value ?? "";
+          const wikidataId = b.item.value.split("/").pop();
+          return {
+            id: i + 1,
+            year,
+            displayYear: toDisplayYear(year),
+            description: desc ? `<b>${label}</b> — ${desc}` : `<b>${label}</b>`,
+            detail: `<a href="https://www.wikidata.org/wiki/${wikidataId}" target="_blank" rel="noreferrer">Wikidata</a>`,
+            image: fixImageUrl(b.image.value),
+            possiblePoints: i === 0 ? 0 : i <= 3 ? 3 : 4,
+            actualPoints: 0,
+            guess: "",
+            status: i === 0 ? "start" : "unanswered",
+          };
+        });
+      }
+      
+      function setMessage(msg) {
+        const el = document.getElementById("message");
+        el.textContent = msg;
+        el.style.display = msg ? "block" : "none";
+      }
+      
+      function renderProgressBar() {
+        const el = document.getElementById("progress-bar");
+        const { events, index } = state;
+        if (events.length < 2) { el.innerHTML = ""; return; }
+        const points = events.reduce((t, e) => t + e.actualPoints, 0);
+        const markers = events.map((e, i) => {
+          if (e.status === "start") return "";
+          const cls = ["marker",
+            e.status === "correct" ? "correct" : e.status === "incorrect" ? "incorrect" : "",
+            i === index + 1 ? "active" : "",
+          ].filter(Boolean).join(" ");
+          return `<div class="${cls}"></div>`;
+        }).join("");
+        el.innerHTML = `
+    <span class="progress-index">${index} of ${events.length - 1}</span>
+    ${markers}
+    <span class="progress-points">${points} Points</span>
+  `;
+      }
+      
+      function renderGuessing() {
+        const el = document.getElementById("guessing");
+        const { events, index } = state;
+        if (index > events.length - 2) { el.innerHTML = ""; return; }
+        const event = events[index + 1];
+        el.innerHTML = `
+    <div class="box-event-guess" draggable="true" id="guess-card">
+      <div class="event-data">
+        <img src="${event.image}" alt="" onerror="this.style.display='none'" />
+        <div class="event-description">${event.description}</div>
+        <div class="event-points">${event.possiblePoints} points</div>
+      </div>
+    </div>
+  `;
+        document.getElementById("guess-card").addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", "guess");
+          e.dataTransfer.effectAllowed = "move";
+        });
+      }
+      
+      function renderResults() {
+        const el = document.getElementById("results");
+        const { events, index } = state;
+        if (events.length < 2 || index < events.length - 1) {
+          el.style.display = "none";
+          return;
+        }
+        let score = 0, possible = 0, correct = 0;
+        const total = events.length - 1;
+        for (let i = 1; i < events.length; i++) {
+          if (events[i].status === "correct") correct++;
+          score += events[i].actualPoints;
+          possible += events[i].possiblePoints;
+        }
+        el.style.display = "block";
+        el.innerHTML = `
+    You scored ${score} of ${possible} points,<br/>
+    with ${correct} of ${total} correct.
+    <div class="btn-restart" id="btn-restart">Play Again</div>
+  `;
+        document.getElementById("btn-restart").addEventListener("click", () => {
+          if (state.game) clearProgress(state.game.value);
+          state.events = state.events.map((e) => ({
+            ...e,
+            status: e.status === "start" ? "start" : "unanswered",
+            actualPoints: 0,
+            guess: "",
+          }));
+          state.index = 0;
+          render();
+        });
+      }
+      
+      
+      function renderTimeline() {
+        const el = document.getElementById("timeline");
+        const { events, index, dragOverZone } = state;
+        const gameOver = index >= events.length - 1;
+        const displayed = events.slice(0, index + 1).sort((a, b) => a.year - b.year);
+        
+        let html = `<div class="timeline-label">BEFORE</div>`;
+        
+        for (let i = 0; i < displayed.length; i++) {
+          if (!gameOver) {
+            html += `<div class="box-drop${dragOverZone === i ? " active" : ""}" data-zone="${i}"></div>`;
+          }
+          const ev = displayed[i];
+          const yc = ev.status === "correct" ? "correct" : ev.status === "incorrect" ? "incorrect" : "";
+          html += `
+      <div class="box-event-placed">
+        <div class="event-year ${yc}">${ev.displayYear}</div>
+        <div class="event-data-inner">
+          <img src="${ev.image}" alt="" onerror="this.style.display='none'" />
+          <div class="event-description">${ev.description}</div>
+        </div>
+      </div>
+    `;
+        }
+        
+        if (!gameOver) {
+          html += `<div class="box-drop${dragOverZone === displayed.length ? " active" : ""}" data-zone="${displayed.length}"></div>`;
+        }
+        
+        html += `<div class="timeline-label">AFTER</div>`;
+        el.innerHTML = html;
+        
+        if (!gameOver) {
+          el.querySelectorAll(".box-drop").forEach((zone) => {
+            const z = parseInt(zone.dataset.zone, 10);
+            
+            zone.addEventListener("dragenter", (e) => {
+              e.preventDefault();
+              el.querySelectorAll(".box-drop").forEach((z) => z.classList.remove("active"));
+              zone.classList.add("active");
+              state.dragOverZone = z;
+            });
+            
+            zone.addEventListener("dragover", (e) => {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = "move";
+            });
+            
+            zone.addEventListener("dragleave", (e) => {
+              if (!zone.contains(e.relatedTarget)) {
+                zone.classList.remove("active");
+                state.dragOverZone = -1;
+              }
+            });
+            
+            zone.addEventListener("drop", (e) => {
+              e.preventDefault();
+              el.querySelectorAll(".box-drop").forEach((z) => z.classList.remove("active"));
+              state.dragOverZone = -1;
+              madeGuess(z);
+            });
+          });
+        }
+      }
+      
+      function render() {
+        renderProgressBar();
+        renderGuessing();
+        renderResults();
+        renderTimeline();
+      }
+      
+      function madeGuess(dropIndex) {
+        const displayed = state.events.slice(0, state.index + 1).sort((a, b) => a.year - b.year);
+        const dropped = state.events[state.index + 1];
+        let correct = true;
+        let guess = "";
+        if (dropIndex > 0) {
+          const before = displayed[dropIndex - 1];
+          if (dropped.year < before.year) correct = false;
+          guess += before.year;
+        }
+        guess += "-";
+        if (dropIndex <= displayed.length) {
+          const after = displayed[dropIndex];
+          if (after && dropped.year > after.year) correct = false;
+          if (after) guess += after.year;
+        }
+        const updated = [...state.events];
+        updated[state.index + 1] = {
+          ...updated[state.index + 1],
+          status: correct ? "correct" : "incorrect",
+          actualPoints: correct ? updated[state.index + 1].possiblePoints : 0,
+          guess,
+        };
+        state.events = updated;
+        state.index += 1;
+        saveProgress();
+        render();
+      }
+      
+      async function loadGame(game) {
+        state.game = game;
+        state.dragOverZone = -1;
+        safeSet(KEY_GAME, game);
+        pushHistory(game);
+        state.history = loadHistory();
+        
+        const titleEl = document.getElementById("game-title");
+        titleEl.textContent = game.label;
+        titleEl.style.display = "block";
+        
+        const saved = safeGet(progressKey(game.value));
+        if (saved) {
+          state.events = saved.events;
+          state.index = saved.index;
+          setMessage("");
+          render();
+          return;
+        }
+        
+        setMessage(`Loading ${game.label}...`);
+        state.events = [];
+        state.index = 0;
+        render();
+        
+        try {
+          state.events = await fetchGameEvents(game.value);
+          setMessage("");
+        } catch (err) {
+          setMessage(`Failed: ${err.message}. Try another topic.`);
+        }
+        render();
+      }
+      
+      let debounceTimer = null;
+      
+      function renderDropdown() {
+        const dropdown = document.getElementById("search-dropdown");
+        const query = document.getElementById("search-input").value.trim();
+        const history = state.history;
+        const results = state.searchResults;
+        
+        if (!state.searchOpen || (!query && !history.length)) {
+          dropdown.style.display = "none";
+          return;
+        }
+        
+        let html = "";
+        
+        if (!query && history.length) {
+          html += `<div class="dropdown-section-label">Recent</div>`;
+          for (const g of history) {
+            html += `
+        <div class="dropdown-item" data-id="${g.value}" data-label="${escapeAttr(g.label)}">
+          <span class="dropdown-item-label">${escapeHtml(g.label)}</span>
+        </div>
+      `;
+          }
+        }
+        
+        if (query && results.length) {
+          html += `<div class="dropdown-section-label">Results</div>`;
+          for (const r of results) {
+            html += `
+        <div class="dropdown-item" data-id="${r.id}" data-label="${escapeAttr(r.label)}">
+          <span class="dropdown-item-label">${escapeHtml(r.label)}</span>
+          ${r.description ? `<span class="dropdown-item-desc">${escapeHtml(r.description)}</span>` : ""}
+        </div>
+      `;
+          }
+        }
+        
+        if (!html) { dropdown.style.display = "none"; return; }
+        
+        dropdown.innerHTML = html;
+        dropdown.style.display = "block";
+        
+        dropdown.querySelectorAll(".dropdown-item").forEach((item) => {
+          item.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            const id = item.dataset.id;
+            const label = item.dataset.label;
+            document.getElementById("search-input").value = "";
+            document.getElementById("search-clear").style.display = "none";
+            state.searchResults = [];
+            state.searchOpen = false;
+            dropdown.style.display = "none";
+            loadGame({ label, value: id });
+          });
+        });
+      }
+      
+      function escapeHtml(s) {
+        return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      }
+      
+      function escapeAttr(s) {
+        return s.replace(/"/g,"&quot;");
+      }
+      
+      async function validateEntityIds(ids) {
+        if (!ids.length) return new Set();
+        const values = ids.map((id) => `wd:${id}`).join(" ");
+        const sparql = `
+  SELECT ?entity WHERE {
+    VALUES ?entity { ${values} }
+    ?item wdt:P31 ?entity;
+          wdt:P18 ?image.
+    {?item wdt:P571 ?date.} UNION
+    {?item wdt:P577 ?date.} UNION
+    {?item wdt:P580 ?date.} UNION
+    {?item wdt:P569 ?date.}
+    FILTER(YEAR(?date) > 0)
+  }
+  GROUP BY ?entity
+  HAVING (COUNT(DISTINCT ?item) >= 2)
+  `;
+        const url = `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}&format=json`;
+        const res = await fetch(url, {
+          headers: {
+            Accept: "application/sparql-results+json",
+            "User-Agent": "FlashbackQuiz/1.0",
+          },
+        });
+        if (!res.ok) return new Set(ids);
+        const json = await res.json();
+        return new Set(
+          json.results.bindings.map((b) => b.entity.value.split("/").pop())
+        );
+      }
+      
+      function getDeck() { return safeGet(KEY_DECK) ?? []; }
+      function getSpent() { return safeGet(KEY_SPENT) ?? []; }
+      
+      function popFromDeck() {
+        let deck = getDeck();
+        const spent = getSpent();
+        if (!deck.length && spent.length) {
+          deck = shuffle(spent);
+          safeSet(KEY_SPENT, []);
+          safeSet(KEY_DECK, deck);
+        }
+        if (!deck.length) return null;
+        const item = deck.shift();
+        safeSet(KEY_DECK, deck);
+        return item;
+      }
+      
+      function addToDeck(game) {
+        const deck = getDeck();
+        const spent = getSpent();
+        if ([...deck, ...spent].some((g) => g.value === game.value)) return;
+        safeSet(KEY_DECK, [...deck, game]);
+      }
+      
+      function markSpent(game) {
+        safeSet(KEY_DECK, getDeck().filter((g) => g.value !== game.value));
+        const spent = getSpent();
+        if (!spent.some((g) => g.value === game.value)) {
+          safeSet(KEY_SPENT, [...spent, game]);
+        }
+      }
+      
+      async function resolveToPlayableClass(qid) {
+        const sparql = `
+SELECT ?class ?classLabel WHERE {
+  wd:${qid} wdt:P31 ?class.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+LIMIT 10
+`;
+        const url = `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}&format=json`;
+        const res = await fetch(url, {
+          headers: {
+            Accept: "application/sparql-results+json",
+            "User-Agent": "FlashbackQuiz/1.0",
+          },
+        });
+        if (!res.ok) return null;
+        const json = await res.json();
+        const candidates = json.results.bindings.map((b) => ({
+          value: b.class.value.split("/").pop(),
+          label: b.classLabel?.value ?? b.class.value.split("/").pop(),
+        }));
+        if (!candidates.length) return null;
+        const validIds = await validateEntityIds(candidates.map((c) => c.value));
+        return candidates.find((c) => validIds.has(c.value)) ?? null;
+      }
+      
+      async function discoverAndEnqueue() {
+        const p1 = new URLSearchParams({
+          action: "query",
+          list: "random",
+          rnnamespace: "0",
+          rnlimit: "1",
+          format: "json",
+          origin: "*",
+        });
+        const res1 = await fetch(`${WIKIPEDIA_API}?${p1}`);
+        if (!res1.ok) return null;
+        const j1 = await res1.json();
+        const title = j1.query.random[0].title;
+        
+        const p2 = new URLSearchParams({
+          action: "query",
+          titles: title,
+          prop: "pageprops",
+          ppprop: "wikibase_item",
+          format: "json",
+          origin: "*",
+        });
+        const res2 = await fetch(`${WIKIPEDIA_API}?${p2}`);
+        if (!res2.ok) return null;
+        const j2 = await res2.json();
+        const qid = Object.values(j2.query.pages)[0]?.pageprops?.wikibase_item;
+        if (!qid) return null;
+        
+        const game = await resolveToPlayableClass(qid);
+        if (!game) return null;
+        addToDeck(game);
+        return game;
+      }
+      
+      async function nextTopic() {
+        const fromDeck = popFromDeck();
+        if (fromDeck) {
+          discoverAndEnqueue().catch(() => {});
+          return fromDeck;
+        }
+        for (let i = 0; i < 10; i++) {
+          const game = await discoverAndEnqueue();
+          if (game) {
+            popFromDeck();
+            return game;
+          }
+        }
+        throw new Error("Could not find a playable topic");
+      }
+      
+      
+      function initSearch() {
+        const input = document.getElementById("search-input");
+        const spinner = document.getElementById("search-spinner");
+        const clearBtn = document.getElementById("search-clear");
+        const btnRandom = document.getElementById("btn-random");
+        
+        state.history = loadHistory();
+        
+        input.addEventListener("focus", () => {
+          state.searchOpen = true;
+          renderDropdown();
+        });
+        
+        input.addEventListener("blur", () => {
+          setTimeout(() => {
+            state.searchOpen = false;
+            document.getElementById("search-dropdown").style.display = "none";
+          }, 150);
+        });
+        
+        input.addEventListener("input", () => {
+          const q = input.value;
+          clearBtn.style.display = q ? "block" : "none";
+          state.searchResults = [];
+          if (debounceTimer) clearTimeout(debounceTimer);
+          if (!q.trim()) {
+            spinner.style.display = "none";
+            renderDropdown();
+            return;
+          }
+          spinner.style.display = "block";
+          debounceTimer = setTimeout(async () => {
+            try {
+              const raw = await searchEntities(q);
+              if (raw.length) {
+                const validIds = await validateEntityIds(raw.map((r) => r.id));
+                state.searchResults = raw.filter((r) => validIds.has(r.id));
+              } else {
+                state.searchResults = [];
+              }
+            } catch {
+              state.searchResults = [];
+            }
+            spinner.style.display = "none";
+            renderDropdown();
+          }, 300);
+        });
+        
+        clearBtn.addEventListener("click", () => {
+          input.value = "";
+          clearBtn.style.display = "none";
+          state.searchResults = [];
+          state.searchOpen = true;
+          renderDropdown();
+          input.focus();
+        });
+        
+        document.addEventListener("click", (e) => {
+          const container = document.getElementById("search-container");
+          if (!container.contains(e.target)) {
+            state.searchOpen = false;
+            document.getElementById("search-dropdown").style.display = "none";
+          }
+        });
+        
+        btnRandom.addEventListener("click", async () => {
+          btnRandom.classList.add("loading");
+          try {
+            const game = await nextTopic();
+            markSpent(game);
+            await loadGame(game);
+          } catch (err) {
+            setMessage(`Random failed: ${err.message}`);
+          } finally {
+            btnRandom.classList.remove("loading");
+          }
+        });
+        
+        const savedGame = safeGet(KEY_GAME);
+        if (savedGame) loadGame(savedGame);
+      }
+      
+      initSearch();
+      </script>
+      </body>
+      </html>

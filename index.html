@@ -8,7 +8,7 @@
     <link href="https://typeface.nytimes.com/css/zam5nzz.css" rel="stylesheet" />
     <style>
       *, *::before, *::after { box-sizing: border-box; }
-      
+
       html, body {
         margin: 0;
         padding: 0;
@@ -16,7 +16,7 @@
         color: #333;
         font-family: "nyt-franklin", arial, helvetica, sans-serif;
       }
-      
+
       #top-bar {
         position: fixed;
         top: 0;
@@ -26,56 +26,53 @@
         background: #f2f1e8;
         border-bottom: 2px solid #e2e0d6;
       }
-      
+
       #search-row {
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 12px 20px;
-        border-bottom: 1px solid #e2e0d6;
+        padding: 10px 16px;
       }
-      
+
       #search-container {
         position: relative;
         flex: 1;
-        max-width: 420px;
+        max-width: 380px;
       }
-      
+
       #search-input-wrap {
         display: flex;
         align-items: center;
         background: #fff;
         border: 2px solid #e2e0d6;
         border-radius: 25px;
-        padding: 0 14px;
+        padding: 0 12px;
         transition: border-color 0.15s;
       }
-      
-      #search-input-wrap:focus-within {
-        border-color: #6171c3;
-      }
-      
+
+      #search-input-wrap:focus-within { border-color: #6171c3; }
+
       #search-icon {
         color: #b1aea5;
-        font-size: 16px;
-        margin-right: 8px;
+        font-size: 15px;
+        margin-right: 7px;
         flex-shrink: 0;
       }
-      
+
       #search-input {
         flex: 1;
         border: none;
         outline: none;
-        padding: 9px 0;
-        font-size: 15px;
+        padding: 8px 0;
+        font-size: 14px;
         font-family: "nyt-franklin", arial, helvetica, sans-serif;
         background: transparent;
         color: #333;
         min-width: 0;
       }
-      
+
       #search-input::placeholder { color: #b1aea5; }
-      
+
       #search-clear {
         cursor: pointer;
         color: #b1aea5;
@@ -85,12 +82,12 @@
         display: none;
         flex-shrink: 0;
       }
-      
+
       #search-clear:hover { color: #333; }
-      
+
       #search-spinner {
-        width: 16px;
-        height: 16px;
+        width: 14px;
+        height: 14px;
         border: 2px solid #e2e0d6;
         border-top-color: #6171c3;
         border-radius: 50%;
@@ -99,9 +96,9 @@
         flex-shrink: 0;
         margin-left: 6px;
       }
-      
+
       @keyframes spin { to { transform: rotate(360deg); } }
-      
+
       #search-dropdown {
         position: absolute;
         top: calc(100% + 6px);
@@ -110,46 +107,46 @@
         background: #fff;
         border: 1px solid #e2e0d6;
         border-radius: 10px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-        max-height: 360px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        max-height: 320px;
         overflow-y: auto;
         display: none;
         z-index: 400;
       }
-      
+
       .dropdown-section-label {
-        padding: 8px 14px 4px;
-        font-size: 11px;
+        padding: 7px 12px 3px;
+        font-size: 10px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: #b1aea5;
       }
-      
+
       .dropdown-item {
-        padding: 10px 14px;
+        padding: 9px 12px;
         cursor: pointer;
         display: flex;
         flex-direction: column;
-        gap: 3px;
+        gap: 2px;
       }
-      
+
       .dropdown-item:hover { background: #f2f1e8; }
-      
+
       .dropdown-item-label {
-        font-size: 15px;
+        font-size: 14px;
         color: #333;
         font-weight: 500;
       }
-      
+
       .dropdown-item-desc {
-        font-size: 12px;
+        font-size: 11px;
         color: #888;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-      
+
       #btn-random {
         display: flex;
         align-items: center;
@@ -158,8 +155,8 @@
         color: #fff;
         border: none;
         border-radius: 25px;
-        padding: 9px 18px;
-        font-size: 14px;
+        padding: 8px 16px;
+        font-size: 13px;
         font-weight: 700;
         font-family: "nyt-franklin", arial, helvetica, sans-serif;
         cursor: pointer;
@@ -167,310 +164,504 @@
         transition: background 0.15s, transform 0.1s;
         flex-shrink: 0;
       }
-      
+
       #btn-random:hover { background: #4a5eb0; }
       #btn-random:active { transform: scale(0.97); }
-      
-      #btn-random.loading {
-        background: #a0a8d8;
-        pointer-events: none;
-      }
-      
+      #btn-random.loading { background: #a0a8d8; pointer-events: none; }
+
       #btn-random svg {
-        width: 14px;
-        height: 14px;
+        width: 13px;
+        height: 13px;
         fill: currentColor;
         flex-shrink: 0;
       }
-      
-      #btn-random.loading svg {
-        animation: spin 0.7s linear infinite;
-      }
-      
+
+      #btn-random.loading svg { animation: spin 0.7s linear infinite; }
+
       #game-title {
-        font-size: 13px;
+        font-size: 12px;
         color: #666;
         font-style: italic;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 200px;
+        max-width: 160px;
         display: none;
       }
-      
-      #bottom { padding-top: 220px; }
-      
+
+      #bank-area {
+        position: fixed;
+        left: 0;
+        width: 100%;
+        background: #f2f1e8;
+        border-bottom: 2px solid #e2e0d6;
+        z-index: 100;
+        padding: 8px 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        justify-content: center;
+        min-height: 48px;
+        transition: background 0.15s;
+      }
+
+      #bank-area.drag-over { background: #ece9d4; }
+
+      #bank-empty-hint {
+        display: flex;
+        align-items: center;
+        color: #b1aea5;
+        font-size: 13px;
+        font-style: italic;
+      }
+
+      .bank-card {
+        background: #fff;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        cursor: grab;
+        user-select: none;
+        flex-shrink: 0;
+        width: var(--card-w, 130px);
+        transition: box-shadow 0.15s;
+      }
+
+      .bank-card:active { cursor: grabbing; }
+      .bank-card.dragging { opacity: 0.35; }
+
+      .bank-card img {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        display: block;
+      }
+
+      .bank-card .card-desc {
+        padding: 5px 6px;
+        font-size: clamp(9px, 1.1vw, 12px);
+        font-family: "nyt-imperial", georgia, serif;
+        line-height: 1.3;
+        user-select: none;
+        cursor: grab;
+      }
+
+      #page-content {
+        padding-bottom: 80px;
+      }
+
+      #timeline-wrap {
+        max-width: 540px;
+        margin: 0 auto;
+        padding: 0 12px;
+      }
+
+      .tl-label {
+        text-align: center;
+        color: #999;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 10px 0 4px;
+      }
+
+      .tl-drop-zone {
+        height: 8px;
+        border-radius: 6px;
+        transition: height 0.12s, background 0.12s;
+      }
+
+      .tl-drop-zone.active {
+        height: 68px;
+        background: #f4da93;
+      }
+
+      .tl-card {
+        background: #e3e0d5;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        margin: 3px 0;
+        cursor: grab;
+        user-select: none;
+      }
+
+      .tl-card:active { cursor: grabbing; }
+      .tl-card.dragging { opacity: 0.35; }
+
+      .tl-card img {
+        width: 68px;
+        height: 51px;
+        object-fit: cover;
+        border-radius: 4px;
+        flex-shrink: 0;
+      }
+
+      .tl-card .card-desc {
+        flex: 1;
+        font-size: 13px;
+        font-family: "nyt-imperial", georgia, serif;
+        line-height: 1.3;
+        min-width: 0;
+        user-select: none;
+        cursor: grab;
+      }
+
+      .year-badge {
+        background: #b1aea5;
+        color: #fff;
+        border-radius: 8px;
+        padding: 3px 8px;
+        font-size: 12px;
+        font-weight: 700;
+        flex-shrink: 0;
+        font-family: "nyt-franklin", arial, sans-serif;
+      }
+
+      .tl-card.correct .year-badge { background: #5cb887; }
+      .tl-card.incorrect .year-badge { background: #d25353; }
+
+      #submit-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(242, 241, 232, 0.97);
+        border-top: 2px solid #e2e0d6;
+        padding: 10px 20px;
+        text-align: center;
+        z-index: 200;
+        display: none;
+        gap: 10px;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      #results-text {
+        font-size: 14px;
+        color: #444;
+        font-family: "nyt-franklin", arial, sans-serif;
+      }
+
+      #btn-submit {
+        background: #5d72c9;
+        color: #fff;
+        border: none;
+        border-radius: 25px;
+        padding: 9px 32px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+
+      #btn-submit:hover { background: #4a5eb0; }
+
+      #btn-restart {
+        background: transparent;
+        border: 2px solid #5d72c9;
+        color: #5d72c9;
+        border-radius: 25px;
+        padding: 7px 24px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        cursor: pointer;
+        display: none;
+        transition: background 0.15s, color 0.15s;
+      }
+
+      #btn-restart:hover { background: #5d72c9; color: #fff; }
+
       #message {
         position: fixed;
         bottom: 20px;
-        left: 20px;
+        left: 50%;
+        transform: translateX(-50%);
         z-index: 300;
         color: #616161;
         font-style: italic;
-        background: rgba(255,255,255,0.95);
+        background: rgba(255, 255, 255, 0.97);
         padding: 10px 20px;
         border-radius: 15px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         display: none;
-        max-width: 320px;
-      }
-      
-      #progress-bar {
-        margin: 8px auto;
-        text-align: center;
-        font-weight: 700;
-        font-size: 16px;
-        color: #333;
-        min-height: 26px;
-      }
-      
-      .marker {
-        display: inline-block;
-        width: 50px;
-        height: 8px;
-        margin: 0 5px;
-        border-radius: 5px;
-        vertical-align: middle;
-        background: #e2e0d6;
-      }
-      
-      .marker.correct { background: #5cb887; }
-      .marker.incorrect { background: #d25353; }
-      .marker.active { border: 2px solid #6171c3; }
-      .progress-index { display: inline-block; margin-right: 10px; }
-      .progress-points { display: inline-block; margin-left: 10px; }
-      
-      #guessing { margin: 0 auto; text-align: center; }
-      
-      .box-event-guess {
-        width: 420px;
-        background: #fff;
-        border-radius: 5px;
-        padding: 15px 2px 11px;
-        margin: 6px auto;
-        box-shadow: 0 4px 5px 0 #b1aea5;
-        user-select: none;
-        cursor: grab;
-        display: inline-block;
-      }
-      
-      .box-event-guess:active { cursor: grabbing; }
-      
-      .event-data { position: relative; padding: 0; }
-      
-      .event-data img {
-        display: inline-block;
-        vertical-align: top;
-        margin: 0 10px;
-        width: 100px;
-        height: 75px;
-        object-fit: cover;
-      }
-      
-      .event-description {
-        display: inline-block;
-        vertical-align: top;
-        width: 270px;
-        text-align: left;
-        font-family: "nyt-imperial", georgia, "times new roman", times, serif;
-        font-size: 15px;
-      }
-      
-      .event-points {
-        position: absolute;
-        bottom: 0;
-        right: 10px;
+        white-space: nowrap;
         font-size: 14px;
-        font-weight: 700;
-        color: #b1aea5;
-      }
-      
-      #results {
-        margin: 20px auto;
-        border: 2px solid #e2e0d6;
-        border-radius: 10px;
-        width: 320px;
-        padding: 30px;
-        background: #fff;
-        font-size: 24px;
-        font-weight: 400;
-        font-family: "nyt-cheltenham", georgia, "times new roman", times, serif;
-        text-align: center;
-        line-height: 1.2em;
-        display: none;
-      }
-      
-      .btn-restart {
-        background: #5d72c9;
-        border-radius: 25px;
-        padding: 10px;
-        margin: 20px auto 0;
-        text-align: center;
-        font-weight: 700;
-        font-size: 18px;
-        color: #fff;
-        width: 120px;
-        font-family: "nyt-franklin", arial, helvetica, sans-serif;
-        cursor: pointer;
-      }
-      
-      #timeline {
-        margin: 0 auto;
-        width: 600px;
-        text-align: center;
-      }
-      
-      .timeline-label {
-        color: #666;
-        font-size: 16px;
-        font-family: "nyt-franklin", arial, helvetica, sans-serif;
-      }
-      
-      .box-drop {
-        position: relative;
-        width: 420px;
-        margin: 10px auto;
-        border-radius: 8px;
-        height: 10px;
-        transition: height 0.15s, background 0.15s;
-      }
-      
-      .box-drop.active {
-        background: #f4da93;
-        height: 120px;
-      }
-      
-      .box-event-placed {
-        width: 400px;
-        background: #e3e0d5;
-        border-radius: 5px;
-        padding: 15px 0 11px;
-        margin: 15px auto;
-        user-select: none;
-        color: #5b5a56;
-      }
-      
-      .box-event-placed .event-data img {
-        width: 80px;
-        height: 60px;
-        object-fit: cover;
-        margin-right: 10px;
-        margin-left: 0;
-      }
-      
-      .box-event-placed .event-description { width: 270px; }
-      
-      .event-year {
-        position: relative;
-        display: inline-block;
-        vertical-align: top;
-        margin-top: -28px;
-        background: #b1aea5;
-        text-align: center;
-        color: #fff;
-        padding: 4px 8px;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 16px;
-        z-index: 100;
-      }
-      
-      .event-year.correct { background: #74b68b; }
-      .event-year.incorrect { background: #c35b57; }
-      
-      .event-data-inner {
-        position: relative;
-        margin-top: -20px;
       }
     </style>
   </head>
   <body>
-    
     <div id="top-bar">
       <div id="search-row">
         <div id="search-container">
           <div id="search-input-wrap">
             <span id="search-icon">&#9906;</span>
-            <input id="search-input" type="text" placeholder="Search any topic..." autocomplete="off" />
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Search any topic..."
+              autocomplete="off"
+            />
             <span id="search-clear" title="Clear">&times;</span>
             <div id="search-spinner"></div>
           </div>
           <div id="search-dropdown"></div>
         </div>
-        
+
         <button id="btn-random">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M17 4l4 4-4 4V9h-3.08A8 8 0 0 1 20 19l-1.42 1.42A6 6 0 0 0 6.68 9H9V7H3v6h2v-2.1A8 8 0 0 1 13.92 9H17V4zm-7.42 11.58A6 6 0 0 0 18.32 11H16V9h6v6h-2v-2.1a8 8 0 0 1-6.08 8.52L12.5 23 9 19l4-4-.42 3.58z"/>
+            <path
+              d="M17 4l4 4-4 4V9h-3.08A8 8 0 0 1 20 19l-1.42 1.42A6 6 0 0 0 6.68 9H9V7H3v6h2v-2.1A8 8 0 0 1 13.92 9H17V4zm-7.42 11.58A6 6 0 0 0 18.32 11H16V9h6v6h-2v-2.1a8 8 0 0 1-6.08 8.52L12.5 23 9 19l4-4-.42 3.58z"
+            />
           </svg>
           Random
         </button>
-        
+
         <span id="game-title"></span>
       </div>
-      
-      <div id="progress-bar"></div>
-      <div id="guessing"></div>
-      <div id="results"></div>
     </div>
-    
+
+    <div id="bank-area"></div>
+
+    <div id="page-content">
+      <div id="timeline-wrap">
+        <div id="timeline"></div>
+      </div>
+    </div>
+
+    <div id="submit-bar">
+      <span id="results-text"></span>
+      <button id="btn-submit">Submit</button>
+      <button id="btn-restart">Play Again</button>
+    </div>
+
     <div id="message"></div>
-    
-    <div id="bottom">
-      <div id="timeline"></div>
-    </div>
-    
+
     <script>
       const SPARQL_ENDPOINT = "https://query.wikidata.org/sparql";
       const WIKIDATA_API = "https://www.wikidata.org/w/api.php";
-      const WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php";
-      
-      const KEY_DECK = "fbq_deck";
-      const KEY_SPENT = "fbq_spent";
-      
+      const UA = "FlashbackQuiz/1.0 (https://localhost)";
+
+      async function sparqlFetch(sparql) {
+        const url =
+          `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}` +
+          `&format=json&useragent=${encodeURIComponent(UA)}`;
+        const res = await fetch(url, {
+          headers: { Accept: "application/sparql-results+json" },
+        });
+        if (!res.ok) throw new Error(`SPARQL ${res.status}`);
+        return res.json();
+      }
+
+      const SEEDS = [
+        { value: "Q11424",   label: "Films" },
+        { value: "Q482994",  label: "Music Albums" },
+        { value: "Q3305213", label: "Paintings" },
+        { value: "Q12280",   label: "Bridges" },
+        { value: "Q839954",  label: "Archaeological Sites" },
+        { value: "Q207694",  label: "Art Museums" },
+        { value: "Q1248784", label: "Airports" },
+        { value: "Q5398426", label: "Television Series" },
+        { value: "Q2221906", label: "Geographic Locations" },
+        { value: "Q4830453", label: "Businesses" },
+        { value: "Q1344",    label: "Operas" },
+        { value: "Q1093829", label: "U.S. Cities" },
+        { value: "Q39715",   label: "Lighthouses" },
+        { value: "Q16917",   label: "Hospitals" },
+        { value: "Q23413",   label: "Castles" },
+        { value: "Q44613",   label: "Monasteries" },
+        { value: "Q33506",   label: "Museums" },
+        { value: "Q3947",    label: "Houses" },
+        { value: "Q571",     label: "Books" },
+        { value: "Q11707",   label: "Restaurants" },
+        { value: "Q179700",  label: "Statues" },
+        { value: "Q178561",  label: "Battles" },
+        { value: "Q198",     label: "Wars" },
+        { value: "Q57821",   label: "Fortifications" },
+        { value: "Q2977",    label: "Cathedrals" },
+        { value: "Q42948",   label: "Walls" },
+        { value: "Q16560",   label: "Palaces" },
+        { value: "Q7725634", label: "Literary Works" },
+        { value: "Q8261",    label: "Novels" },
+        { value: "Q44782",   label: "Ports" },
+        { value: "Q55488",   label: "Railway Stations" },
+        { value: "Q49084",   label: "Short Stories" },
+        { value: "Q1076486", label: "Sports Venues" },
+        { value: "Q46169",   label: "National Parks" },
+        { value: "Q182832",  label: "Concerts" },
+        { value: "Q1329623", label: "Cultural Centers" },
+        { value: "Q2031836", label: "Orthodox Churches" },
+        { value: "Q692",     label: "Shakespeare's Works",    prop: "P50" },
+        { value: "Q23434",   label: "Hemingway's Works",      prop: "P50" },
+        { value: "Q5686",    label: "Dickens's Works",        prop: "P50" },
+        { value: "Q40909",   label: "Virginia Woolf's Works", prop: "P50" },
+        { value: "Q991",     label: "Dostoyevsky's Works",    prop: "P50" },
+        { value: "Q7243",    label: "Tolstoy's Works",        prop: "P50" },
+      ];
+
+      async function discoverAndEnqueue() {
+        const deck = getDeck();
+        const spent = getSpent();
+        const used = new Set([...deck, ...spent].map((g) => g.value));
+        const remaining = SEEDS.filter((s) => !used.has(s.value));
+        const pool = remaining.length ? remaining : SEEDS;
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        try {
+          await fetchGameEvents(pick.value, pick.prop ?? null);
+          addToDeck(pick);
+          return pick;
+        } catch {
+          return null;
+        }
+      }
+
+      async function nextTopic() {
+        const fromDeck = popFromDeck();
+        if (fromDeck) {
+          discoverAndEnqueue().catch(() => {});
+          return fromDeck;
+        }
+        for (let i = 0; i < SEEDS.length; i++) {
+          const game = await discoverAndEnqueue();
+          if (game) {
+            popFromDeck();
+            return game;
+          }
+        }
+        throw new Error("Could not find a playable topic");
+      }
+
       const KEY_HISTORY = "fbq_history";
-      const KEY_GAME = "fbq_game";
-      const progressKey = (id) => `fbq_progress_${id}`;
-      
+      const KEY_GAME    = "fbq_game";
+      const KEY_DECK    = "fbq_deck";
+      const KEY_SPENT   = "fbq_spent";
+
       const state = {
         game: null,
         events: [],
-        index: 0,
-        dragOverZone: -1,
+        bank: [],
+        timeline: [],
+        submitted: false,
+        dragging: null,
+        dragOverZone: null,
         history: [],
         searchResults: [],
         searchOpen: false,
       };
-      
+
       function safeGet(key) {
         try {
           const r = localStorage.getItem(key);
           return r ? JSON.parse(r) : null;
-        } catch { return null; }
+        } catch {
+          return null;
+        }
       }
-      
+
       function safeSet(key, val) {
-        try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+        try {
+          localStorage.setItem(key, JSON.stringify(val));
+        } catch {}
       }
-      
-      function loadHistory() { return safeGet(KEY_HISTORY) ?? []; }
-      
+
+      function loadHistory() {
+        return safeGet(KEY_HISTORY) ?? [];
+      }
+
       function pushHistory(game) {
         const h = loadHistory().filter((g) => g.value !== game.value);
         safeSet(KEY_HISTORY, [game, ...h].slice(0, 20));
       }
-      
-      function saveProgress() {
-        if (!state.game || !state.events.length) return;
-        safeSet(progressKey(state.game.value), {
-          events: state.events,
-          index: state.index,
-        });
+
+      function getDeck() {
+        return safeGet(KEY_DECK) ?? [];
       }
-      
-      function clearProgress(id) {
-        try { localStorage.removeItem(progressKey(id)); } catch {}
+
+      function getSpent() {
+        return safeGet(KEY_SPENT) ?? [];
       }
-      
+
+      function popFromDeck() {
+        let deck = getDeck();
+        const spent = getSpent();
+        if (!deck.length && spent.length) {
+          deck = shuffle(spent);
+          safeSet(KEY_SPENT, []);
+          safeSet(KEY_DECK, deck);
+        }
+        if (!deck.length) return null;
+        const item = deck.shift();
+        safeSet(KEY_DECK, deck);
+        return item;
+      }
+
+      function addToDeck(game) {
+        const deck = getDeck();
+        const spent = getSpent();
+        if ([...deck, ...spent].some((g) => g.value === game.value)) return;
+        safeSet(KEY_DECK, [...deck, game]);
+      }
+
+      function markSpent(game) {
+        safeSet(KEY_DECK, getDeck().filter((g) => g.value !== game.value));
+        const spent = getSpent();
+        if (!spent.some((g) => g.value === game.value)) {
+          safeSet(KEY_SPENT, [...spent, game]);
+        }
+      }
+
+      function shuffle(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function parseYear(iso) {
+        if (!iso) return null;
+        if (iso.startsWith("-")) return -parseInt(iso.slice(1, 5), 10);
+        return parseInt(iso.slice(0, 4), 10);
+      }
+
+      function toDisplayYear(y) {
+        return y < 0 ? `${Math.abs(y)} BC` : String(y);
+      }
+
+      function fixImageUrl(url) {
+        return url.replace("http://", "https://") + "?width=160";
+      }
+
+      function setMessage(msg) {
+        const el = document.getElementById("message");
+        el.textContent = msg;
+        el.style.display = msg ? "block" : "none";
+      }
+
+      function getCardWidth() {
+        const available = Math.min(window.innerWidth, 540) - 24;
+        const count = Math.min(state.events.length || 8, 8);
+        const gaps = (count - 1) * 6;
+        return Math.max(90, Math.min(148, (available - gaps) / count));
+      }
+
+      function adjustLayout() {
+        const topBar  = document.getElementById("top-bar");
+        const bankArea = document.getElementById("bank-area");
+        const content  = document.getElementById("page-content");
+        const topH  = topBar.getBoundingClientRect().height;
+        const bankH = bankArea.getBoundingClientRect().height;
+        bankArea.style.top = `${topH}px`;
+        content.style.paddingTop = `${topH + bankH + 10}px`;
+      }
+
       async function searchEntities(query) {
         const p = new URLSearchParams({
           action: "wbsearchentities",
@@ -490,60 +681,92 @@
           description: r.description ?? "",
         }));
       }
-      
-      
-      function buildSparql(entityId) {
-        return `
-    SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-      ?item wdt:P31/wdt:P279* wd:${entityId}.
-      ?item wdt:P18 ?image.
-      {?item wdt:P571 ?date.} UNION
-      {?item wdt:P577 ?date.} UNION
-      {?item wdt:P580 ?date.} UNION
-      {?item wdt:P569 ?date.}
-      FILTER(YEAR(?date) > 0)
-      SERVICE wikibase:label {
-        bd:serviceParam wikibase:language "en".
-      }
-    }
-    LIMIT 60
-  `;
-      }
-      
-      function parseYear(iso) {
-        if (!iso) return null;
-        if (iso.startsWith("-")) return -parseInt(iso.slice(1, 5), 10);
-        return parseInt(iso.slice(0, 4), 10);
-      }
-      
-      function toDisplayYear(y) {
-        return y < 0 ? `${Math.abs(y)} BC` : String(y);
-      }
-      
-      function shuffle(arr) {
-        const a = [...arr];
-        for (let i = a.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [a[i], a[j]] = [a[j], a[i]];
+
+      async function validateEntityIds(ids) {
+        if (!ids.length) return new Set();
+        const values = ids.map((id) => `wd:${id}`).join(" ");
+        const sparql = `
+SELECT ?entity WHERE {
+  VALUES ?entity { ${values} }
+  ?item wdt:P31/wdt:P279* ?entity;
+        wdt:P18 ?image.
+  {?item wdt:P571 ?date.} UNION
+  {?item wdt:P577 ?date.} UNION
+  {?item wdt:P580 ?date.} UNION
+  {?item wdt:P569 ?date.}
+  FILTER(YEAR(?date) > 0)
+}
+GROUP BY ?entity
+HAVING (COUNT(DISTINCT ?item) >= 2)
+`;
+        try {
+          const json = await sparqlFetch(sparql);
+          return new Set(
+            json.results.bindings.map((b) => b.entity.value.split("/").pop())
+          );
+        } catch {
+          return new Set(ids);
         }
-        return a;
+      }
+
+      function buildSparql(entityId, prop) {
+        if (prop) {
+          return `
+SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
+  ?item wdt:${prop} wd:${entityId};
+        wdt:P18 ?image.
+  {?item wdt:P571 ?date.} UNION
+  {?item wdt:P577 ?date.} UNION
+  {?item wdt:P580 ?date.} UNION
+  {?item wdt:P569 ?date.}
+  FILTER(YEAR(?date) > 0)
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "en".
+  }
+}
+LIMIT 60
+`;
+        }
+        return `
+SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
+  ?item wdt:P31/wdt:P279* wd:${entityId};
+        wdt:P18 ?image.
+  {?item wdt:P571 ?date.} UNION
+  {?item wdt:P577 ?date.} UNION
+  {?item wdt:P580 ?date.} UNION
+  {?item wdt:P569 ?date.}
+  FILTER(YEAR(?date) > 0)
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "en".
+  }
+}
+LIMIT 60
+`;
       }
       
-      function fixImageUrl(url) {
-        return url.replace("http://", "https://") + "?width=320";
+      function cleanLabel(s) {
+        return s
+        .replace(/^\d{4}\s+/, "")
+        .replace(/\s+of\s+\d{4}([–\-]\d{2,4})?/gi, "")
+        .replace(/\s+\d{4}[–\-]\d{2,4}/g, "")
+        .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)/g, "")
+        .trim();
       }
       
-      async function fetchGameEvents(entityId) {
-        const sparql = buildSparql(entityId);
-        const url = `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}&format=json`;
-        const res = await fetch(url, {
-          headers: {
-            Accept: "application/sparql-results+json",
-            "User-Agent": "FlashbackQuiz/1.0",
-          },
-        });
-        if (!res.ok) throw new Error(`Wikidata error: ${res.status}`);
-        const json = await res.json();
+      function cleanDesc(s) {
+        return s
+        .replace(/\bfrom\s+\d{4}\s+to\s+\d{4}\b/gi, "")
+        .replace(/\b\d{4}[–\-]\d{2,4}\b/g, "")
+        .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, "")
+        .replace(/\s{2,}/g, " ")
+        .replace(/\s+([,.])/g, "$1")
+        .replace(/^[–\-,\s]+/, "")
+        .trim();
+      }
+
+      async function fetchGameEvents(entityId, prop = null) {
+        const sparql = buildSparql(entityId, prop);
+        const json = await sparqlFetch(sparql);
         const bindings = json.results.bindings;
         if (!bindings.length) throw new Error("No results for that topic");
         
@@ -551,7 +774,8 @@
         const deduped = [];
         for (const b of bindings) {
           const id = b.item?.value;
-          if (!id || !b.date?.value || !b.itemLabel?.value || !b.image?.value) continue;
+          if (!id || !b.date?.value || !b.itemLabel?.value || !b.image?.value)
+            continue;
           const year = parseYear(b.date.value);
           if (year === null) continue;
           if (seen.has(id)) continue;
@@ -559,373 +783,26 @@
           deduped.push({ ...b, _year: year });
         }
         
-        if (deduped.length < 2) throw new Error("Not enough dated items with images");
+        if (deduped.length < 2)
+          throw new Error("Not enough dated items with images");
         
-        const selected = shuffle(deduped).slice(0, 9);
+        const selected = shuffle(deduped).slice(0, 8);
         selected.sort((a, b) => a._year - b._year);
         
         return selected.map((b, i) => {
-          const year = b._year;
-          const label = b.itemLabel.value;
-          const desc = b.itemDescription?.value ?? "";
-          const wikidataId = b.item.value.split("/").pop();
+          const year  = b._year;
+          const label = cleanLabel(b.itemLabel.value);
+          const desc  = cleanDesc(b.itemDescription?.value ?? "");
           return {
             id: i + 1,
             year,
             displayYear: toDisplayYear(year),
-            description: desc ? `<b>${label}</b> — ${desc}` : `<b>${label}</b>`,
-            detail: `<a href="https://www.wikidata.org/wiki/${wikidataId}" target="_blank" rel="noreferrer">Wikidata</a>`,
+            description: desc
+            ? `<b>${label}</b> — ${desc}`
+            : `<b>${label}</b>`,
             image: fixImageUrl(b.image.value),
-            possiblePoints: i === 0 ? 0 : i <= 3 ? 3 : 4,
-            actualPoints: 0,
-            guess: "",
-            status: i === 0 ? "start" : "unanswered",
           };
         });
-      }
-      
-      function setMessage(msg) {
-        const el = document.getElementById("message");
-        el.textContent = msg;
-        el.style.display = msg ? "block" : "none";
-      }
-      
-      function renderProgressBar() {
-        const el = document.getElementById("progress-bar");
-        const { events, index } = state;
-        if (events.length < 2) { el.innerHTML = ""; return; }
-        const points = events.reduce((t, e) => t + e.actualPoints, 0);
-        const markers = events.map((e, i) => {
-          if (e.status === "start") return "";
-          const cls = ["marker",
-            e.status === "correct" ? "correct" : e.status === "incorrect" ? "incorrect" : "",
-            i === index + 1 ? "active" : "",
-          ].filter(Boolean).join(" ");
-          return `<div class="${cls}"></div>`;
-        }).join("");
-        el.innerHTML = `
-    <span class="progress-index">${index} of ${events.length - 1}</span>
-    ${markers}
-    <span class="progress-points">${points} Points</span>
-  `;
-      }
-      
-      function renderGuessing() {
-        const el = document.getElementById("guessing");
-        const { events, index } = state;
-        if (index > events.length - 2) { el.innerHTML = ""; return; }
-        const event = events[index + 1];
-        el.innerHTML = `
-    <div class="box-event-guess" draggable="true" id="guess-card">
-      <div class="event-data">
-        <img src="${event.image}" alt="" onerror="this.style.display='none'" />
-        <div class="event-description">${event.description}</div>
-        <div class="event-points">${event.possiblePoints} points</div>
-      </div>
-    </div>
-  `;
-        document.getElementById("guess-card").addEventListener("dragstart", (e) => {
-          e.dataTransfer.setData("text/plain", "guess");
-          e.dataTransfer.effectAllowed = "move";
-        });
-      }
-      
-      function renderResults() {
-        const el = document.getElementById("results");
-        const { events, index } = state;
-        if (events.length < 2 || index < events.length - 1) {
-          el.style.display = "none";
-          return;
-        }
-        let score = 0, possible = 0, correct = 0;
-        const total = events.length - 1;
-        for (let i = 1; i < events.length; i++) {
-          if (events[i].status === "correct") correct++;
-          score += events[i].actualPoints;
-          possible += events[i].possiblePoints;
-        }
-        el.style.display = "block";
-        el.innerHTML = `
-    You scored ${score} of ${possible} points,<br/>
-    with ${correct} of ${total} correct.
-    <div class="btn-restart" id="btn-restart">Play Again</div>
-  `;
-        document.getElementById("btn-restart").addEventListener("click", () => {
-          if (state.game) clearProgress(state.game.value);
-          state.events = state.events.map((e) => ({
-            ...e,
-            status: e.status === "start" ? "start" : "unanswered",
-            actualPoints: 0,
-            guess: "",
-          }));
-          state.index = 0;
-          render();
-        });
-      }
-      
-      
-      function renderTimeline() {
-        const el = document.getElementById("timeline");
-        const { events, index, dragOverZone } = state;
-        const gameOver = index >= events.length - 1;
-        const displayed = events.slice(0, index + 1).sort((a, b) => a.year - b.year);
-        
-        let html = `<div class="timeline-label">BEFORE</div>`;
-        
-        for (let i = 0; i < displayed.length; i++) {
-          if (!gameOver) {
-            html += `<div class="box-drop${dragOverZone === i ? " active" : ""}" data-zone="${i}"></div>`;
-          }
-          const ev = displayed[i];
-          const yc = ev.status === "correct" ? "correct" : ev.status === "incorrect" ? "incorrect" : "";
-          html += `
-      <div class="box-event-placed">
-        <div class="event-year ${yc}">${ev.displayYear}</div>
-        <div class="event-data-inner">
-          <img src="${ev.image}" alt="" onerror="this.style.display='none'" />
-          <div class="event-description">${ev.description}</div>
-        </div>
-      </div>
-    `;
-        }
-        
-        if (!gameOver) {
-          html += `<div class="box-drop${dragOverZone === displayed.length ? " active" : ""}" data-zone="${displayed.length}"></div>`;
-        }
-        
-        html += `<div class="timeline-label">AFTER</div>`;
-        el.innerHTML = html;
-        
-        if (!gameOver) {
-          el.querySelectorAll(".box-drop").forEach((zone) => {
-            const z = parseInt(zone.dataset.zone, 10);
-            
-            zone.addEventListener("dragenter", (e) => {
-              e.preventDefault();
-              el.querySelectorAll(".box-drop").forEach((z) => z.classList.remove("active"));
-              zone.classList.add("active");
-              state.dragOverZone = z;
-            });
-            
-            zone.addEventListener("dragover", (e) => {
-              e.preventDefault();
-              e.dataTransfer.dropEffect = "move";
-            });
-            
-            zone.addEventListener("dragleave", (e) => {
-              if (!zone.contains(e.relatedTarget)) {
-                zone.classList.remove("active");
-                state.dragOverZone = -1;
-              }
-            });
-            
-            zone.addEventListener("drop", (e) => {
-              e.preventDefault();
-              el.querySelectorAll(".box-drop").forEach((z) => z.classList.remove("active"));
-              state.dragOverZone = -1;
-              madeGuess(z);
-            });
-          });
-        }
-      }
-      
-      function render() {
-        renderProgressBar();
-        renderGuessing();
-        renderResults();
-        renderTimeline();
-      }
-      
-      function madeGuess(dropIndex) {
-        const displayed = state.events.slice(0, state.index + 1).sort((a, b) => a.year - b.year);
-        const dropped = state.events[state.index + 1];
-        let correct = true;
-        let guess = "";
-        if (dropIndex > 0) {
-          const before = displayed[dropIndex - 1];
-          if (dropped.year < before.year) correct = false;
-          guess += before.year;
-        }
-        guess += "-";
-        if (dropIndex <= displayed.length) {
-          const after = displayed[dropIndex];
-          if (after && dropped.year > after.year) correct = false;
-          if (after) guess += after.year;
-        }
-        const updated = [...state.events];
-        updated[state.index + 1] = {
-          ...updated[state.index + 1],
-          status: correct ? "correct" : "incorrect",
-          actualPoints: correct ? updated[state.index + 1].possiblePoints : 0,
-          guess,
-        };
-        state.events = updated;
-        state.index += 1;
-        saveProgress();
-        render();
-      }
-      
-      async function loadGame(game) {
-        state.game = game;
-        state.dragOverZone = -1;
-        safeSet(KEY_GAME, game);
-        pushHistory(game);
-        state.history = loadHistory();
-        
-        const titleEl = document.getElementById("game-title");
-        titleEl.textContent = game.label;
-        titleEl.style.display = "block";
-        
-        const saved = safeGet(progressKey(game.value));
-        if (saved) {
-          state.events = saved.events;
-          state.index = saved.index;
-          setMessage("");
-          render();
-          return;
-        }
-        
-        setMessage(`Loading ${game.label}...`);
-        state.events = [];
-        state.index = 0;
-        render();
-        
-        try {
-          state.events = await fetchGameEvents(game.value);
-          setMessage("");
-        } catch (err) {
-          setMessage(`Failed: ${err.message}. Try another topic.`);
-        }
-        render();
-      }
-      
-      let debounceTimer = null;
-      
-      function renderDropdown() {
-        const dropdown = document.getElementById("search-dropdown");
-        const query = document.getElementById("search-input").value.trim();
-        const history = state.history;
-        const results = state.searchResults;
-        
-        if (!state.searchOpen || (!query && !history.length)) {
-          dropdown.style.display = "none";
-          return;
-        }
-        
-        let html = "";
-        
-        if (!query && history.length) {
-          html += `<div class="dropdown-section-label">Recent</div>`;
-          for (const g of history) {
-            html += `
-        <div class="dropdown-item" data-id="${g.value}" data-label="${escapeAttr(g.label)}">
-          <span class="dropdown-item-label">${escapeHtml(g.label)}</span>
-        </div>
-      `;
-          }
-        }
-        
-        if (query && results.length) {
-          html += `<div class="dropdown-section-label">Results</div>`;
-          for (const r of results) {
-            html += `
-        <div class="dropdown-item" data-id="${r.id}" data-label="${escapeAttr(r.label)}">
-          <span class="dropdown-item-label">${escapeHtml(r.label)}</span>
-          ${r.description ? `<span class="dropdown-item-desc">${escapeHtml(r.description)}</span>` : ""}
-        </div>
-      `;
-          }
-        }
-        
-        if (!html) { dropdown.style.display = "none"; return; }
-        
-        dropdown.innerHTML = html;
-        dropdown.style.display = "block";
-        
-        dropdown.querySelectorAll(".dropdown-item").forEach((item) => {
-          item.addEventListener("mousedown", (e) => {
-            e.preventDefault();
-            const id = item.dataset.id;
-            const label = item.dataset.label;
-            document.getElementById("search-input").value = "";
-            document.getElementById("search-clear").style.display = "none";
-            state.searchResults = [];
-            state.searchOpen = false;
-            dropdown.style.display = "none";
-            loadGame({ label, value: id });
-          });
-        });
-      }
-      
-      function escapeHtml(s) {
-        return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-      }
-      
-      function escapeAttr(s) {
-        return s.replace(/"/g,"&quot;");
-      }
-      
-      async function validateEntityIds(ids) {
-        if (!ids.length) return new Set();
-        const values = ids.map((id) => `wd:${id}`).join(" ");
-        const sparql = `
-  SELECT ?entity WHERE {
-    VALUES ?entity { ${values} }
-    ?item wdt:P31 ?entity;
-          wdt:P18 ?image.
-    {?item wdt:P571 ?date.} UNION
-    {?item wdt:P577 ?date.} UNION
-    {?item wdt:P580 ?date.} UNION
-    {?item wdt:P569 ?date.}
-    FILTER(YEAR(?date) > 0)
-  }
-  GROUP BY ?entity
-  HAVING (COUNT(DISTINCT ?item) >= 2)
-  `;
-        const url = `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}&format=json`;
-        const res = await fetch(url, {
-          headers: {
-            Accept: "application/sparql-results+json",
-            "User-Agent": "FlashbackQuiz/1.0",
-          },
-        });
-        if (!res.ok) return new Set(ids);
-        const json = await res.json();
-        return new Set(
-          json.results.bindings.map((b) => b.entity.value.split("/").pop())
-        );
-      }
-      
-      function getDeck() { return safeGet(KEY_DECK) ?? []; }
-      function getSpent() { return safeGet(KEY_SPENT) ?? []; }
-      
-      function popFromDeck() {
-        let deck = getDeck();
-        const spent = getSpent();
-        if (!deck.length && spent.length) {
-          deck = shuffle(spent);
-          safeSet(KEY_SPENT, []);
-          safeSet(KEY_DECK, deck);
-        }
-        if (!deck.length) return null;
-        const item = deck.shift();
-        safeSet(KEY_DECK, deck);
-        return item;
-      }
-      
-      function addToDeck(game) {
-        const deck = getDeck();
-        const spent = getSpent();
-        if ([...deck, ...spent].some((g) => g.value === game.value)) return;
-        safeSet(KEY_DECK, [...deck, game]);
-      }
-      
-      function markSpent(game) {
-        safeSet(KEY_DECK, getDeck().filter((g) => g.value !== game.value));
-        const spent = getSpent();
-        if (!spent.some((g) => g.value === game.value)) {
-          safeSet(KEY_SPENT, [...spent, game]);
-        }
       }
       
       async function resolveToPlayableClass(qid) {
@@ -936,95 +813,400 @@ SELECT ?class ?classLabel WHERE {
 }
 LIMIT 10
 `;
-        const url = `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}&format=json`;
-        const res = await fetch(url, {
-          headers: {
-            Accept: "application/sparql-results+json",
-            "User-Agent": "FlashbackQuiz/1.0",
-          },
-        });
-        if (!res.ok) return null;
-        const json = await res.json();
-        const candidates = json.results.bindings.map((b) => ({
-          value: b.class.value.split("/").pop(),
-          label: b.classLabel?.value ?? b.class.value.split("/").pop(),
-        }));
-        if (!candidates.length) return null;
-        const validIds = await validateEntityIds(candidates.map((c) => c.value));
-        return candidates.find((c) => validIds.has(c.value)) ?? null;
-      }
-      
-      async function discoverAndEnqueue() {
-        const p1 = new URLSearchParams({
-          action: "query",
-          list: "random",
-          rnnamespace: "0",
-          rnlimit: "1",
-          format: "json",
-          origin: "*",
-        });
-        const res1 = await fetch(`${WIKIPEDIA_API}?${p1}`);
-        if (!res1.ok) return null;
-        const j1 = await res1.json();
-        const title = j1.query.random[0].title;
-        
-        const p2 = new URLSearchParams({
-          action: "query",
-          titles: title,
-          prop: "pageprops",
-          ppprop: "wikibase_item",
-          format: "json",
-          origin: "*",
-        });
-        const res2 = await fetch(`${WIKIPEDIA_API}?${p2}`);
-        if (!res2.ok) return null;
-        const j2 = await res2.json();
-        const qid = Object.values(j2.query.pages)[0]?.pageprops?.wikibase_item;
-        if (!qid) return null;
-        
-        const game = await resolveToPlayableClass(qid);
-        if (!game) return null;
-        addToDeck(game);
-        return game;
-      }
-      
-      async function nextTopic() {
-        const fromDeck = popFromDeck();
-        if (fromDeck) {
-          discoverAndEnqueue().catch(() => {});
-          return fromDeck;
+        try {
+          const json = await sparqlFetch(sparql);
+          const candidates = json.results.bindings.map((b) => ({
+            value: b.class.value.split("/").pop(),
+            label: b.classLabel?.value ?? b.class.value.split("/").pop(),
+          }));
+          if (!candidates.length) return null;
+          const validIds = await validateEntityIds(candidates.map((c) => c.value));
+          return candidates.find((c) => validIds.has(c.value)) ?? null;
+        } catch {
+          return null;
         }
-        for (let i = 0; i < 10; i++) {
-          const game = await discoverAndEnqueue();
-          if (game) {
-            popFromDeck();
-            return game;
+      }
+
+      async function loadGame(game) {
+        state.game = game;
+        state.submitted = false;
+        state.dragging = null;
+        state.dragOverZone = null;
+        state.events = [];
+        state.bank = [];
+        state.timeline = [];
+
+        safeSet(KEY_GAME, game);
+        pushHistory(game);
+        state.history = loadHistory();
+
+        const titleEl = document.getElementById("game-title");
+        titleEl.textContent = game.label;
+        titleEl.style.display = "block";
+
+        setMessage(`Loading ${game.label}...`);
+        render();
+
+        try {
+          const events = await fetchGameEvents(game.value, game.prop ?? null);
+          state.events = events;
+          state.bank = shuffle([...events]);
+          state.timeline = [];
+          setMessage("");
+        } catch (err) {
+          setMessage(`Failed: ${err.message}. Try another topic.`);
+        }
+        render();
+      }
+
+      function getCorrectOrder() {
+        return [...state.events].sort((a, b) => a.year - b.year);
+      }
+
+      function getCardStatus(event, index) {
+        return event.id === getCorrectOrder()[index]?.id ? "correct" : "incorrect";
+      }
+
+      function getScore() {
+        const correct = getCorrectOrder();
+        let score = 0;
+        for (let i = 0; i < state.timeline.length; i++) {
+          if (state.timeline[i].id === correct[i]?.id) score++;
+        }
+        return { score, total: state.events.length };
+      }
+
+      function renderBank() {
+        const el = document.getElementById("bank-area");
+        const w  = getCardWidth();
+        document.documentElement.style.setProperty("--card-w", `${w}px`);
+
+        if (!state.events.length || state.submitted) {
+          el.innerHTML = "";
+          return;
+        }
+
+        if (!state.bank.length) {
+          el.innerHTML =
+            '<span id="bank-empty-hint">All placed — submit when ready</span>';
+          return;
+        }
+
+        el.innerHTML = state.bank
+          .map(
+            (ev) => `
+          <div class="bank-card" draggable="true" data-id="${ev.id}">
+            <img src="${ev.image}" alt="" onerror="this.style.display='none'" />
+            <div class="card-desc">${ev.description}</div>
+          </div>
+        `
+          )
+          .join("");
+
+        el.querySelectorAll(".bank-card").forEach((card) => {
+          const id = parseInt(card.dataset.id, 10);
+          card.addEventListener("dragstart", (e) => {
+            state.dragging = { id, from: "bank" };
+            e.dataTransfer.effectAllowed = "move";
+            e.dataTransfer.setData("text/plain", String(id));
+            setTimeout(() => card.classList.add("dragging"), 0);
+          });
+          card.addEventListener("dragend", () => {
+            card.classList.remove("dragging");
+            if (state.dragging) {
+              state.dragging = null;
+              state.dragOverZone = null;
+              renderTimeline();
+            }
+          });
+        });
+      }
+
+      function renderTimeline() {
+        const el = document.getElementById("timeline");
+        if (!state.events.length) {
+          el.innerHTML = "";
+          return;
+        }
+
+        const { timeline, dragOverZone, submitted } = state;
+
+        let html = `<div class="tl-label">EARLIEST</div>`;
+
+        if (!submitted) {
+          html += dropZoneHtml(0, dragOverZone);
+        }
+
+        for (let i = 0; i < timeline.length; i++) {
+          const ev     = timeline[i];
+          const status = submitted ? getCardStatus(ev, i) : "";
+          html += `
+            <div class="tl-card ${status}"
+              draggable="${!submitted}"
+              data-id="${ev.id}">
+              <img src="${ev.image}" alt=""
+                onerror="this.style.display='none'" />
+              <div class="card-desc">${ev.description}</div>
+              ${submitted
+                ? `<div class="year-badge">${ev.displayYear}</div>`
+                : ""}
+            </div>
+          `;
+          if (!submitted) {
+            html += dropZoneHtml(i + 1, dragOverZone);
           }
         }
-        throw new Error("Could not find a playable topic");
+
+        html += `<div class="tl-label">LATEST</div>`;
+        el.innerHTML = html;
+
+        if (!submitted) {
+          el.querySelectorAll(".tl-card").forEach((card) => {
+            const id = parseInt(card.dataset.id, 10);
+            card.addEventListener("dragstart", (e) => {
+              state.dragging = { id, from: "timeline" };
+              e.dataTransfer.effectAllowed = "move";
+              e.dataTransfer.setData("text/plain", String(id));
+              setTimeout(() => card.classList.add("dragging"), 0);
+            });
+            card.addEventListener("dragend", () => {
+              card.classList.remove("dragging");
+              if (state.dragging) {
+                state.dragging = null;
+                state.dragOverZone = null;
+                renderTimeline();
+              }
+            });
+          });
+
+          el.querySelectorAll(".tl-drop-zone").forEach((zone) => {
+            const z = parseInt(zone.dataset.zone, 10);
+
+            zone.addEventListener("dragenter", (e) => {
+              e.preventDefault();
+              state.dragOverZone = z;
+              el.querySelectorAll(".tl-drop-zone").forEach((dz) =>
+                dz.classList.remove("active")
+              );
+              zone.classList.add("active");
+            });
+
+            zone.addEventListener("dragover", (e) => {
+              e.preventDefault();
+              e.dataTransfer.dropEffect = "move";
+            });
+
+            zone.addEventListener("dragleave", (e) => {
+              if (!zone.contains(e.relatedTarget)) {
+                zone.classList.remove("active");
+                if (state.dragOverZone === z) state.dragOverZone = null;
+              }
+            });
+
+            zone.addEventListener("drop", (e) => {
+              e.preventDefault();
+              state.dragOverZone = null;
+              if (!state.dragging) return;
+              const { id, from } = state.dragging;
+              let ev;
+
+              if (from === "bank") {
+                ev = state.bank.find((b) => b.id === id);
+                if (!ev) return;
+                state.bank = state.bank.filter((b) => b.id !== id);
+              } else {
+                ev = state.timeline.find((t) => t.id === id);
+                if (!ev) return;
+                state.timeline = state.timeline.filter((t) => t.id !== id);
+              }
+
+              const insertAt = Math.max(0, Math.min(z, state.timeline.length));
+              state.timeline.splice(insertAt, 0, ev);
+              state.dragging = null;
+              render();
+            });
+          });
+        }
       }
-      
-      
+
+      function dropZoneHtml(index, activeZone) {
+        const active = activeZone === index && state.dragging !== null;
+        return `<div class="tl-drop-zone${active ? " active" : ""}"
+          data-zone="${index}"></div>`;
+      }
+
+      function renderSubmitBar() {
+        const bar         = document.getElementById("submit-bar");
+        const btnSubmit   = document.getElementById("btn-submit");
+        const btnRestart  = document.getElementById("btn-restart");
+        const resultsText = document.getElementById("results-text");
+
+        if (!state.events.length) {
+          bar.style.display = "none";
+          return;
+        }
+
+        bar.style.display = "flex";
+
+        if (state.submitted) {
+          const { score, total } = getScore();
+          resultsText.textContent = `${score} of ${total} in the correct position`;
+          btnSubmit.style.display = "none";
+          btnRestart.style.display = "inline-block";
+          return;
+        }
+
+        resultsText.textContent = "";
+        btnRestart.style.display = "none";
+
+        if (state.bank.length === 0 && state.timeline.length > 0) {
+          btnSubmit.style.display = "inline-block";
+        } else {
+          bar.style.display = "none";
+        }
+      }
+
+      function render() {
+        renderBank();
+        renderTimeline();
+        renderSubmitBar();
+        requestAnimationFrame(adjustLayout);
+      }
+
+      let debounceTimer = null;
+
+      function renderDropdown() {
+        const dropdown = document.getElementById("search-dropdown");
+        const query    = document.getElementById("search-input").value.trim();
+        const history  = state.history;
+        const results  = state.searchResults;
+
+        if (!state.searchOpen || (!query && !history.length)) {
+          dropdown.style.display = "none";
+          return;
+        }
+
+        let html = "";
+
+        if (!query && history.length) {
+          html += `<div class="dropdown-section-label">Recent</div>`;
+          for (const g of history) {
+            html += `
+              <div class="dropdown-item"
+                data-id="${g.value}"
+                data-label="${escapeAttr(g.label)}">
+                <span class="dropdown-item-label">
+                  ${escapeHtml(g.label)}
+                </span>
+              </div>
+            `;
+          }
+        }
+
+        if (query && results.length) {
+          html += `<div class="dropdown-section-label">Results</div>`;
+          for (const r of results) {
+            html += `
+              <div class="dropdown-item"
+                data-id="${r.id}"
+                data-label="${escapeAttr(r.label)}">
+                <span class="dropdown-item-label">
+                  ${escapeHtml(r.label)}
+                </span>
+                ${r.description
+                  ? `<span class="dropdown-item-desc">
+                      ${escapeHtml(r.description)}
+                     </span>`
+                  : ""}
+              </div>
+            `;
+          }
+        }
+
+        if (!html) {
+          dropdown.style.display = "none";
+          return;
+        }
+
+        dropdown.innerHTML = html;
+        dropdown.style.display = "block";
+
+        dropdown.querySelectorAll(".dropdown-item").forEach((item) => {
+          item.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            const id    = item.dataset.id;
+            const label = item.dataset.label;
+            document.getElementById("search-input").value = "";
+            document.getElementById("search-clear").style.display = "none";
+            state.searchResults = [];
+            state.searchOpen = false;
+            dropdown.style.display = "none";
+            loadGame({ label, value: id });
+          });
+        });
+      }
+
+      function escapeHtml(s) {
+        return s
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function escapeAttr(s) {
+        return s.replace(/"/g, "&quot;");
+      }
+
       function initSearch() {
-        const input = document.getElementById("search-input");
-        const spinner = document.getElementById("search-spinner");
-        const clearBtn = document.getElementById("search-clear");
-        const btnRandom = document.getElementById("btn-random");
-        
+        const input      = document.getElementById("search-input");
+        const spinner    = document.getElementById("search-spinner");
+        const clearBtn   = document.getElementById("search-clear");
+        const btnRandom  = document.getElementById("btn-random");
+        const btnSubmit  = document.getElementById("btn-submit");
+        const btnRestart = document.getElementById("btn-restart");
+        const bankArea   = document.getElementById("bank-area");
+
         state.history = loadHistory();
-        
+
+        bankArea.addEventListener("dragover", (e) => {
+          if (state.dragging?.from === "timeline") {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = "move";
+            bankArea.classList.add("drag-over");
+          }
+        });
+
+        bankArea.addEventListener("dragleave", (e) => {
+          if (!bankArea.contains(e.relatedTarget)) {
+            bankArea.classList.remove("drag-over");
+          }
+        });
+
+        bankArea.addEventListener("drop", (e) => {
+          e.preventDefault();
+          bankArea.classList.remove("drag-over");
+          if (state.dragging?.from !== "timeline") return;
+          const id = state.dragging.id;
+          const ev = state.timeline.find((t) => t.id === id);
+          if (!ev) return;
+          state.timeline = state.timeline.filter((t) => t.id !== id);
+          state.bank = [...state.bank, ev];
+          state.dragging = null;
+          render();
+        });
+
         input.addEventListener("focus", () => {
           state.searchOpen = true;
           renderDropdown();
         });
-        
+
         input.addEventListener("blur", () => {
           setTimeout(() => {
             state.searchOpen = false;
             document.getElementById("search-dropdown").style.display = "none";
           }, 150);
         });
-        
+
         input.addEventListener("input", () => {
           const q = input.value;
           clearBtn.style.display = q ? "block" : "none";
@@ -1052,7 +1234,7 @@ LIMIT 10
             renderDropdown();
           }, 300);
         });
-        
+
         clearBtn.addEventListener("click", () => {
           input.value = "";
           clearBtn.style.display = "none";
@@ -1061,7 +1243,7 @@ LIMIT 10
           renderDropdown();
           input.focus();
         });
-        
+
         document.addEventListener("click", (e) => {
           const container = document.getElementById("search-container");
           if (!container.contains(e.target)) {
@@ -1069,7 +1251,7 @@ LIMIT 10
             document.getElementById("search-dropdown").style.display = "none";
           }
         });
-        
+
         btnRandom.addEventListener("click", async () => {
           btnRandom.classList.add("loading");
           try {
@@ -1082,12 +1264,32 @@ LIMIT 10
             btnRandom.classList.remove("loading");
           }
         });
-        
+
+        btnSubmit.addEventListener("click", () => {
+          if (state.bank.length > 0) return;
+          state.submitted = true;
+          render();
+        });
+
+        btnRestart.addEventListener("click", () => {
+          state.bank = shuffle([...state.events]);
+          state.timeline = [];
+          state.submitted = false;
+          state.dragging = null;
+          state.dragOverZone = null;
+          render();
+        });
+
+        window.addEventListener("resize", () => {
+          renderBank();
+          requestAnimationFrame(adjustLayout);
+        });
+
         const savedGame = safeGet(KEY_GAME);
         if (savedGame) loadGame(savedGame);
       }
-      
+
       initSearch();
-      </script>
-      </body>
-      </html>
+    </script>
+  </body>
+</html>

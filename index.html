@@ -512,6 +512,7 @@
       flex-direction: column;
       align-items: center;
       gap: 0;
+      padding-top: 100px; /* room for first card's .placeButton.top at top:-90px */
     }
 
     .timeline-label {
@@ -537,8 +538,11 @@
       align-items: center;
       box-sizing: border-box;
       pointer-events: none;
-      margin: 0 auto;
+      margin: 0 auto 90px;  /* bottom margin makes room for the absolutely-positioned placeButton */
     }
+
+    /* Last placed card doesn't need extra bottom margin (no button below it when done) */
+    .placed-card:last-child { margin-bottom: 40px; }
 
     .placed-card .clue-inner {
       padding: 12px 10px;
@@ -638,28 +642,40 @@
       100% { transform: translate(-50%) scale(1); opacity: 1; }
     }
 
-    /* ===== PLACE ZONES ===== */
-    .place-zone {
-      position: relative;
-      width: 360px;
-      max-width: calc(100vw - 20px);
+    /* ===== PLACE BUTTONS (absolutely inside each placed card, matching HAR exactly) ===== */
+    /*
+     * From bundle CSS:
+     *   position:absolute; bottom:-80px; left:50%; transform:translate(-50%);
+     *   width:100%; max-width:360px; height:65px;
+     *   background-image: dashed-SVG; background-color: var(--background-color)
+     *   .top { top:-90px }
+     */
+    .placeButton {
+      position: absolute;
+      bottom: -80px;
+      left: 50%;
+      transform: translate(-50%);
+      width: 100%;
+      max-width: 360px;
       height: 65px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%23B1AEA4FF' stroke-width='4' stroke-dasharray='6%2c 10' stroke-dashoffset='5' stroke-linecap='square'/%3e%3c/svg%3e");
-      background-color: var(--background-color);
       border-radius: 8px;
-      margin: 8px auto;
+      background-color: var(--background-color);
+      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%23B1AEA4FF' stroke-width='4' stroke-dasharray='6%2c 10' stroke-dashoffset='5' stroke-linecap='square'/%3e%3c/svg%3e");
+      pointer-events: all;
       cursor: pointer;
+      z-index: 10;
     }
 
-    .place-zone:hover .place-btn {
-      background-color: var(--button-background-dark);
-      border-color: var(--button-background-dark);
-      color: #fff;
+    /* Top button hangs above first card */
+    .placeButton.top {
+      bottom: auto;
+      top: -90px;
     }
 
+    /* Inner "Place here" pill button */
     .place-btn {
       background-color: #fff;
       border-radius: 30px;
@@ -674,17 +690,24 @@
       pointer-events: none;
     }
 
-    .place-zone.pressing .place-btn {
-      transform: scale(0.92);
-      transition: transform 0.1s;
+    .placeButton:hover .place-btn,
+    .placeButton.pressing .place-btn {
+      background-color: var(--button-background-dark);
+      border-color: var(--button-background-dark);
+      color: #fff;
     }
 
-    .place-zone.drag-over {
+    .placeButton.pressing .place-btn {
+      transform: scale(0.92);
+    }
+
+    /* Drag-over highlight */
+    .placeButton.drag-over {
       background-color: var(--highlight);
       background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%235d72c9' stroke-width='4' stroke-dasharray='6%2c 10' stroke-dashoffset='5' stroke-linecap='square'/%3e%3c/svg%3e");
     }
 
-    .place-zone.drag-over .place-btn {
+    .placeButton.drag-over .place-btn {
       background-color: var(--button-background);
       color: #fff;
     }
@@ -907,7 +930,7 @@
     @media (max-width: 374px) {
       .stack-card, .stack-background { max-width: calc(100vw - 10px); width: calc(100vw - 10px); }
       .placed-card { max-width: calc(100vw - 10px); width: calc(100vw - 10px); }
-      .place-zone { max-width: calc(100vw - 10px); width: calc(100vw - 10px); }
+      .placeButton { max-width: calc(100vw - 10px); width: calc(100vw - 10px); }
       .stack-card img { width: 80px; height: 80px; }
       .placed-card img { width: 55px; height: 55px; }
     }
@@ -1484,37 +1507,34 @@
   function renderTimeline() {
     const el = document.getElementById('timeline');
     const isDone = state.phase === 'done';
-    let html = `<div class="timeline-label">Earlier</div>`;
+    let html = '';
 
-    for (let z = 0; z <= state.timeline.length; z++) {
-      // Place zone (only show during active game)
+    for (let i = 0; i < state.timeline.length; i++) {
+      const ev       = state.timeline[i];
+      const status   = state.placedStatuses[ev.id] ?? '';
+      const isAnchor = ev.id === state.anchorId;
+      const cardCls  = isAnchor ? 'placed-card start' : `placed-card ${status}`;
+
+      html += `<div class="${cardCls}">`;
+
+      // Top placeButton only on first card — zone 0 = insert before everything
+      if (!isDone && i === 0) {
+        html += `<div class="placeButton top" data-zone="0"><div class="place-btn">Place here</div></div>`;
+      }
+
+      html += `<div class="year-outline">&nbsp;</div>
+        <div class="year-badge">${escapeHtml(ev.displayYear)}</div>
+        ${cardInnerHtml(ev, true)}`;
+
+      // Bottom placeButton — zone i+1 = insert after card i
       if (!isDone) {
-        html += `<div class="place-zone" data-zone="${z}">
-          <div class="place-btn">Place here</div>
-        </div>`;
+        html += `<div class="placeButton" data-zone="${i + 1}"><div class="place-btn">Place here</div></div>`;
       }
 
-      // Placed card at this index
-      if (z < state.timeline.length) {
-        const ev     = state.timeline[z];
-        const status = state.placedStatuses[ev.id] ?? '';
-        const isAnchor = ev.id === state.anchorId;
-        const cls = isAnchor
-          ? 'placed-card start'
-          : `placed-card ${status}`;
-
-        html += `<div class="${cls}" style="margin-top:8px;margin-bottom:8px">
-          <div class="year-outline">&nbsp;</div>
-          <div class="year-badge">${escapeHtml(ev.displayYear)}</div>
-          ${cardInnerHtml(ev, true)}
-        </div>`;
-      }
+      html += `</div>`; // .placed-card
     }
 
-    html += `<div class="timeline-label">Later</div>`;
     el.innerHTML = html;
-
-    // Attach click handlers via event delegation (already set up once on init)
   }
 
   // ==================== START GAME ====================
@@ -1730,15 +1750,14 @@
     let active = null; // { pointerId, offsetX, offsetY, currentZone }
 
     function getZoneUnderPoint(x, y) {
-      // Temporarily hide ghost so elementFromPoint can see through it
       ghost.style.display = 'none';
       const el = document.elementFromPoint(x, y);
       ghost.style.display = 'block';
-      return el ? el.closest('.place-zone') : null;
+      return el ? el.closest('.placeButton') : null;
     }
 
     function clearHighlights() {
-      document.querySelectorAll('.place-zone.drag-over').forEach(z => z.classList.remove('drag-over'));
+      document.querySelectorAll('.placeButton.drag-over').forEach(z => z.classList.remove('drag-over'));
     }
 
     function positionGhost(x, y) {
@@ -1800,7 +1819,7 @@
       const zone = active.currentZone;
       active = null;
 
-      if (zone && state.phase === 'game' && !state.isAnimating && state.stack.length) {
+      if (zone && zone.dataset.zone !== undefined && state.phase === 'game' && !state.isAnimating && state.stack.length) {
         const z = parseInt(zone.dataset.zone, 10);
         placeCard(z);
       }
@@ -1813,15 +1832,14 @@
   // ==================== TIMELINE INTERACTION ====================
   function initTimeline() {
     document.getElementById('timeline').addEventListener('click', e => {
-      const zone = e.target.closest('.place-zone');
-      if (!zone || state.phase !== 'game' || state.isAnimating) return;
+      const btn = e.target.closest('.placeButton');
+      if (!btn || state.phase !== 'game' || state.isAnimating) return;
       if (!state.stack.length) return;
 
-      // Press animation
-      zone.classList.add('pressing');
-      setTimeout(() => zone.classList.remove('pressing'), 150);
+      btn.classList.add('pressing');
+      setTimeout(() => btn.classList.remove('pressing'), 150);
 
-      const z = parseInt(zone.dataset.zone, 10);
+      const z = parseInt(btn.dataset.zone, 10);
       placeCard(z);
     });
   }

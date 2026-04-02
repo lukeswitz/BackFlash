@@ -43,6 +43,8 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
+      overflow-y: auto;
+      padding: 20px 0;
     }
 
     #welcome-screen.hidden { display: none; }
@@ -229,13 +231,47 @@
       font-family: var(--frank);
     }
 
-    .topic-display {
-      text-align: center;
-      font-size: 13px;
-      color: #888;
-      padding: 6px 10px 0;
-      min-height: 20px;
+    .topic-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 10px 0;
+      min-height: 28px;
     }
+
+    #topic-display {
+      font-size: 13px;
+      color: #555;
+      font-weight: 600;
+      font-family: var(--frank);
+      text-align: center;
+    }
+
+    #btn-rotate-topic {
+      background: none;
+      border: 1.5px solid var(--dark-background);
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      color: var(--dark-background);
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+      transition: border-color 0.2s, color 0.2s, transform 0.4s;
+      flex-shrink: 0;
+    }
+
+    #btn-rotate-topic:hover {
+      border-color: var(--button-background);
+      color: var(--button-background);
+    }
+
+    #btn-rotate-topic.spinning { transform: rotate(360deg); }
 
     @media (max-width: 374px) {
       .welcome-inner { width: calc(100vw - 16px); }
@@ -384,6 +420,17 @@
       background-color: var(--medium-background);
       flex-shrink: 0;
       border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-symbol {
+      font-size: 36px;
+      font-weight: 700;
+      font-family: var(--chelt);
+      color: var(--dark-background);
+      user-select: none;
     }
 
     .stack-card p {
@@ -530,118 +577,89 @@
     /* ===== PLACED CARDS ===== */
     .placed-card {
       position: relative;
-      width: 350px;
-      max-width: calc(100vw - 20px);
+      width: calc(100vw - 20px);
+      max-width: 360px;
       border: var(--background-color) 4px solid;
       border-radius: 8px;
       display: flex;
       flex-direction: row;
-      align-items: center;
+      align-items: stretch;
       box-sizing: border-box;
       pointer-events: none;
-      margin: 0 auto 90px;  /* bottom margin makes room for the absolutely-positioned placeButton */
+      margin: 0 auto 78px;
     }
 
-    /* Last placed card doesn't need extra bottom margin (no button below it when done) */
     .placed-card:last-child { margin-bottom: 40px; }
 
     .placed-card .clue-inner {
-      padding: 12px 10px;
+      padding: 0;
       display: flex;
       background-color: var(--medium-background);
-      border-radius: 8px;
-      align-items: center;
+      border-radius: 4px;
+      align-items: stretch;
       width: 100%;
+      overflow: hidden;
     }
 
-    .placed-card img {
-      width: 65px;
-      height: 65px;
-      object-fit: cover;
+    /* Year column — colour driven by placement result */
+    .placed-year {
+      min-width: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--frank);
+      font-weight: 700;
+      font-size: 12px;
+      color: #fff;
+      background-color: var(--color-neutral);
       flex-shrink: 0;
+      padding: 10px 6px;
+      text-align: center;
+      white-space: nowrap;
     }
 
-    .placed-card .image-placeholder {
-      width: 65px;
-      min-width: 65px;
-      height: 65px;
-      background-color: var(--medium-background);
-      flex-shrink: 0;
-      border-radius: 2px;
-    }
+    .placed-card.start     .placed-year { background-color: var(--dark-background); }
+    .placed-card.correct   .placed-year { background-color: var(--color-correct); }
+    .placed-card.incorrect .placed-year { background-color: var(--color-incorrect); }
 
     .placed-card p {
       font-family: var(--imperial);
       color: #121212;
-      font-size: 15px;
+      font-size: 13px;
       font-weight: 500;
       line-height: var(--lh);
-      padding: 0 10px;
+      padding: 10px 10px;
       margin: 0;
-      opacity: 0.65;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      opacity: 0.85;
     }
 
-    /* Year badge */
-    .year-badge {
-      position: absolute;
-      left: 50%;
-      transform: translate(-50%);
-      top: -14px;
-      font-weight: 700;
-      font-size: 17px;
-      color: #fff;
-      padding: 3px 6px;
-      border-radius: 14px;
-      background-color: var(--color-neutral);
-      white-space: nowrap;
-      z-index: 5;
+    /* ===== PLACEMENT ANIMATIONS ===== */
+    @keyframes place-correct {
+      0%   { opacity: 0; transform: translateY(8px); }
+      55%  { opacity: 1; transform: none; }
+      72%  { box-shadow: 0 0 0 3px rgba(92,184,135,0.5); }
+      100% { transform: none; box-shadow: none; }
     }
 
-    .year-outline {
-      position: absolute;
-      left: 50%;
-      transform: translate(-50%);
-      top: -17px;
-      font-size: 17px;
-      font-weight: 700;
-      padding: 3px 6px;
-      border-radius: 19px;
-      z-index: 3;
-      color: transparent;
-      border: var(--light-background) solid 5px;
-      background-color: var(--light-background);
-      white-space: nowrap;
-      pointer-events: none;
+    @keyframes place-incorrect {
+      0%   { opacity: 0; transform: translateY(8px); }
+      40%  { opacity: 1; transform: none; }
+      52%  { transform: translateX(-5px); box-shadow: 0 0 0 3px rgba(210,83,83,0.5); }
+      64%  { transform: translateX(5px); }
+      76%  { transform: translateX(-3px); }
+      88%  { transform: translateX(1px); box-shadow: 0 0 0 1px rgba(210,83,83,0.2); }
+      100% { transform: none; box-shadow: none; }
     }
 
-    .placed-card.start .year-badge {
-      background-color: var(--dark-background);
-      border: var(--dark-background) solid 2px;
+    @keyframes vl-correct {
+      0%   { border-color: white; box-shadow: none; }
+      30%  { border-color: var(--color-correct); box-shadow: 0 0 8px rgba(92,184,135,0.5); }
+      100% { border-color: white; box-shadow: none; }
     }
 
-    .placed-card.correct .year-badge {
-      background-color: var(--color-correct);
-      border: var(--color-correct) solid 2px;
-    }
-
-    .placed-card.incorrect .year-badge {
-      background-color: var(--color-incorrect);
-      border: var(--color-incorrect) solid 2px;
-    }
-
-    .year-badge.pop {
-      animation: badge-pop 0.35s ease-out forwards;
-    }
-
-    @keyframes badge-pop {
-      0%   { transform: translate(-50%) scale(0.3); opacity: 0; }
-      60%  { transform: translate(-50%) scale(1.15); opacity: 1; }
-      100% { transform: translate(-50%) scale(1); opacity: 1; }
-    }
+    .placed-card.new-correct   { animation: place-correct   0.5s  ease-out both; }
+    .placed-card.new-incorrect { animation: place-incorrect 0.55s ease-out both; }
+    .vl.correct-flash          { animation: vl-correct 0.65s ease-out forwards; }
 
     /* ===== PLACE BUTTONS (absolutely inside each placed card) ===== */
     .placeButton {
@@ -723,43 +741,95 @@
       min-height: 14px;
     }
 
-    /* ===== WELCOME MODE & SIZE CONTROLS ===== */
-    .mode-row {
+    /* ===== WELCOME SETTINGS CONTROLS ===== */
+    .settings-section {
       margin: 10px 10px 0;
+      border: 1px solid var(--medium-background);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .setting-row {
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: var(--white-background);
     }
-    .mode-row label {
-      font-size: 13px;
-      color: #555;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--frank);
+
+    .setting-row + .setting-row {
+      border-top: 1px solid var(--medium-background);
     }
-    .mode-row input[type="checkbox"] { cursor: pointer; }
-    .size-row {
-      margin: 8px 10px 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .size-row label {
-      font-size: 13px;
-      color: #555;
-      font-family: var(--frank);
-    }
-    .size-row select {
-      font-size: 13px;
-      padding: 4px 8px;
-      border: 1px solid var(--dark-background);
-      border-radius: 6px;
-      background: var(--medium-background);
+
+    .setting-label {
+      font-size: 14px;
       color: #333;
       font-family: var(--frank);
+      font-weight: 500;
+    }
+
+    /* Toggle switch */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
       cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input { display: none; }
+
+    .toggle-track {
+      display: block;
+      width: 40px;
+      height: 22px;
+      background: var(--dark-background);
+      border-radius: 11px;
+      position: relative;
+      transition: background 0.25s;
+    }
+
+    .toggle-switch input:checked + .toggle-track { background: var(--button-background); }
+
+    .toggle-knob {
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.25s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+
+    .toggle-switch input:checked + .toggle-track .toggle-knob { transform: translateX(18px); }
+
+    /* Select wrapper */
+    .select-wrap { position: relative; }
+
+    .select-wrap select {
+      appearance: none;
+      -webkit-appearance: none;
+      font-size: 14px;
+      font-family: var(--frank);
+      font-weight: 600;
+      color: var(--button-background);
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 2px 20px 2px 4px;
+      cursor: pointer;
+    }
+
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--button-background);
+      font-size: 12px;
+      pointer-events: none;
     }
 
     /* ===== RESULTS ===== */
@@ -780,7 +850,15 @@
       border: 2px solid var(--medium-background);
     }
 
-    #results-container.show { display: flex; }
+    @keyframes results-enter {
+      0%   { opacity: 0; transform: scale(0.96) translateY(12px); }
+      100% { opacity: 1; transform: none; }
+    }
+
+    #results-container.show {
+      display: flex;
+      animation: results-enter 0.35s ease-out both;
+    }
 
     #results-score {
       font-family: var(--chelt);
@@ -969,21 +1047,13 @@
       font-weight: 700;
       font-size: 15px;
       display: none;
-      z-index: 500;
+      z-index: 1100;
       border: 2px solid var(--medium-background);
       box-shadow: 0 4px 20px rgba(0,0,0,0.12);
       text-align: center;
       max-width: 300px;
     }
 
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 374px) {
-      .stack-card, .stack-background { max-width: calc(100vw - 10px); width: calc(100vw - 10px); }
-      .placed-card { max-width: calc(100vw - 10px); width: calc(100vw - 10px); }
-      .placeButton { max-width: calc(100vw - 10px); width: calc(100vw - 10px); }
-      .stack-card img { width: 80px; height: 80px; }
-      .placed-card img { width: 55px; height: 55px; }
-    }
   </style>
 </head>
 <body>
@@ -1010,23 +1080,31 @@
       <div id="welcome-dropdown-list"></div>
     </div>
 
-    <div class="topic-display" id="topic-display"></div>
-
-    <div class="mode-row">
-      <label>
-        <input type="checkbox" id="mode-tap-checkbox" />
-        Tap to place (no dragging)
-      </label>
+    <div class="topic-row">
+      <span id="topic-display"></span>
+      <button id="btn-rotate-topic" title="Try a different topic">&#x21BB;</button>
     </div>
-    <div class="size-row">
-      <label for="cards-select">Cards to place:</label>
-      <select id="cards-select">
-        <option value="4">3</option>
-        <option value="6">5</option>
-        <option value="9" selected>8</option>
-        <option value="11">10</option>
-        <option value="13">12</option>
-      </select>
+
+    <div class="settings-section">
+      <div class="setting-row">
+        <span class="setting-label">Tap to place</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="mode-tap-checkbox" />
+          <span class="toggle-track"><span class="toggle-knob"></span></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <span class="setting-label">Cards to place</span>
+        <div class="select-wrap">
+          <select id="cards-select">
+            <option value="4">3</option>
+            <option value="6">5</option>
+            <option value="9" selected>8</option>
+            <option value="11">10</option>
+            <option value="13">12</option>
+          </select>
+        </div>
+      </div>
     </div>
 
     <div class="welcome-btns">
@@ -1122,35 +1200,47 @@
 
   // ==================== SEEDS ====================
   const SEEDS = [
-    { value: 'Q11696',   label: 'U.S. Presidents',        prop: 'P39'  },
-    { value: 'Q901',     label: 'Scientists',              prop: 'P106' },
-    { value: 'Q4964182', label: 'Philosophers',            prop: 'P106' },
-    { value: 'Q36834',   label: 'Composers',               prop: 'P106' },
-    { value: 'Q571',     label: 'Books'                                  },
-    { value: 'Q7725634', label: 'Literary Works'                         },
-    { value: 'Q692',     label: "Shakespeare's Works",    prop: 'P50'  },
-    { value: 'Q23434',   label: "Hemingway's Works",      prop: 'P50'  },
-    { value: 'Q5686',    label: "Dickens's Works",        prop: 'P50'  },
-    { value: 'Q40909',   label: "Virginia Woolf's Works", prop: 'P50'  },
-    { value: 'Q16867',   label: "Poe's Works",            prop: 'P50'  },
-    { value: 'Q3305213', label: 'Paintings'                              },
-    { value: 'Q179700',  label: 'Statues'                                },
-    { value: 'Q11424',   label: 'Films'                                  },
-    { value: 'Q11016',   label: 'Inventions'                             },
-    { value: 'Q839954',  label: 'Archaeological Sites'                   },
-    { value: 'Q44539',   label: 'Temples'                                },
-    { value: 'Q23413',   label: 'Castles'                                },
-    { value: 'Q2977',    label: 'Cathedrals'                             },
-    { value: 'Q12518',   label: 'Fortresses'                             },
-    { value: 'Q12280',   label: 'Bridges'                                },
-    { value: 'Q207694',  label: 'Art Museums'                            },
-    { value: 'Q33506',   label: 'Museums'                                },
-    { value: 'Q3918',    label: 'Universities'                           },
-    { value: 'Q1093829', label: 'U.S. Cities'                            },
-    { value: 'Q46169',   label: 'National Parks'                         },
-    { value: 'Q3624078', label: 'Sovereign States'                       },
-    { value: 'Q178561',  label: 'Battles'                                },
-    { value: 'Q198',     label: 'Wars'                                   },
+    // People
+    { value: 'Q11696',   label: 'U.S. Presidents',          prop: 'P39'  },
+    // { value: 'Q901',     label: 'Scientists',                prop: 'P106' },
+    { value: 'Q4964182', label: 'Philosophers',              prop: 'P106' },
+    // { value: 'Q36834',   label: 'Composers',                 prop: 'P106' },
+    { value: 'Q1028181', label: 'Painters',                  prop: 'P106' },
+    { value: 'Q11631',   label: 'Astronauts',                prop: 'P106' },
+    { value: 'Q11900058',label: 'Explorers',                 prop: 'P106' },
+    // Literature
+    { value: 'Q692',     label: "Shakespeare's Works",       prop: 'P50'  },
+    { value: 'Q23434',   label: "Hemingway's Works",         prop: 'P50'  },
+    { value: 'Q5686',    label: "Dickens's Works",           prop: 'P50'  },
+    { value: 'Q40909',   label: "Virginia Woolf's Works",    prop: 'P50'  },
+    { value: 'Q16867',   label: "Poe's Works",               prop: 'P50'  },
+    { value: 'Q1067',    label: "Tolstoy's Works",           prop: 'P50'  },
+    // Art & Culture
+    { value: 'Q3305213', label: 'Famous Paintings'                        },
+    { value: 'Q179700',  label: 'Famous Statues'                          },
+    { value: 'Q11424',   label: 'Classic Films'                           },
+    { value: 'Q207694',  label: 'Art Museums'                             },
+    // Science & Technology
+    { value: 'Q205375',  label: 'Inventors',                 prop: 'P106' },
+    { value: 'Q2133344', label: 'Space Missions'                          },
+    // War & Conflict
+    { value: 'Q178561',  label: 'Famous Battles'                          },
+    { value: 'Q198',     label: 'Wars'                                    },
+    { value: 'Q188055',  label: 'Famous Sieges'                           },
+    { value: 'Q350604',  label: 'Assassinations/Conflicts'                },
+    { value: 'Q10931',   label: 'Revolutions'                             },
+    // Places & Structures
+    // { value: 'Q839954',  label: 'Archaeological Sites'                    },
+    // { value: 'Q44539',   label: 'Ancient Temples'                         },
+    { value: 'Q23413',   label: 'Famous Castles'                          },
+    // { value: 'Q2977',    label: 'Cathedrals'                              },
+    { value: 'Q57831',   label: 'Fortresses'                              },
+    // { value: 'Q12280',   label: 'Famous Bridges'                          },
+    // { value: 'Q3918',    label: 'Great Universities'                      },
+    { value: 'Q46169',   label: 'National Parks'                          },
+    { value: 'Q3624078', label: 'Nations of the World'                    },
+    { value: 'Q1093829', label: 'U.S. Cities'                             },
+    { value: 'Q33506',   label: 'Great Museums'                           },
   ];
 
   // ==================== STATE ====================
@@ -1206,8 +1296,11 @@
 
   function cleanLabel(s) {
     return s
-      .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)\s*$/g, '')
-      .replace(/\s+\d{4}[–\-]\d{2,4}\s*$/g, '')
+      .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)\s*/g, '')
+      .replace(/\b\d{4}[–\-]\d{2,4}\b/g, '')
+      .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, '')
+      .replace(/\s+\b(of|in|from|the|at|on|by)\s*$/gi, '')
+      .replace(/\s{2,}/g, ' ')
       .trim();
   }
 
@@ -1217,6 +1310,7 @@
       .replace(/\b(in|since|until|before|after|around|circa|c\.|by|on)\s+\d{4}([–\-]\d{2,4})?\b/gi, '')
       .replace(/\b\d{4}[–\-]\d{2,4}\b/g, '')
       .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, '')
+      .replace(/\(\s*[–\-]?\s*\)/g, '')
       .replace(/\s{2,}/g, ' ')
       .replace(/\s+([,.])/g, '$1')
       .replace(/,\s*$/, '')
@@ -1278,17 +1372,19 @@
   }`;
     if (prop) {
       return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-  ?item wdt:${prop} wd:${entityId}; wdt:P18 ?image.
+  ?item wdt:${prop} wd:${entityId}.
   ${dateClause}
   FILTER(YEAR(?date) > 0)
   ${labelClause}
+  OPTIONAL { ?item wdt:P18 ?image. }
 } LIMIT 80`;
     }
     return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-  ?item wdt:P31 wd:${entityId}; wdt:P18 ?image.
+  ?item wdt:P31 wd:${entityId}.
   ${dateClause}
   FILTER(YEAR(?date) > 0)
   ${labelClause}
+  OPTIONAL { ?item wdt:P18 ?image. }
 } LIMIT 80`;
   }
 
@@ -1297,18 +1393,21 @@
     const bindings = json.results.bindings;
     if (!bindings.length) throw new Error('No results for that topic');
 
-    const seen = new Set();
-    const deduped = [];
+    const byId = new Map();
     for (const b of bindings) {
       const id = b.item?.value;
-      if (!id || !b.date?.value || !b.itemLabel?.value || !b.image?.value) continue;
+      if (!id || !b.date?.value || !b.itemLabel?.value) continue;
       const year = parseYear(b.date.value);
-      if (year === null || seen.has(id)) continue;
-      seen.add(id);
-      deduped.push({ ...b, _year: year });
+      if (year === null) continue;
+      const existing = byId.get(id);
+      // Keep this row if: no entry yet, OR this row adds an image the existing lacks
+      if (!existing || (!existing.image?.value && b.image?.value)) {
+        byId.set(id, { ...b, _year: year });
+      }
     }
+    const deduped = Array.from(byId.values());
 
-    if (deduped.length < GAME_SIZE) throw new Error('Not enough dated items with images for this topic');
+    if (deduped.length < GAME_SIZE) throw new Error('Not enough dated items for this topic');
 
     const selected = shuffle(deduped).slice(0, GAME_SIZE);
     selected.sort((a, b) => a._year - b._year);
@@ -1322,7 +1421,8 @@
         year,
         displayYear: toDisplayYear(year),
         description: desc ? `<b>${escapeHtml(label)}</b> — ${escapeHtml(desc)}` : `<b>${escapeHtml(label)}</b>`,
-        image: fixImageUrl(b.image.value),
+        image: b.image?.value ? fixImageUrl(b.image.value) : null,
+        symbol: label.charAt(0).toUpperCase(),
       };
     });
   }
@@ -1489,8 +1589,19 @@
     setTimeout(() => {
       saveState();
       renderProgress();
-      renderTimeline();
+      renderTimeline(card.id, correct ? 'correct' : 'incorrect');
       renderStack();
+
+      if (correct) {
+        const vl = document.querySelector('.vl');
+        if (vl) {
+          vl.classList.remove('correct-flash');
+          // Force reflow so re-adding the class retriggers the animation
+          void vl.offsetWidth;
+          vl.classList.add('correct-flash');
+          vl.addEventListener('animationend', () => vl.classList.remove('correct-flash'), { once: true });
+        }
+      }
 
       if (state.stack.length === 0) {
         finishGame();
@@ -1517,8 +1628,11 @@
       `${state.correctCount} of ${total}`;
     document.getElementById('results-container').classList.add('show');
 
-    // Hide place zones (re-render without them)
+    // Re-render without place zones, then scroll to results
     renderTimeline();
+    setTimeout(() => {
+      document.getElementById('results-container').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 400);
   }
 
   // ==================== RENDERING ====================
@@ -1566,16 +1680,21 @@
   }
 
   function cardInnerHtml(ev, isPlaced) {
-    const imgStyle = isPlaced ? 'style="width:65px;height:65px"' : '';
-    return `<div class="clue-inner">
-      <img src="${ev.image}" alt="" loading="lazy" ${imgStyle}
-        onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
-      <div class="${isPlaced ? 'image-placeholder' : 'image-placeholder'}" style="display:none"></div>
-      <p>${ev.description}</p>
-    </div>`;
+    if (isPlaced) {
+      return `<div class="clue-inner">
+        <div class="placed-year">${escapeHtml(ev.displayYear)}</div>
+        <p>${ev.description}</p>
+      </div>`;
+    }
+    const mediaHtml = ev.image
+      ? `<img src="${ev.image}" alt="" loading="lazy"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+         <div class="image-placeholder" style="display:none"><span class="card-symbol">${escapeHtml(ev.symbol)}</span></div>`
+      : `<div class="image-placeholder" style="display:flex"><span class="card-symbol">${escapeHtml(ev.symbol)}</span></div>`;
+    return `<div class="clue-inner">${mediaHtml}<p>${ev.description}</p></div>`;
   }
 
-  function renderTimeline() {
+  function renderTimeline(newCardId = null, newCardStatus = null) {
     const el = document.getElementById('timeline');
     const isDone = state.phase === 'done';
     let html = '';
@@ -1585,17 +1704,16 @@
       const status   = state.placedStatuses[ev.id] ?? '';
       const isAnchor = ev.id === state.anchorId;
       const cardCls  = isAnchor ? 'placed-card start' : `placed-card ${status}`;
+      const newCls   = ev.id === newCardId ? ` new-${newCardStatus}` : '';
 
-      html += `<div class="${cardCls}">`;
+      html += `<div class="${cardCls}${newCls}" data-id="${ev.id}">`;
 
       // Top placeButton only on first card — zone 0 = insert before everything
       if (!isDone && i === 0) {
         html += `<div class="placeButton top" data-zone="0"><div class="place-btn">Place here</div></div>`;
       }
 
-      html += `<div class="year-outline">&nbsp;</div>
-        <div class="year-badge">${escapeHtml(ev.displayYear)}</div>
-        ${cardInnerHtml(ev, true)}`;
+      html += cardInnerHtml(ev, true);
 
       // Bottom placeButton — zone i+1 = insert after card i
       if (!isDone) {
@@ -1692,6 +1810,11 @@
     const dropList = document.getElementById('welcome-dropdown-list');
     const topicDisplay = document.getElementById('topic-display');
 
+    // Purge stale deck/spent entries whose QIDs are no longer in SEEDS
+    const validValues = new Set(SEEDS.map(s => s.value));
+    safeSet(KEY_DECK,  (safeGet(KEY_DECK)  ?? []).filter(g => validValues.has(g.value)));
+    safeSet(KEY_SPENT, (safeGet(KEY_SPENT) ?? []).filter(g => validValues.has(g.value)));
+
     // Load persisted mode & size
     const savedMode = safeGet(KEY_MODE);
     if (savedMode === 'tap') tapMode = true;
@@ -1735,7 +1858,21 @@
       }
     });
 
-    // Search input
+    // Rotate topic button
+    const rotateBtn = document.getElementById('btn-rotate-topic');
+    if (rotateBtn) {
+      rotateBtn.addEventListener('click', async () => {
+        rotateBtn.classList.add('spinning');
+        setTimeout(() => rotateBtn.classList.remove('spinning'), 400);
+        const topic = await nextTopic();
+        if (topic) {
+          state.pendingGame = topic;
+          topicDisplay.textContent = topic.label;
+        }
+      });
+    }
+
+    // Search input — SEEDS autocomplete immediately, Wikidata fills in extras
     input.addEventListener('input', () => {
       const q = input.value.trim();
       if (searchDebounce) clearTimeout(searchDebounce);
@@ -1745,12 +1882,22 @@
         if (state.pendingGame) topicDisplay.textContent = state.pendingGame.label;
         return;
       }
+      const ql = q.toLowerCase();
+      const seedMatches = SEEDS
+        .filter(s => s.label.toLowerCase().includes(ql))
+        .map(s => ({ id: s.value, label: s.label, description: '' }));
+      state.searchResults = seedMatches;
+      renderWelcomeDropdown();
+
       spinner.style.display = 'block';
       searchDebounce = setTimeout(async () => {
         try {
-          state.searchResults = await searchEntities(q);
+          const wiki = await searchEntities(q);
+          const seedIds = new Set(seedMatches.map(r => r.id));
+          const extras = wiki.filter(r => !seedIds.has(r.id));
+          state.searchResults = [...seedMatches, ...extras];
         } catch {
-          state.searchResults = [];
+          // keep seed results only
         }
         spinner.style.display = 'none';
         renderWelcomeDropdown();
@@ -1889,10 +2036,10 @@
       gameEl.classList.add('is-dragging');
 
       const ev = state.stack[state.stack.length - 1];
-      ghost.innerHTML = `<div class="clue-inner">
-        <img src="${ev.image}" alt="" loading="lazy" onerror="this.style.display='none'" />
-        <p>${ev.description}</p>
-      </div>`;
+      const ghostMedia = ev.image
+        ? `<img src="${ev.image}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="image-placeholder" style="display:none"><span class="card-symbol">${escapeHtml(ev.symbol)}</span></div>`
+        : `<div class="image-placeholder" style="display:flex"><span class="card-symbol">${escapeHtml(ev.symbol)}</span></div>`;
+      ghost.innerHTML = `<div class="clue-inner">${ghostMedia}<p>${ev.description}</p></div>`;
       positionGhost(e.clientX, e.clientY);
       ghost.style.display = 'block';
       card.classList.add('dragging');

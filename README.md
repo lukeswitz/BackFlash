@@ -12,27 +12,26 @@ _A history quiz game. Order the items chronologicaly_
 Play now using any browser [here](https://lukeswitz.github.io/BackFlash/) 
 
 
-
 ## How to play
 
-1. Hit **New Game** and choose a difficulty (4, 7, or 11 events)
-2. Cards appear in a bank at the top — each one shows an image and a description
-3. Drag each card into the timeline in the correct order, earliest to latest
-4. You earn more points for placing cards early when there are fewer slots to choose from
-5. Once all cards are placed, your score and results are revealed
-
-**Experimental:** You can also search for any topic — countries, people, films, battles, paintings, and more.
+1. Search for a topic or hit **Start the quiz** to get a random one
+2. One anchor event is pre-placed on the timeline to get you started
+3. A card appears at the top — drag it (or tap **Place here**) to position it in the timeline
+4. Placed cards condense to a compact strip so the timeline stays readable as it grows
+5. Correct placements pulse green; incorrect ones shake red
+6. Once all cards are placed, the page scrolls to your results
 
 ## Features
 
-- Dozens of built-in topics: U.S. Presidents, authors works, ancient temples, famous battles, and more
-- Search any Wikidata topic to build a custom game
-- Single card or all at once view toggle
-- Saves your progress if you close the tab mid-game
+- Dozens of built-in topics: U.S. Presidents, authors' works, famous battles, and more
+- Search any topic to build a custom game
+- Drag mode or tap-to-place mode (toggle on the welcome screen, saved across sessions)
+- Choose how many cards to place: 3, 5, 8, 10, or 12
+- Saves progress if you close mid-game; resume or start over on the welcome screen
 
 ## Tech
 
-A single HTML file. No frameworks, no build step, no backend. All data comes from [Wikidata](https://www.wikidata.org/) — open, freely licensed, and community maintained.
+A single HTML file. No frameworks, no build step, no backend. All data comes from [Wikidata](https://www.wikidata.org/) — open, freely licensed, and community maintained. Built for mobile.
 
 ## Run it locally
 

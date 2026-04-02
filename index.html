@@ -4,8 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex,nofollow" />
-    <title>Flashback</title>
-    <link href="https://typeface.nytimes.com/css/zam5nzz.css" rel="stylesheet" />
+    <title>BackFlash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
     <style>
       *, *::before, *::after { box-sizing: border-box; }
 
@@ -14,7 +16,7 @@
         padding: 0;
         background: #f7f7f5;
         color: #333;
-        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        font-family: "Inter", arial, helvetica, sans-serif;
         min-height: 100%;
       }
 
@@ -70,7 +72,7 @@
         outline: none;
         padding: 9px 0;
         font-size: 14px;
-        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        font-family: "Inter", arial, helvetica, sans-serif;
         background: transparent;
         color: #333;
         min-width: 0;
@@ -161,7 +163,7 @@
         padding: 9px 16px;
         font-size: 13px;
         font-weight: 700;
-        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        font-family: "Inter", arial, helvetica, sans-serif;
         cursor: pointer;
         white-space: nowrap;
         transition: background 0.15s;
@@ -189,7 +191,7 @@
         padding: 8px 12px;
         font-size: 12px;
         font-weight: 700;
-        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        font-family: "Inter", arial, helvetica, sans-serif;
         color: #888;
         cursor: pointer;
         white-space: nowrap;
@@ -209,7 +211,7 @@
         padding: 8px 16px 2px;
         font-size: 12px;
         font-weight: 700;
-        font-family: "nyt-franklin", arial, sans-serif;
+        font-family: "Inter", arial, sans-serif;
         width: 100%;
       }
 
@@ -239,7 +241,7 @@
         font-size: 11px;
         font-weight: 700;
         color: #aaa;
-        font-family: "nyt-franklin", arial, sans-serif;
+        font-family: "Inter", arial, sans-serif;
         white-space: nowrap;
         flex-shrink: 0;
       }
@@ -308,7 +310,7 @@
         font-size: 12px;
         font-weight: 700;
         color: #aaa;
-        font-family: "nyt-franklin", arial, sans-serif;
+        font-family: "Inter", arial, sans-serif;
         white-space: nowrap;
         text-align: center;
         padding: 2px 0 4px;
@@ -385,7 +387,7 @@
       .bank-card .card-desc {
         padding: 6px 7px;
         font-size: 11px;
-        font-family: "nyt-imperial", georgia, serif;
+        font-family: "Lora", georgia, serif;
         line-height: 1.3;
         user-select: none;
         cursor: grab;
@@ -466,7 +468,7 @@
       .tl-card .card-desc {
         flex: 1;
         font-size: 13px;
-        font-family: "nyt-imperial", georgia, serif;
+        font-family: "Lora", georgia, serif;
         line-height: 1.35;
         min-width: 0;
         user-select: none;
@@ -479,7 +481,7 @@
         font-size: 13px;
         font-weight: 700;
         flex-shrink: 0;
-        font-family: "nyt-franklin", arial, sans-serif;
+        font-family: "Inter", arial, sans-serif;
         background: #e8e6de;
         color: #666;
       }
@@ -511,7 +513,7 @@
       #results-text {
         font-size: 14px;
         color: #555;
-        font-family: "nyt-franklin", arial, sans-serif;
+        font-family: "Inter", arial, sans-serif;
       }
 
       #btn-submit {
@@ -522,7 +524,7 @@
         padding: 10px 36px;
         font-size: 14px;
         font-weight: 700;
-        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        font-family: "Inter", arial, helvetica, sans-serif;
         cursor: pointer;
         transition: background 0.15s;
       }
@@ -537,7 +539,7 @@
         padding: 9px 24px;
         font-size: 14px;
         font-weight: 700;
-        font-family: "nyt-franklin", arial, helvetica, sans-serif;
+        font-family: "Inter", arial, helvetica, sans-serif;
         cursor: pointer;
         display: none;
         transition: background 0.15s, color 0.15s;
@@ -595,7 +597,7 @@
       #drag-ghost .card-desc {
         padding: 6px 7px;
         font-size: 11px;
-        font-family: "nyt-imperial", georgia, serif;
+        font-family: "Lora", georgia, serif;
         line-height: 1.3;
         display: -webkit-box;
         -webkit-line-clamp: 2;
@@ -611,7 +613,7 @@
       }
 
       #empty-state h2 {
-        font-family: "nyt-imperial", georgia, serif;
+        font-family: "Lora", georgia, serif;
         font-size: 26px;
         font-weight: 700;
         color: #222;
@@ -623,6 +625,78 @@
         color: #888;
         margin: 0;
         line-height: 1.6;
+      }
+
+      /* ── Difficulty modal ── */
+      #difficulty-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        z-index: 500;
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #difficulty-inner {
+        background: #fff;
+        border-radius: 14px;
+        padding: 28px 28px 24px;
+        max-width: 320px;
+        width: calc(100vw - 40px);
+        box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+      }
+
+      #difficulty-inner h3 {
+        font-family: "Inter", arial, sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #999;
+        margin: 0 0 16px;
+        text-align: center;
+      }
+
+      #difficulty-options {
+        display: flex;
+        gap: 8px;
+      }
+
+      .diff-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        padding: 16px 8px;
+        border: 1.5px solid #e2e0d6;
+        border-radius: 10px;
+        background: #fff;
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+        font-family: "Inter", arial, sans-serif;
+      }
+
+      .diff-btn:hover { border-color: #333; background: #f7f7f5; }
+
+      .diff-btn.selected {
+        border-color: #333;
+        background: #333;
+      }
+
+      .diff-btn.selected .diff-label,
+      .diff-btn.selected .diff-count { color: #fff; }
+
+      .diff-label {
+        font-size: 14px;
+        font-weight: 700;
+        color: #222;
+      }
+
+      .diff-count {
+        font-size: 11px;
+        color: #888;
       }
 
       @media (max-width: 480px) {
@@ -696,8 +770,8 @@
 
     <div id="page-content">
       <div id="empty-state">
-        <h2>Flashback</h2>
-        <p>Drag the cards into chronological order.<br/>Hit Random to start, or search any topic.</p>
+        <h2>BackFlash</h2>
+        <p>Drag the cards into chronological order.<br/>Hit Random to start, or search for a topic.</p>
       </div>
       <div id="timeline-wrap">
         <div id="timeline"></div>
@@ -712,10 +786,30 @@
 
     <div id="message"></div>
 
+    <div id="difficulty-modal">
+      <div id="difficulty-inner">
+        <h3>How many events?</h3>
+        <div id="difficulty-options">
+          <button class="diff-btn" data-diff="easy">
+            <span class="diff-label">Easy</span>
+            <span class="diff-count">4 events</span>
+          </button>
+          <button class="diff-btn" data-diff="medium">
+            <span class="diff-label">Medium</span>
+            <span class="diff-count">7 events</span>
+          </button>
+          <button class="diff-btn" data-diff="hard">
+            <span class="diff-label">Hard</span>
+            <span class="diff-count">11 events</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
       const SPARQL_ENDPOINT = "https://query.wikidata.org/sparql";
       const WIKIDATA_API    = "https://www.wikidata.org/w/api.php";
-      const UA              = "FlashbackQuiz/1.0 (https://localhost)";
+      const UA              = "BackFlashQuiz/1.0 (github.com/flashback-quiz; contact via repo)";
 
       async function sparqlFetch(sparql, retries = 2) {
         const url =
@@ -746,57 +840,70 @@
         }
       }
 
+      // Seeds: items must have P18 (image) + a date property to be playable.
+      // Removed: non-English-heavy categories (monasteries, orthodox churches,
+      // fortifications, ports, walls, railway stations, geographic locations,
+      // businesses, hospitals, houses, restaurants, cultural centers, short
+      // stories, concerts, Dostoyevsky/Tolstoy works, lighthouses).
       const SEEDS = [
+        // Film & TV
         { value: "Q11424",   label: "Films" },
-        { value: "Q482994",  label: "Music Albums" },
-        { value: "Q3305213", label: "Paintings" },
-        { value: "Q12280",   label: "Bridges" },
-        { value: "Q839954",  label: "Archaeological Sites" },
-        { value: "Q207694",  label: "Art Museums" },
-        { value: "Q1248784", label: "Airports" },
+        { value: "Q202866",  label: "Animated Films" },
         { value: "Q5398426", label: "Television Series" },
-        { value: "Q2221906", label: "Geographic Locations" },
-        { value: "Q4830453", label: "Businesses" },
+
+        // Music
+        { value: "Q482994",  label: "Music Albums" },
+        { value: "Q215380",  label: "Music Bands" },
         { value: "Q1344",    label: "Operas" },
-        { value: "Q1093829", label: "U.S. Cities" },
-        { value: "Q39715",   label: "Lighthouses" },
-        { value: "Q16917",   label: "Hospitals" },
-        { value: "Q23413",   label: "Castles" },
-        { value: "Q44613",   label: "Monasteries" },
-        { value: "Q33506",   label: "Museums" },
-        { value: "Q3947",    label: "Houses" },
-        { value: "Q571",     label: "Books" },
-        { value: "Q11707",   label: "Restaurants" },
-        { value: "Q179700",  label: "Statues" },
-        { value: "Q178561",  label: "Battles" },
-        { value: "Q198",     label: "Wars" },
-        { value: "Q57821",   label: "Fortifications" },
-        { value: "Q2977",    label: "Cathedrals" },
-        { value: "Q42948",   label: "Walls" },
-        { value: "Q16560",   label: "Palaces" },
-        { value: "Q7725634", label: "Literary Works" },
+
+        // Literature
         { value: "Q8261",    label: "Novels" },
-        { value: "Q44782",   label: "Ports" },
-        { value: "Q55488",   label: "Railway Stations" },
-        { value: "Q49084",   label: "Short Stories" },
-        { value: "Q1076486", label: "Sports Venues" },
-        { value: "Q46169",   label: "National Parks" },
-        { value: "Q182832",  label: "Concerts" },
-        { value: "Q1329623", label: "Cultural Centers" },
-        { value: "Q2031836", label: "Orthodox Churches" },
+        { value: "Q571",     label: "Books" },
+        { value: "Q7725634", label: "Literary Works" },
         { value: "Q692",     label: "Shakespeare's Works",    prop: "P50" },
         { value: "Q23434",   label: "Hemingway's Works",      prop: "P50" },
         { value: "Q5686",    label: "Dickens's Works",        prop: "P50" },
         { value: "Q40909",   label: "Virginia Woolf's Works", prop: "P50" },
-        { value: "Q991",     label: "Dostoyevsky's Works",    prop: "P50" },
-        { value: "Q7243",    label: "Tolstoy's Works",        prop: "P50" },
+
+        // Visual Arts
+        { value: "Q3305213", label: "Paintings" },
+
+        // Technology & Invention
+        { value: "Q11016",   label: "Inventions" },
+        { value: "Q7889",    label: "Video Games" },
+        { value: "Q40218",   label: "Spacecraft" },
+
+        // People (sorted by birth year)
+        { value: "Q11696",   label: "U.S. Presidents",  prop: "P39"  },
+        { value: "Q901",     label: "Scientists",        prop: "P106" },
+
+        // Places & Structures
+        { value: "Q12280",   label: "Bridges" },
+        { value: "Q839954",  label: "Archaeological Sites" },
+        { value: "Q207694",  label: "Art Museums" },
+        { value: "Q1248784", label: "Airports" },
+        { value: "Q1093829", label: "U.S. Cities" },
+        { value: "Q23413",   label: "Castles" },
+        { value: "Q33506",   label: "Museums" },
+        { value: "Q179700",  label: "Statues" },
+        { value: "Q2977",    label: "Cathedrals" },
+        { value: "Q16560",   label: "Palaces" },
+        { value: "Q1076486", label: "Sports Venues" },
+        { value: "Q46169",   label: "National Parks" },
+
+        // History
+        { value: "Q178561",  label: "Battles" },
+        { value: "Q198",     label: "Wars" },
       ];
 
-      const KEY_HISTORY = "fbq_history";
-      const KEY_GAME    = "fbq_game";
-      const KEY_DECK    = "fbq_deck";
-      const KEY_SPENT   = "fbq_spent";
-      const KEY_STATE   = "fbq_state";
+      const KEY_HISTORY    = "fbq_history";
+      const KEY_GAME       = "fbq_game";
+      const KEY_DECK       = "fbq_deck";
+      const KEY_SPENT      = "fbq_spent";
+      const KEY_STATE      = "fbq_state";
+      const KEY_DIFFICULTY = "fbq_difficulty";
+
+      const DIFFICULTY_COUNTS = { easy: 4, medium: 7, hard: 11 };
 
       const state = {
         game: null,
@@ -814,6 +921,7 @@
         potentialPoints: {},
         cardOrder: [],
         score: 0,
+        difficulty: "medium",
       };
 
       function safeGet(key) {
@@ -1016,7 +1124,8 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
   ${dateClause}
   FILTER(YEAR(?date) > 0)
   ${label}
-} LIMIT 60`;
+  FILTER(LANG(?itemLabel) = "en")
+} LIMIT 80`;
         }
         return `
 SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
@@ -1025,7 +1134,8 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
   ${dateClause}
   FILTER(YEAR(?date) > 0)
   ${label}
-} LIMIT 60`;
+  FILTER(LANG(?itemLabel) = "en")
+} LIMIT 80`;
       }
 
       async function fetchGameEvents(entityId, prop = null) {
@@ -1044,9 +1154,10 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           deduped.push({ ...b, _year: year });
         }
 
-        if (deduped.length < 2) throw new Error("Not enough dated items with images");
+        const count = DIFFICULTY_COUNTS[state.difficulty] ?? 7;
+        if (deduped.length < count) throw new Error("Not enough dated items with images");
 
-        const selected = shuffle(deduped).slice(0, 8);
+        const selected = shuffle(deduped).slice(0, count);
         selected.sort((a, b) => a._year - b._year);
 
         return selected.map((b, i) => {
@@ -1391,7 +1502,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         dropdown.style.display = "block";
 
         dropdown.querySelectorAll(".dropdown-item").forEach((item) => {
-          item.addEventListener("mousedown", async (e) => {
+          item.addEventListener("mousedown", (e) => {
             e.preventDefault();
             const id    = item.dataset.id;
             const label = item.dataset.label;
@@ -1401,20 +1512,22 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             state.searchOpen    = false;
             dropdown.style.display = "none";
 
-            const knownSeed = SEEDS.find((s) => s.value === id);
-            if (knownSeed) {
-              loadGame(knownSeed);
-              return;
-            }
+            showDifficultyModal(async () => {
+              const knownSeed = SEEDS.find((s) => s.value === id);
+              if (knownSeed) {
+                loadGame(knownSeed);
+                return;
+              }
 
-            setMessage(`Resolving "${label}"…`);
-            const resolved = await resolveToPlayableClass(id);
-            setMessage("");
-            if (resolved) {
-              loadGame({ label: resolved.label, value: resolved.value });
-            } else {
-              loadGame({ label, value: id });
-            }
+              setMessage(`Resolving "${label}"…`);
+              const resolved = await resolveToPlayableClass(id);
+              setMessage("");
+              if (resolved) {
+                loadGame({ label: resolved.label, value: resolved.value });
+              } else {
+                loadGame({ label, value: id });
+              }
+            });
           });
         });
       }
@@ -1537,6 +1650,37 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         });
       }
 
+      function showDifficultyModal(onConfirm) {
+        const modal = document.getElementById("difficulty-modal");
+        modal.style.display = "flex";
+
+        modal.querySelectorAll(".diff-btn").forEach((btn) => {
+          btn.classList.toggle("selected", btn.dataset.diff === state.difficulty);
+          btn.onclick = () => {
+            state.difficulty = btn.dataset.diff;
+            safeSet(KEY_DIFFICULTY, state.difficulty);
+            modal.style.display = "none";
+            onConfirm();
+          };
+        });
+
+        function onBackdrop(e) {
+          if (e.target === modal) {
+            modal.style.display = "none";
+            modal.removeEventListener("click", onBackdrop);
+          }
+        }
+        modal.addEventListener("click", onBackdrop);
+
+        function onEscape(e) {
+          if (e.key === "Escape") {
+            modal.style.display = "none";
+            document.removeEventListener("keydown", onEscape);
+          }
+        }
+        document.addEventListener("keydown", onEscape);
+      }
+
       function initSearch() {
         const input      = document.getElementById("search-input");
         const spinner    = document.getElementById("search-spinner");
@@ -1547,6 +1691,11 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
 
         state.history = loadHistory();
         btnMode.classList.toggle("active", state.oneAtATime);
+
+        const savedDiff = safeGet(KEY_DIFFICULTY);
+        if (savedDiff && DIFFICULTY_COUNTS[savedDiff]) {
+          state.difficulty = savedDiff;
+        }
 
         input.addEventListener("focus", () => {
           state.searchOpen = true;
@@ -1598,18 +1747,20 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           }
         });
 
-        btnRandom.addEventListener("click", async () => {
-          btnRandom.classList.add("loading");
-          try {
-            const game = await nextTopic();
-            if (!game) throw new Error("No topics available");
-            markSpent(game);
-            await loadGame(game);
-          } catch (err) {
-            setMessage(`Random failed: ${err.message}`);
-          } finally {
-            btnRandom.classList.remove("loading");
-          }
+        btnRandom.addEventListener("click", () => {
+          showDifficultyModal(async () => {
+            btnRandom.classList.add("loading");
+            try {
+              const game = await nextTopic();
+              if (!game) throw new Error("No topics available");
+              markSpent(game);
+              await loadGame(game);
+            } catch (err) {
+              setMessage(`Random failed: ${err.message}`);
+            } finally {
+              btnRandom.classList.remove("loading");
+            }
+          });
         });
 
         btnRestart.addEventListener("click", () => {

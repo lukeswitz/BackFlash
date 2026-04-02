@@ -1,1879 +1,1892 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="noindex,nofollow" />
-    <title>BackFlash</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
-    <style>
-      *, *::before, *::after { box-sizing: border-box; }
-
-      html, body {
-        margin: 0;
-        padding: 0;
-        background: #f7f7f5;
-        color: #333;
-        font-family: "Inter", arial, helvetica, sans-serif;
-        min-height: 100%;
-      }
-
-      #top-bar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        z-index: 200;
-        background: #fff;
-        border-bottom: 1px solid #e2e0d6;
-      }
-
-      #nav-inner {
-        max-width: 600px;
-        margin: 0 auto;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 16px;
-      }
-
-      #search-container {
-        position: relative;
-        flex: 1;
-        min-width: 0;
-      }
-
-      #search-input-wrap {
-        display: flex;
-        align-items: center;
-        background: #f7f7f5;
-        border: 1.5px solid #d8d6cc;
-        border-radius: 8px;
-        padding: 0 10px;
-        transition: border-color 0.15s;
-      }
-
-      #search-input-wrap:focus-within {
-        border-color: #333;
-        background: #fff;
-      }
-
-      #search-icon {
-        color: #aaa;
-        font-size: 14px;
-        margin-right: 7px;
-        flex-shrink: 0;
-      }
-
-      #search-input {
-        flex: 1;
-        border: none;
-        outline: none;
-        padding: 9px 0;
-        font-size: 14px;
-        font-family: "Inter", arial, helvetica, sans-serif;
-        background: transparent;
-        color: #333;
-        min-width: 0;
-      }
-
-      #search-input::placeholder { color: #aaa; }
-
-      #search-clear {
-        cursor: pointer;
-        color: #aaa;
-        font-size: 18px;
-        line-height: 1;
-        padding: 0 0 0 6px;
-        display: none;
-      }
-
-      #search-clear:hover { color: #333; }
-
-      #search-spinner {
-        width: 13px;
-        height: 13px;
-        border: 2px solid #e2e0d6;
-        border-top-color: #333;
-        border-radius: 50%;
-        animation: spin 0.6s linear infinite;
-        display: none;
-        margin-left: 6px;
-      }
-
-      @keyframes spin { to { transform: rotate(360deg); } }
-
-      #search-dropdown {
-        position: absolute;
-        top: calc(100% + 6px);
-        left: 0;
-        width: 100%;
-        background: #fff;
-        border: 1px solid #e2e0d6;
-        border-radius: 10px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.10);
-        max-height: 300px;
-        overflow-y: auto;
-        display: none;
-        z-index: 400;
-      }
-
-      .dropdown-section-label {
-        padding: 8px 14px 3px;
-        font-size: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.07em;
-        color: #aaa;
-      }
-
-      .dropdown-item {
-        padding: 10px 14px;
-        cursor: pointer;
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-      }
-
-      .dropdown-item:hover { background: #f7f7f5; }
-
-      .dropdown-item-label {
-        font-size: 14px;
-        color: #222;
-        font-weight: 600;
-      }
-
-      .dropdown-item-desc {
-        font-size: 11px;
-        color: #999;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      #btn-random {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        background: #333;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 9px 16px;
-        font-size: 13px;
-        font-weight: 700;
-        font-family: "Inter", arial, helvetica, sans-serif;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: background 0.15s;
-        flex-shrink: 0;
-      }
-
-      #btn-random:hover { background: #111; }
-      #btn-random.loading { background: #999; pointer-events: none; }
-
-      #btn-random svg {
-        width: 13px;
-        height: 13px;
-        fill: currentColor;
-      }
-
-      #btn-random.loading svg { animation: spin 0.7s linear infinite; }
-
-      #btn-mode {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        background: transparent;
-        border: 1.5px solid #d8d6cc;
-        border-radius: 8px;
-        padding: 8px 12px;
-        font-size: 12px;
-        font-weight: 700;
-        font-family: "Inter", arial, helvetica, sans-serif;
-        color: #888;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: all 0.15s;
-        flex-shrink: 0;
-      }
-
-      #btn-mode:hover { border-color: #333; color: #333; }
-      #btn-mode.active { border-color: #333; color: #333; background: #f0f0ec; }
-      #btn-mode svg { width: 12px; height: 12px; fill: currentColor; }
-
-      #progress-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        justify-content: center;
-        padding: 8px 16px 2px;
-        font-size: 12px;
-        font-weight: 700;
-        font-family: "Inter", arial, sans-serif;
-        width: 100%;
-      }
-
-      .progress-count { color: #666; white-space: nowrap; }
-      .progress-score { color: #333; white-space: nowrap; }
-
-      .progress-dots { display: flex; gap: 4px; align-items: center; }
-
-      .prog-dot {
-        width: 24px;
-        height: 8px;
-        border-radius: 4px;
-        flex-shrink: 0;
-        transition: background 0.2s, width 0.15s;
-      }
-
-      .prog-dot.correct   { background: #4caf78; }
-      .prog-dot.incorrect { background: #d04f4f; }
-      .prog-dot.current   { background: #5b8dd9; width: 32px; }
-      .prog-dot.remaining { background: #d8d6cc; }
-
-      .bank-card .card-pts { display: none; }
-
-      .bank-card.single .card-pts {
-        display: block;
-        align-self: flex-end;
-        padding: 8px 10px;
-        font-size: 11px;
-        font-weight: 700;
-        color: #aaa;
-        font-family: "Inter", arial, sans-serif;
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
-
-
-      #bank-area {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background: #fff;
-        border-bottom: 1px solid #e2e0d6;
-        z-index: 100;
-        padding: 10px 0 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        transition: background 0.15s;
-      }
-      
-
-      #bank-area.drag-over { background: #f7f7f5; }
-
-      #bank-scroll {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        padding: 0 16px 8px;
-        width: 100%;
-        -webkit-overflow-scrolling: touch;
-        justify-content: center;
-        align-items: flex-start;
-      }
-
-      #bank-scroll::-webkit-scrollbar { width: 4px; }
-      #bank-scroll::-webkit-scrollbar-thumb { background: #d8d6cc; border-radius: 4px; }
-
-      #bank-scroll.single-mode {
-        flex-direction: column;
-        align-items: center;
-        flex-wrap: nowrap;
-        gap: 10px;
-      }
-
-      #bank-empty-hint {
-        display: flex;
-        align-items: center;
-        color: #aaa;
-        font-size: 13px;
-        font-style: italic;
-        padding: 0 16px;
-      }
-
-      #bank-counter {
-        font-size: 12px;
-        font-weight: 700;
-        color: #aaa;
-        font-family: "Inter", arial, sans-serif;
-        white-space: nowrap;
-        text-align: center;
-        padding: 2px 0 4px;
-      }
-
-      .bank-card {
-        flex: 0 0 auto;
-        width: 100px;
-        background: #fff;
-        border: 1.5px solid #e2e0d6;
-        border-radius: 8px;
-        cursor: grab;
-        user-select: none;
-        transition: box-shadow 0.15s, transform 0.15s;
-        display: flex;
-        flex-direction: column;
-      }
-      
-      .bank-card .img-wrap {
-        width: 100%;
-        height: 66px;
-        background: #f0efe9;
-        overflow: hidden;
-        flex-shrink: 0;
-        border-radius: 7px 7px 0 0;
-      }
-
-      .bank-card:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-        transform: translateY(-2px);
-      }
-
-      .bank-card:active { cursor: grabbing; }
-      .bank-card.dragging { opacity: 0.3; transform: scale(0.96); }
-
-      .bank-card.single {
-        width: min(340px, calc(100vw - 32px));
-        flex-direction: row;
-        align-items: stretch;
-        height: 88px;
-        border-radius: 10px;
-      }
-
-      .bank-card.single .img-wrap {
-        width: 110px;
-        height: 100%;
-        flex-shrink: 0;
-        border-radius: 9px 0 0 9px;
-        background: #f0efe9;
-        overflow: hidden;
-      }
-
-      .bank-card.single .card-desc {
-        font-size: 12.5px;
-        padding: 10px 12px;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        align-self: center;
-      }
-
-      .bank-card .img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        pointer-events: none;
-      }
-
-      .bank-card .card-desc {
-        padding: 6px 7px;
-        font-size: 11px;
-        font-family: "Lora", georgia, serif;
-        line-height: 1.3;
-        user-select: none;
-        cursor: grab;
-        flex: 1;
-        color: #222;
-      }
-
-      #page-content {
-        padding-bottom: 100px;
-      }
-
-      #timeline-wrap {
-        max-width: 560px;
-        margin: 0 auto;
-        padding: 0 16px;
-      }
-
-      .tl-label {
-        text-align: center;
-        color: #bbb;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        padding: 14px 0 4px;
-      }
-
-      .tl-place-hint {
-        text-align: center;
-        color: #bbb;
-        font-size: 12px;
-        padding: 6px 0 2px;
-        font-style: italic;
-        pointer-events: none;
-        user-select: none;
-      }
-
-      .tl-drop-zone {
-        height: 44px;
-        border-radius: 8px;
-        margin: 4px 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        position: relative;
-        border: 2px dashed #d4d1c8;
-        background: #faf9f7;
-        transition: height 0.12s ease, background 0.12s ease, border-color 0.12s;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      .tl-drop-zone::before {
-        content: "+";
-        font-size: 18px;
-        font-weight: 400;
-        color: #c8c5bc;
-        line-height: 1;
-        transition: color 0.12s;
-      }
-
-      .tl-drop-zone:hover {
-        border-color: #aaa8a0;
-        background: #f3f2ee;
-      }
-      .tl-drop-zone:hover::before { color: #888; }
-
-      .tl-drop-zone.active {
-        height: 68px;
-        background: #f5e9c8;
-        border: 2px dashed #e0c87a;
-        border-radius: 8px;
-      }
-
-      .tl-drop-zone.active::before {
-        content: "↓";
-        color: #c8a840;
-        font-size: 20px;
-      }
-
-      @keyframes card-enter {
-        from { opacity: 0; transform: translateY(-6px) scale(0.98); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
-      }
-      @keyframes correct-flash {
-        0%   { background: #d4f0e3; }
-        100% { background: #f3fbf7; }
-      }
-      @keyframes incorrect-shake {
-        0%, 100% { transform: translateX(0); }
-        20%      { transform: translateX(-5px); }
-        60%      { transform: translateX(5px); }
-        80%      { transform: translateX(-3px); }
-      }
-
-      .tl-card {
-        background: #fff;
-        border: 1.5px solid #e8e6de;
-        border-left: 4px solid #e8e6de;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 10px 12px;
-        margin: 2px 0;
-        cursor: grab;
-        user-select: none;
-        transition: box-shadow 0.15s, border-color 0.15s;
-      }
-
-      .tl-card.just-placed { animation: card-enter 0.18s ease-out; }
-      .tl-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-      .tl-card:active { cursor: grabbing; }
-      .tl-card.dragging { opacity: 0.3; }
-
-      .tl-card .img-wrap {
-        width: 72px;
-        height: 54px;
-        border-radius: 6px;
-        overflow: hidden;
-        flex-shrink: 0;
-        background: #f0efe9;
-      }
-
-      .tl-card .img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        pointer-events: none;
-      }
-
-      .tl-card .card-desc {
-        flex: 1;
-        font-size: 13px;
-        font-family: "Lora", georgia, serif;
-        line-height: 1.35;
-        min-width: 0;
-        user-select: none;
-        color: #222;
-      }
-
-      .year-badge {
-        border-radius: 6px;
-        padding: 4px 10px;
-        font-size: 13px;
-        font-weight: 700;
-        flex-shrink: 0;
-        font-family: "Inter", arial, sans-serif;
-        background: #e8e6de;
-        color: #666;
-      }
-
-      .tl-card.correct {
-        border-color: #b8dfc8;
-        border-left-color: #4caf78;
-        background: #f3fbf7;
-        animation: correct-flash 0.5s ease-out;
-      }
-      .tl-card.correct .year-badge { background: #4caf78; color: #fff; }
-
-      .tl-card.incorrect {
-        border-color: #f0c4c4;
-        border-left-color: #d04f4f;
-        background: #fdf5f5;
-        animation: incorrect-shake 0.35s ease-out;
-      }
-      .tl-card.incorrect .year-badge { background: #d04f4f; color: #fff; }
-
-      #submit-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: rgba(255,255,255,0.97);
-        border-top: 1px solid #e2e0d6;
-        padding: 12px 20px;
-        text-align: center;
-        z-index: 200;
-        display: none;
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-        backdrop-filter: blur(6px);
-      }
-
-      #results-text {
-        font-size: 14px;
-        color: #555;
-        font-family: "Inter", arial, sans-serif;
-      }
-
-      #btn-submit {
-        background: #333;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 36px;
-        font-size: 14px;
-        font-weight: 700;
-        font-family: "Inter", arial, helvetica, sans-serif;
-        cursor: pointer;
-        transition: background 0.15s;
-      }
-
-      #btn-submit:hover { background: #111; }
-
-      #btn-restart {
-        background: transparent;
-        border: 1.5px solid #333;
-        color: #333;
-        border-radius: 8px;
-        padding: 9px 24px;
-        font-size: 14px;
-        font-weight: 700;
-        font-family: "Inter", arial, helvetica, sans-serif;
-        cursor: pointer;
-        display: none;
-        transition: background 0.15s, color 0.15s;
-      }
-
-      #btn-restart:hover { background: #333; color: #fff; }
-
-      #message {
-        position: fixed;
-        bottom: 80px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 300;
-        color: #444;
-        background: #fff;
-        padding: 10px 22px;
-        border-radius: 20px;
-        border: 1px solid #e2e0d6;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.10);
-        display: none;
-        white-space: nowrap;
-        font-size: 13px;
-        font-weight: 500;
-      }
-
-      #drag-ghost {
-        position: fixed;
-        pointer-events: none;
-        z-index: 999;
-        opacity: 0.93;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 10px 28px rgba(0,0,0,0.22);
-        background: #fff;
-        border: 1.5px solid #e2e0d6;
-        transform: translate(-50%, -120%) scale(1.06);
-        display: none;
-        width: 100px;
-      }
-
-      #drag-ghost .img-wrap {
-        width: 100%;
-        height: 66px;
-        overflow: hidden;
-        background: #f0efe9;
-      }
-
-      #drag-ghost .img-wrap img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
-
-      #drag-ghost .card-desc {
-        padding: 6px 7px;
-        font-size: 11px;
-        font-family: "Lora", georgia, serif;
-        line-height: 1.3;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        color: #222;
-      }
-
-      #empty-state {
-        text-align: center;
-        padding: 80px 24px 0;
-        display: none;
-      }
-
-      #empty-state h2 {
-        font-family: "Lora", georgia, serif;
-        font-size: 26px;
-        font-weight: 700;
-        color: #222;
-        margin: 0 0 10px;
-      }
-
-      #empty-state p {
-        font-size: 15px;
-        color: #888;
-        margin: 0;
-        line-height: 1.6;
-      }
-
-      /* ── Difficulty modal ── */
-      #difficulty-modal {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.45);
-        z-index: 500;
-        display: none;
-        align-items: center;
-        justify-content: center;
-      }
-
-      #difficulty-inner {
-        background: #fff;
-        border-radius: 14px;
-        padding: 28px 28px 24px;
-        max-width: 320px;
-        width: calc(100vw - 40px);
-        box-shadow: 0 8px 40px rgba(0,0,0,0.18);
-      }
-
-      #difficulty-inner h3 {
-        font-family: "Inter", arial, sans-serif;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: #999;
-        margin: 0 0 16px;
-        text-align: center;
-      }
-
-      #difficulty-options {
-        display: flex;
-        gap: 8px;
-      }
-
-      .diff-btn {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 5px;
-        padding: 16px 8px;
-        border: 1.5px solid #e2e0d6;
-        border-radius: 10px;
-        background: #fff;
-        cursor: pointer;
-        transition: border-color 0.15s, background 0.15s;
-        font-family: "Inter", arial, sans-serif;
-      }
-
-      .diff-btn:hover { border-color: #333; background: #f7f7f5; }
-
-      .diff-btn.selected {
-        border-color: #333;
-        background: #333;
-      }
-
-      .diff-btn.selected .diff-label,
-      .diff-btn.selected .diff-count { color: #fff; }
-
-      .diff-label {
-        font-size: 14px;
-        font-weight: 700;
-        color: #222;
-      }
-
-      .diff-count {
-        font-size: 11px;
-        color: #888;
-      }
-
-      @media (max-width: 480px) {
-        #nav-inner { padding: 8px 10px; gap: 6px; }
-        #btn-random { padding: 8px 12px; font-size: 12px; }
-        #btn-mode   { padding: 7px 9px; font-size: 0; }
-        #btn-mode svg { width: 16px; height: 16px; }
-
-        .bank-card {
-          width: calc(33.333% - 6px);
-          min-width: 80px;
-          max-width: 110px;
-        }
-
-        .bank-card.single {
-          width: min(300px, calc(100vw - 32px));
-          max-width: none;
-        }
-
-        .bank-card .img-wrap { height: 58px; }
-
-        #bank-scroll {
-          max-height: 38vh;
-          gap: 6px;
-          padding: 0 10px 6px;
-          justify-content: flex-start;
-        }
-
-        #bank-scroll.single-mode {
-          justify-content: center;
-        }
-
-        #drag-ghost { width: 88px; }
-        #drag-ghost .img-wrap { height: 58px; }
-      }
-    </style>
-  </head>
-  <body>
-    <div id="top-bar">
-      <div id="nav-inner">
-        <div id="search-container">
-          <div id="search-input-wrap">
-            <span id="search-icon">&#9906;</span>
-            <input
-              id="search-input"
-              type="text"
-              placeholder="Search any topic..."
-              autocomplete="off"
-            />
-            <span id="search-clear" title="Clear">&times;</span>
-            <div id="search-spinner"></div>
-          </div>
-          <div id="search-dropdown"></div>
-        </div>
-
-        <button id="btn-random">
-          <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-          New Game
-        </button>
-
-        <button id="btn-mode">
-          <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4zm4 5h12v2H8zm4 5h8v2h-8z"/></svg>
-          Single
-        </button>
-
-      </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>BackFlash</title>
+  <style>
+    :root {
+      --chelt: Georgia, "Times New Roman", times, serif;
+      --frank: Arial, Helvetica, sans-serif;
+      --imperial: Georgia, "Times New Roman", times, serif;
+      --background-color: #f2f1e7;
+      --medium-background: #e3e0d5;
+      --dark-background: #b1aea4;
+      --white-background: #ffffff;
+      --light-background: #f2f1e7;
+      --color-correct: #5cb887;
+      --color-incorrect: #d25353;
+      --color-neutral: #b6b3a4;
+      --highlight: #f9d988;
+      --button-background: #5d72c9;
+      --button-background-dark: #1f3282;
+      --lh: 1.2rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--background-color);
+      font-family: var(--frank);
+      overscroll-behavior-y: none;
+    }
+
+    /* ===== WELCOME SCREEN ===== */
+    #welcome-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: var(--background-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    #welcome-screen.hidden { display: none; }
+
+    /* background decorative elements */
+    .welcome-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .welcome-vl {
+      position: absolute;
+      left: 50%;
+      margin-left: -1px;
+      height: 100%;
+      border-left: 2px solid white;
+      top: 0;
+    }
+
+    .empty-box {
+      background: #DDBD6C;
+      width: 300px;
+      margin: 10px auto;
+      height: 85px;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+
+    .welcome-inner {
+      position: relative;
+      z-index: 2;
+      background: #fff;
+      padding: 30px 10px 0;
+      width: 350px;
+      max-width: calc(100vw - 24px);
+      border-radius: 10px;
+      border: 2px solid var(--medium-background);
+    }
+
+    h1.game-name {
+      font-family: var(--chelt);
+      font-weight: 500;
+      font-size: 36px;
+      text-align: center;
+      margin: 0 0 10px;
+      letter-spacing: -1px;
+    }
+
+    .welcome-subtitle {
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 1.2;
+      text-align: center;
+      max-width: 14.5em;
+      margin: 0 auto;
+    }
+
+    #welcome-search-wrap {
+      display: flex;
+      align-items: center;
+      background: var(--medium-background);
+      border-radius: 8px;
+      padding: 0 10px;
+      margin: 14px 10px 0;
+    }
+
+    #welcome-search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 10px 0;
+      font-size: 14px;
+      font-family: var(--frank);
+      background: transparent;
+      color: #333;
+    }
+
+    #welcome-search-input::placeholder { color: #888; }
+
+    #welcome-spinner {
+      width: 13px; height: 13px;
+      border: 2px solid var(--dark-background);
+      border-top-color: #333;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      display: none;
+      margin-left: 6px;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #welcome-dropdown {
+      margin: 0 10px;
+      position: relative;
+      z-index: 10;
+    }
+
+    #welcome-dropdown-list {
+      background: #fff;
+      border: 1px solid var(--medium-background);
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    .w-drop-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #222;
+      font-weight: 600;
+    }
+
+    .w-drop-item:hover { background: var(--medium-background); }
+
+    .w-drop-item .w-drop-desc {
+      font-size: 11px;
+      color: #999;
+      font-weight: 400;
+      display: block;
+    }
+
+    .welcome-btns {
+      text-align: center;
+      padding: 0 10px;
+    }
+
+    #btn-new-game {
+      background-color: var(--button-background);
+      color: #fff;
+      font-family: var(--frank);
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: none;
+      margin-top: 20px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    #btn-new-game:hover { background-color: var(--button-background-dark); }
+    #btn-new-game.loading { opacity: 0.6; pointer-events: none; }
+
+    .resume-section {
+      text-align: center;
+      padding-bottom: 18px;
+      display: none;
+    }
+
+    .resume-section.show { display: block; }
+
+    #btn-resume {
+      background: none;
+      border: none;
+      color: var(--button-background);
+      font-family: var(--frank);
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 5px;
+      text-decoration: underline;
+      display: block;
+      margin: 0 auto 4px;
+    }
+
+    #btn-start-over {
+      color: #999;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 2px;
+      font-family: var(--frank);
+    }
+
+    .topic-display {
+      text-align: center;
+      font-size: 13px;
+      color: #888;
+      padding: 6px 10px 0;
+      min-height: 20px;
+    }
+
+    @media (max-width: 374px) {
+      .welcome-inner { width: calc(100vw - 16px); }
+      h1.game-name { font-size: 30px; }
+    }
+
+    /* ===== GAME SCREEN ===== */
+    #game-screen { display: none; }
+
+    /* Cream bar behind counter / stack */
+    .top-container {
+      background-color: var(--background-color);
+      height: 30px;
+      width: 100%;
+      position: fixed;
+      left: 0; top: 0;
+      pointer-events: none;
+      z-index: 5;
+      user-select: none;
+    }
+
+    /* ===== PROGRESS COUNTER ===== */
+    #counter {
+      position: fixed;
+      z-index: 200;
+      top: 10px;
+      right: 10px;
+      left: 10px;
+      margin: auto;
+      max-width: 600px;
+    }
+
+    #counter.done, #counter.results { display: none; }
+
+    .circle-container {
+      height: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 10px;
+    }
+
+    .circle {
+      height: 8px;
+      flex-grow: 1;
+      margin: 0 2px;
+      background: var(--medium-background);
+      border-radius: 6px;
+      transition: background 0.4s;
+    }
+
+    .circle.correct { background: var(--color-correct); }
+    .circle.wrong   { background: var(--color-incorrect); }
+    .circle.active  { border: 2px solid var(--button-background); background: var(--medium-background); }
+
+    /* ===== STACK (fixed top, shows current card) ===== */
+    #stack {
+      height: 145px;
+      position: fixed;
+      width: 100%;
+      z-index: 100;
+      top: 30px;
+      left: 0; right: 0;
+      margin: 0;
+      background-color: var(--background-color);
+      pointer-events: none;
+    }
+
+    #stack.done, #stack.results { display: none; }
+
+    .stack-background {
+      border-radius: 8px;
+      user-select: none;
+      width: 360px;
+      max-width: calc(100vw - 20px);
+      background-color: var(--medium-background);
+      height: 128px;
+      transform: translateY(5px);
+      margin: 0 auto;
+      opacity: 0.4;
+    }
+
+    /* Stack shadow line below stack */
+    #stack-shadow {
+      top: 30px;
+      height: 145px;
+      position: fixed;
+      border-bottom: 2px solid var(--medium-background);
+      clip-path: inset(0px 0px -15px 0px);
+      left: 0; right: 0;
+      z-index: 99;
+      background-color: var(--light-background);
+      pointer-events: none;
+    }
+
+    #stack-shadow.done, #stack-shadow.results { display: none; }
+
+    /* ===== CARD IN STACK ===== */
+    .stack-card {
+      position: absolute;
+      left: 0; right: 0;
+      margin: auto;
+      border-radius: 8px;
+      user-select: none;
+      width: 360px;
+      max-width: calc(100vw - 20px);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border: 1px solid var(--medium-background);
+      box-shadow: 0 6px 0 0 var(--dark-background);
+      top: -500px;
+      pointer-events: none;
+      transform: translateY(5px);
+    }
+
+    .stack-card:last-child {
+      top: 0;
+      z-index: 2;
+      touch-action: none;
+      cursor: grab;
+    }
+
+    .stack-card .clue-inner {
+      padding: 12px 10px;
+      display: flex;
+      background-color: var(--white-background);
+      border-radius: 8px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .stack-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+
+    .stack-card .image-placeholder {
+      width: 100px;
+      min-width: 100px;
+      height: 100px;
+      background-color: var(--medium-background);
+      flex-shrink: 0;
+      border-radius: 2px;
+    }
+
+    .stack-card p {
+      font-family: var(--imperial);
+      color: #121212;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: var(--lh);
+      text-align: left;
+      padding: 0 0 0 10px;
+      margin: 0;
+      pointer-events: none;
+    }
+
+    /* First card enter animation */
+    .stack-card.animate-in:last-child {
+      top: -300px;
+      opacity: 0;
+      animation: first-card-enter 0.75s 0.4s ease-out forwards,
+                 card-wiggle 1.8s 7s infinite forwards;
+    }
+
+    @keyframes first-card-enter {
+      0%   { opacity: 0; top: -300px; }
+      20%  { opacity: 1; top: -300px; }
+      100% { opacity: 1; top: 0; }
+    }
+
+    @keyframes card-wiggle {
+      0%  { transform: translateY(5px); }
+      20% { transform: translateY(5px); }
+      80% { transform: translateY(15px); }
+      100% { transform: translateY(5px); }
+    }
+
+    /* Dragging state */
+    .stack-card.dragging {
+      opacity: 0.4;
+      cursor: grabbing;
+    }
+
+    /* Drag ghost */
+    #drag-ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      display: none;
+      width: 360px;
+      max-width: calc(100vw - 20px);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      transform: rotate(2deg) scale(0.97);
+      opacity: 0.95;
+      touch-action: none;
+    }
+
+    #drag-ghost .clue-inner {
+      padding: 12px 10px;
+      display: flex;
+      background-color: var(--white-background);
+      border-radius: 8px;
+      align-items: center;
+      border: 1px solid var(--medium-background);
+    }
+
+    #drag-ghost img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    #drag-ghost p {
+      font-family: var(--imperial);
+      color: #121212;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: var(--lh);
+      padding: 0 0 0 10px;
+      margin: 0;
+    }
+
+    /* Card exiting stack when placed */
+    .stack-card.exit {
+      animation: card-exit 0.3s ease-in forwards;
+      pointer-events: none;
+    }
+
+    @keyframes card-exit {
+      0%   { opacity: 1; top: 0; transform: translateY(5px); }
+      100% { opacity: 0; top: -40px; transform: translateY(0); }
+    }
+
+    /* ===== TIMELINE ===== */
+    #timeline-container {
+      position: relative;
+      padding-top: 195px;
+      padding-bottom: 60px;
+      overscroll-behavior-y: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    #timeline-container.done {
+      padding-top: 20px;
+    }
+
+    /* vertical center line */
+    .vl {
+      border-left: 2px solid white;
+      position: absolute;
+      left: 50%;
+      margin-left: -1px;
+      z-index: 0;
+      top: 250px;
+      bottom: 40px;
+    }
+
+    #timeline-container.done .vl {
+      top: 20px;
+    }
+
+    #timeline {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    .timeline-label {
+      color: #666;
+      font-size: 14px;
+      font-family: var(--frank);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-align: center;
+      padding: 12px 0;
+      user-select: none;
+    }
+
+    /* ===== PLACED CARDS ===== */
+    .placed-card {
+      position: relative;
+      width: 350px;
+      max-width: calc(100vw - 20px);
+      border: var(--background-color) 4px solid;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      box-sizing: border-box;
+      pointer-events: none;
+      margin: 0 auto;
+    }
+
+    .placed-card .clue-inner {
+      padding: 12px 10px;
+      display: flex;
+      background-color: var(--medium-background);
+      border-radius: 8px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .placed-card img {
+      width: 65px;
+      height: 65px;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .placed-card .image-placeholder {
+      width: 65px;
+      min-width: 65px;
+      height: 65px;
+      background-color: var(--medium-background);
+      flex-shrink: 0;
+      border-radius: 2px;
+    }
+
+    .placed-card p {
+      font-family: var(--imperial);
+      color: #121212;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: var(--lh);
+      padding: 0 10px;
+      margin: 0;
+      opacity: 0.65;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Year badge */
+    .year-badge {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%);
+      top: -14px;
+      font-weight: 700;
+      font-size: 17px;
+      color: #fff;
+      padding: 3px 6px;
+      border-radius: 14px;
+      background-color: var(--color-neutral);
+      white-space: nowrap;
+      z-index: 5;
+    }
+
+    .year-outline {
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%);
+      top: -17px;
+      font-size: 17px;
+      font-weight: 700;
+      padding: 3px 6px;
+      border-radius: 19px;
+      z-index: 3;
+      color: transparent;
+      border: var(--light-background) solid 5px;
+      background-color: var(--light-background);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .placed-card.start .year-badge {
+      background-color: var(--dark-background);
+      border: var(--dark-background) solid 2px;
+    }
+
+    .placed-card.correct .year-badge {
+      background-color: var(--color-correct);
+      border: var(--color-correct) solid 2px;
+    }
+
+    .placed-card.incorrect .year-badge {
+      background-color: var(--color-incorrect);
+      border: var(--color-incorrect) solid 2px;
+    }
+
+    .year-badge.pop {
+      animation: badge-pop 0.35s ease-out forwards;
+    }
+
+    @keyframes badge-pop {
+      0%   { transform: translate(-50%) scale(0.3); opacity: 0; }
+      60%  { transform: translate(-50%) scale(1.15); opacity: 1; }
+      100% { transform: translate(-50%) scale(1); opacity: 1; }
+    }
+
+    /* ===== PLACE ZONES ===== */
+    .place-zone {
+      position: relative;
+      width: 360px;
+      max-width: calc(100vw - 20px);
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%23B1AEA4FF' stroke-width='4' stroke-dasharray='6%2c 10' stroke-dashoffset='5' stroke-linecap='square'/%3e%3c/svg%3e");
+      background-color: var(--background-color);
+      border-radius: 8px;
+      margin: 8px auto;
+      cursor: pointer;
+    }
+
+    .place-zone:hover .place-btn {
+      background-color: var(--button-background-dark);
+      border-color: var(--button-background-dark);
+      color: #fff;
+    }
+
+    .place-btn {
+      background-color: #fff;
+      border-radius: 30px;
+      padding: 10px 20px;
+      color: var(--button-background);
+      font-weight: 700;
+      font-size: 16px;
+      border: 2px solid var(--button-background);
+      font-family: var(--frank);
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+      pointer-events: none;
+    }
+
+    .place-zone.pressing .place-btn {
+      transform: scale(0.92);
+      transition: transform 0.1s;
+    }
+
+    .place-zone.drag-over {
+      background-color: var(--highlight);
+      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%235d72c9' stroke-width='4' stroke-dasharray='6%2c 10' stroke-dashoffset='5' stroke-linecap='square'/%3e%3c/svg%3e");
+    }
+
+    .place-zone.drag-over .place-btn {
+      background-color: var(--button-background);
+      color: #fff;
+    }
+
+    /* ===== RESULTS ===== */
+    #results-container {
+      display: none;
+      text-align: center;
+      padding: 20px 17px;
+      position: relative;
+      width: 315px;
+      max-width: calc(100vw - 30px);
+      left: 0; right: 0;
+      margin: 30px auto 20px;
+      z-index: 5;
+      border-radius: 10px;
+      background: #fff;
+      flex-direction: column;
+      align-items: center;
+      border: 2px solid var(--medium-background);
+    }
+
+    #results-container.show { display: flex; }
+
+    #results-score {
+      font-family: var(--chelt);
+      font-size: 30px;
+      font-weight: 500;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    #results-subtitle {
+      font-family: var(--frank);
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 16px;
+    }
+
+    #btn-share {
+      align-items: center;
+      background-color: var(--button-background);
+      border-radius: 25px;
+      border: none;
+      color: #fff;
+      display: flex;
+      font-family: var(--frank);
+      font-weight: 700;
+      justify-content: center;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 15px;
+      margin-bottom: 8px;
+      gap: 6px;
+    }
+
+    #btn-share:hover { background-color: var(--button-background-dark); }
+
+    #btn-new-game-2 {
+      background: none;
+      border: 2px solid var(--button-background);
+      color: var(--button-background);
+      font-family: var(--frank);
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    #btn-new-game-2:hover {
+      background: var(--button-background);
+      color: #fff;
+    }
+
+    /* ===== HELP BUTTON ===== */
+    #btn-help {
+      position: fixed;
+      top: 6px;
+      right: 10px;
+      border: 2px solid var(--dark-background);
+      color: var(--dark-background);
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 50%;
+      height: 20px;
+      width: 20px;
+      box-sizing: border-box;
+      text-align: center;
+      z-index: 1001;
+      cursor: pointer;
+      background: none;
+      font-family: var(--frank);
+      line-height: 1;
+      padding: 0;
+      display: none;
+    }
+
+    #btn-help.visible { display: flex; align-items: center; justify-content: center; }
+
+    /* ===== HELP MODAL ===== */
+    #help-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999999;
+      background-color: rgba(0,0,0,0.3);
+      align-items: center;
+      justify-content: center;
+    }
+
+    #help-modal.show { display: flex; }
+
+    .help-inner {
+      position: relative;
+      padding: 20px;
+      width: 296px;
+      max-width: calc(100vw - 30px);
+      background-color: #fff;
+      border-radius: 10px;
+      border: 2px solid var(--medium-background);
+    }
+
+    .help-inner h2 {
+      font-size: 28px;
+      font-family: var(--chelt);
+      font-weight: 400;
+      letter-spacing: -0.5px;
+      margin: 0 0 10px;
+    }
+
+    .help-inner p {
+      margin-top: 1em;
+      font-family: var(--imperial);
+      line-height: 1.25;
+      font-size: 16px;
+    }
+
+    .help-inner ol {
+      padding-left: 20px;
+      margin-top: 1em;
+      padding-top: 0;
+    }
+
+    .help-inner li {
+      font-family: var(--imperial);
+      line-height: 1.25;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    #help-close {
+      position: absolute;
+      right: 10px; top: 10px;
+      cursor: pointer;
+      font-size: 20px;
+      background: none;
+      border: none;
+      font-family: var(--frank);
+      color: #666;
+    }
+
+    .help-btn-container { display: flex; justify-content: center; margin-top: 10px; }
+
+    .help-ok-btn {
+      background: var(--button-background);
+      color: #fff;
+      font-family: var(--frank);
+      font-weight: 500;
+      padding: 10px 20px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    /* ===== SHARE TOAST ===== */
+    #share-toast {
+      position: fixed;
+      top: 200px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--background-color);
+      border-radius: 30px;
+      padding: 8px 20px;
+      font-family: var(--frank);
+      font-weight: 700;
+      font-size: 15px;
+      white-space: nowrap;
+      z-index: 10000;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    #share-toast.show { opacity: 1; }
+
+    /* ===== MESSAGE TOAST ===== */
+    #message {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 10px;
+      font-family: var(--frank);
+      font-weight: 700;
+      font-size: 15px;
+      display: none;
+      z-index: 500;
+      border: 2px solid var(--medium-background);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+      text-align: center;
+      max-width: 300px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 374px) {
+      .stack-card, .stack-background { max-width: calc(100vw - 10px); width: calc(100vw - 10px); }
+      .placed-card { max-width: calc(100vw - 10px); width: calc(100vw - 10px); }
+      .place-zone { max-width: calc(100vw - 10px); width: calc(100vw - 10px); }
+      .stack-card img { width: 80px; height: 80px; }
+      .placed-card img { width: 55px; height: 55px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== WELCOME SCREEN ===== -->
+<div id="welcome-screen">
+  <div class="welcome-bg">
+    <div class="welcome-vl"></div>
+    <div class="empty-box"></div>
+    <div class="empty-box"></div>
+    <div class="empty-box"></div>
+  </div>
+  <div class="welcome-inner">
+    <div style="text-align:center">
+      <h1 class="game-name">BackFlash</h1>
+    </div>
+    <h2 class="welcome-subtitle">Can you place these events in chronological order?</h2>
+
+    <div id="welcome-search-wrap">
+      <input id="welcome-search-input" type="text" placeholder="Search any topic…" autocomplete="off" />
+      <div id="welcome-spinner"></div>
+    </div>
+    <div id="welcome-dropdown">
+      <div id="welcome-dropdown-list"></div>
     </div>
 
-    <div id="bank-area"></div>
+    <div class="topic-display" id="topic-display"></div>
 
-    <div id="page-content">
-      <div id="empty-state">
-        <h2>BackFlash</h2>
-        <p>Drag the cards into chronological order.<br/>Hit <strong>New Game</strong> to start, or search for a topic.</p>
-      </div>
-      <div id="timeline-wrap">
-        <div id="timeline"></div>
-      </div>
+    <div class="welcome-btns">
+      <button id="btn-new-game">Start the quiz ›</button>
     </div>
 
-    <div id="submit-bar">
-      <span id="results-text"></span>
-      <button id="btn-submit">Check Answers</button>
-      <button id="btn-restart">Play Again</button>
+    <div class="resume-section" id="resume-section">
+      <button id="btn-resume">Resume quiz ›</button>
+      <button id="btn-start-over">Start over</button>
     </div>
+  </div>
+</div>
 
-    <div id="message"></div>
+<!-- ===== GAME SCREEN ===== -->
+<div id="game-screen">
+  <div class="top-container"></div>
 
-    <div id="difficulty-modal">
-      <div id="difficulty-inner">
-        <h3>How many events?</h3>
-        <div id="difficulty-options">
-          <button class="diff-btn" data-diff="easy">
-            <span class="diff-label">Easy</span>
-            <span class="diff-count">4 events</span>
-          </button>
-          <button class="diff-btn" data-diff="medium">
-            <span class="diff-label">Medium</span>
-            <span class="diff-count">7 events</span>
-          </button>
-          <button class="diff-btn" data-diff="hard">
-            <span class="diff-label">Hard</span>
-            <span class="diff-count">11 events</span>
-          </button>
-        </div>
-      </div>
+  <div id="counter">
+    <div class="circle-container" id="circles"></div>
+  </div>
+
+  <div id="stack-shadow"></div>
+
+  <div id="stack">
+    <div class="stack-background"></div>
+  </div>
+
+  <div id="timeline-container">
+    <div class="vl"></div>
+    <div id="timeline"></div>
+    <div id="results-container">
+      <div id="results-score"></div>
+      <div id="results-subtitle">events placed correctly</div>
+      <button id="btn-share">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+          <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+        </svg>
+        Share results
+      </button>
+      <button id="btn-new-game-2">New game</button>
     </div>
+  </div>
+</div>
 
-    <script>
-      const SPARQL_ENDPOINT = "https://query.wikidata.org/sparql";
-      const WIKIDATA_API    = "https://www.wikidata.org/w/api.php";
-      const UA              = "BackFlashQuiz/1.0 (github.com/flashback-quiz; contact via repo)";
+<!-- ===== HELP BUTTON ===== -->
+<button id="btn-help">?</button>
 
-      async function sparqlFetch(sparql, retries = 2) {
-        const url =
-          `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}` +
-          `&format=json&useragent=${encodeURIComponent(UA)}`;
-        for (let attempt = 0; attempt <= retries; attempt++) {
-          try {
-            const res = await fetch(url, {
-              headers: { Accept: "application/sparql-results+json" },
-              signal: AbortSignal.timeout(12000),
-            });
-            if (res.status === 429 || res.status === 504) {
-              if (attempt < retries) {
-                await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
-                continue;
-              }
-              throw new Error(`SPARQL ${res.status}`);
-            }
-            if (!res.ok) throw new Error(`SPARQL ${res.status}`);
-            return res.json();
-          } catch (err) {
-            if (attempt < retries && !(err instanceof SyntaxError)) {
-              await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
-              continue;
-            }
-            throw err;
-          }
-        }
-      }
+<!-- ===== HELP MODAL ===== -->
+<div id="help-modal">
+  <div class="help-inner">
+    <button id="help-close">×</button>
+    <h2>How to play</h2>
+    <ol>
+      <li>One event is placed on the timeline to get you started.</li>
+      <li>A new event appears at the top of the screen.</li>
+      <li>Tap <strong>Place here</strong> to position it in the timeline.</li>
+      <li>Try to place all events in the correct chronological order.</li>
+    </ol>
+    <div class="help-btn-container">
+      <button class="help-ok-btn" id="help-ok">Got it</button>
+    </div>
+  </div>
+</div>
 
-      // Seeds: items must have P18 (image) + a date property to be playable.
-      // All seeds verified to return 11+ English results with images.
-      // Audience: history-focused; ancient, world, and US history.
-      // All seeds verified against Wikidata: ✅ = 11+ results, ⚠️ = 4-10 (Easy/Medium only).
-      // Requires: P18 image + date + English rdfs:label.
-      const SEEDS = [
-        // People — ordered by birth year
-        { value: "Q11696",   label: "U.S. Presidents",        prop: "P39"  }, // ✅ 43
-        { value: "Q901",     label: "Scientists",              prop: "P106" }, // ✅ 80
-        { value: "Q4964182", label: "Philosophers",            prop: "P106" }, // ✅ 80
-        { value: "Q36834",   label: "Composers",               prop: "P106" }, // ✅ 80
+<!-- ===== DRAG GHOST ===== -->
+<div id="drag-ghost"></div>
 
-        // Literature
-        { value: "Q571",     label: "Books" },                                 // ✅ 80
-        { value: "Q7725634", label: "Literary Works" },                        // ✅ 80
-        { value: "Q692",     label: "Shakespeare's Works",    prop: "P50" },   // ✅ 73
-        { value: "Q23434",   label: "Hemingway's Works",      prop: "P50" },   // ✅ 14
-        { value: "Q5686",    label: "Dickens's Works",        prop: "P50" },   // ✅ 53
-        { value: "Q40909",   label: "Virginia Woolf's Works", prop: "P50" },   // ⚠️  6
-        { value: "Q16867",   label: "Poe's Works",            prop: "P50" },   // ✅ 80
+<!-- ===== SHARE TOAST ===== -->
+<div id="share-toast">Copied to clipboard!</div>
 
-        // Visual Arts
-        { value: "Q3305213", label: "Paintings" },                             // ✅ 80
-        { value: "Q179700",  label: "Statues" },                               // ✅ 80
+<!-- ===== MESSAGE TOAST ===== -->
+<div id="message"></div>
 
-        // Film
-        { value: "Q11424",   label: "Films" },                                 // ✅ 80
+<script>
+  'use strict';
 
-        // Science & Technology
-        { value: "Q11016",   label: "Inventions" },                            // ⚠️  9
+  // ==================== CONSTANTS ====================
+  const SPARQL_ENDPOINT = 'https://query.wikidata.org/sparql';
+  const WIKIDATA_API    = 'https://www.wikidata.org/w/api.php';
+  const UA              = 'BackFlashQuiz/1.0 (github.com/flashback-quiz; contact via repo)';
 
-        // Places & Structures
-        { value: "Q839954",  label: "Archaeological Sites" },                  // ✅ 80
-        { value: "Q44539",   label: "Temples" },                               // ✅ 80
-        { value: "Q23413",   label: "Castles" },                               // ✅ 80
-        { value: "Q2977",    label: "Cathedrals" },                            // ✅ 80
-        { value: "Q12518",   label: "Fortresses" },                            // ✅ 80
-        { value: "Q12280",   label: "Bridges" },                               // ✅ 80
-        { value: "Q207694",  label: "Art Museums" },                           // ✅ 80
-        { value: "Q33506",   label: "Museums" },                               // ✅ 80
-        { value: "Q3918",    label: "Universities" },                          // ✅ 80
-        { value: "Q1093829", label: "U.S. Cities" },                          // ✅ 80
-        { value: "Q46169",   label: "National Parks" },                        // ✅ 80
+  const KEY_HISTORY = 'fbq_history';
+  const KEY_GAME    = 'fbq_game';
+  const KEY_DECK    = 'fbq_deck';
+  const KEY_SPENT   = 'fbq_spent';
+  const KEY_STATE   = 'fbq_state_v3';
 
-        // History
-        { value: "Q3624078", label: "Sovereign States" },                      // ✅ 80
-        { value: "Q178561",  label: "Battles" },                               // ✅ 80
-        { value: "Q198",     label: "Wars" },                                  // ✅ 80
-      ];
+  const GAME_SIZE = 9; // 1 anchor + 8 to place
 
-      const KEY_HISTORY    = "fbq_history";
-      const KEY_GAME       = "fbq_game";
-      const KEY_DECK       = "fbq_deck";
-      const KEY_SPENT      = "fbq_spent";
-      const KEY_STATE      = "fbq_state";
-      const KEY_DIFFICULTY = "fbq_difficulty";
+  // ==================== SEEDS ====================
+  const SEEDS = [
+    { value: 'Q11696',   label: 'U.S. Presidents',        prop: 'P39'  },
+    { value: 'Q901',     label: 'Scientists',              prop: 'P106' },
+    { value: 'Q4964182', label: 'Philosophers',            prop: 'P106' },
+    { value: 'Q36834',   label: 'Composers',               prop: 'P106' },
+    { value: 'Q571',     label: 'Books'                                  },
+    { value: 'Q7725634', label: 'Literary Works'                         },
+    { value: 'Q692',     label: "Shakespeare's Works",    prop: 'P50'  },
+    { value: 'Q23434',   label: "Hemingway's Works",      prop: 'P50'  },
+    { value: 'Q5686',    label: "Dickens's Works",        prop: 'P50'  },
+    { value: 'Q40909',   label: "Virginia Woolf's Works", prop: 'P50'  },
+    { value: 'Q16867',   label: "Poe's Works",            prop: 'P50'  },
+    { value: 'Q3305213', label: 'Paintings'                              },
+    { value: 'Q179700',  label: 'Statues'                                },
+    { value: 'Q11424',   label: 'Films'                                  },
+    { value: 'Q11016',   label: 'Inventions'                             },
+    { value: 'Q839954',  label: 'Archaeological Sites'                   },
+    { value: 'Q44539',   label: 'Temples'                                },
+    { value: 'Q23413',   label: 'Castles'                                },
+    { value: 'Q2977',    label: 'Cathedrals'                             },
+    { value: 'Q12518',   label: 'Fortresses'                             },
+    { value: 'Q12280',   label: 'Bridges'                                },
+    { value: 'Q207694',  label: 'Art Museums'                            },
+    { value: 'Q33506',   label: 'Museums'                                },
+    { value: 'Q3918',    label: 'Universities'                           },
+    { value: 'Q1093829', label: 'U.S. Cities'                            },
+    { value: 'Q46169',   label: 'National Parks'                         },
+    { value: 'Q3624078', label: 'Sovereign States'                       },
+    { value: 'Q178561',  label: 'Battles'                                },
+    { value: 'Q198',     label: 'Wars'                                   },
+  ];
 
-      const DIFFICULTY_COUNTS = { easy: 4, medium: 7, hard: 11 };
+  // ==================== STATE ====================
+  const state = {
+    phase: 'welcome',       // 'game' | 'done'
+    events: [],             // all events sorted by year
+    timeline: [],           // placed events (in order on screen)
+    stack: [],              // remaining to place (last = current card)
+    anchorId: null,         // id of pre-placed anchor
+    placedStatuses: {},     // id -> 'correct'|'incorrect'
+    placementOrder: [],     // [{id, status}] in placement order
+    correctCount: 0,
+    game: null,             // { value, label, prop? }
+    history: [],
+    searchResults: [],
+    pendingGame: null,      // game selected on welcome screen
+    isAnimating: false,
+    isDragging: false,
+  };
 
-      const state = {
-        game: null,
-        events: [],
-        bank: [],
-        timeline: [],
-        submitted: false,
-        dragging: null,
-        dragOverZone: null,
-        history: [],
-        searchResults: [],
-        searchOpen: false,
-        oneAtATime: true,
-        placedStatuses: {},
-        potentialPoints: {},
-        cardOrder: [],
-        score: 0,
-        difficulty: "medium",
-        lastPlacedId: null,
-      };
+  // ==================== UTILITIES ====================
+  function safeGet(key) {
+    try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; }
+    catch { return null; }
+  }
 
-      function safeGet(key) {
-        try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; }
-        catch { return null; }
-      }
+  function safeSet(key, val) {
+    try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+  }
 
-      function safeSet(key, val) {
-        try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
-      }
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
 
-      function saveGameState() {
-        if (!state.game) return;
-        safeSet(KEY_STATE, {
-          gameValue:      state.game.value,
-          events:         state.events,
-          bank:           state.bank,
-          timeline:       state.timeline,
-          placedStatuses: state.placedStatuses,
-          potentialPoints: state.potentialPoints,
-          cardOrder:      state.cardOrder,
-          score:          state.score,
+  function parseYear(iso) {
+    if (!iso) return null;
+    if (iso.startsWith('-')) return -parseInt(iso.slice(1, 5), 10);
+    return parseInt(iso.slice(0, 4), 10);
+  }
+
+  function toDisplayYear(y) {
+    return y < 0 ? `${Math.abs(y)} BC` : String(y);
+  }
+
+  function fixImageUrl(url) {
+    return url.replace('http://', 'https://') + '?width=200';
+  }
+
+  function cleanLabel(s) {
+    return s
+      .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)\s*$/g, '')
+      .replace(/\s+\d{4}[–\-]\d{2,4}\s*$/g, '')
+      .trim();
+  }
+
+  function cleanDesc(s) {
+    return s
+      .replace(/\bfrom\s+\d{4}\s+to\s+\d{4}\b/gi, '')
+      .replace(/\b(in|since|until|before|after|around|circa|c\.|by|on)\s+\d{4}([–\-]\d{2,4})?\b/gi, '')
+      .replace(/\b\d{4}[–\-]\d{2,4}\b/g, '')
+      .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, '')
+      .replace(/\s{2,}/g, ' ')
+      .replace(/\s+([,.])/g, '$1')
+      .replace(/,\s*$/, '')
+      .replace(/^[\s,–\-]+/, '')
+      .trim();
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function setMessage(msg) {
+    const el = document.getElementById('message');
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+
+  // ==================== SPARQL ====================
+  async function sparqlFetch(sparql, retries = 2) {
+    const url = `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}&format=json&useragent=${encodeURIComponent(UA)}`;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const res = await fetch(url, {
+          headers: { Accept: 'application/sparql-results+json' },
+          signal: AbortSignal.timeout(15000),
         });
-      }
-
-      function clearGameState() {
-        try { localStorage.removeItem(KEY_STATE); } catch {}
-      }
-
-      function loadHistory()  { return safeGet(KEY_HISTORY) ?? []; }
-
-      function pushHistory(game) {
-        const h = loadHistory().filter((g) => g.value !== game.value);
-        safeSet(KEY_HISTORY, [game, ...h].slice(0, 20));
-      }
-
-      function getDeck()  { return safeGet(KEY_DECK)  ?? []; }
-      function getSpent() { return safeGet(KEY_SPENT) ?? []; }
-
-      function popFromDeck() {
-        let deck = getDeck();
-        const spent = getSpent();
-        if (!deck.length && spent.length) {
-          deck = shuffle([...spent]);
-          safeSet(KEY_SPENT, []);
-          safeSet(KEY_DECK, deck);
+        if (res.status === 429 || res.status === 504) {
+          if (attempt < retries) { await delay(1000 * (attempt + 1)); continue; }
+          throw new Error(`SPARQL ${res.status}`);
         }
-        if (!deck.length) return null;
-        const item = deck.shift();
-        safeSet(KEY_DECK, deck);
-        return item;
-      }
-
-      function addToDeck(game) {
-        const deck  = getDeck();
-        const spent = getSpent();
-        if ([...deck, ...spent].some((g) => g.value === game.value)) return;
-        safeSet(KEY_DECK, [...deck, game]);
-      }
-
-      function markSpent(game) {
-        safeSet(KEY_DECK, getDeck().filter((g) => g.value !== game.value));
-        const spent = getSpent();
-        if (!spent.some((g) => g.value === game.value))
-          safeSet(KEY_SPENT, [...spent, game]);
-      }
-
-      function shuffle(arr) {
-        const a = [...arr];
-        for (let i = a.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [a[i], a[j]] = [a[j], a[i]];
+        if (!res.ok) throw new Error(`SPARQL ${res.status}`);
+        return res.json();
+      } catch (err) {
+        if (attempt < retries && !(err instanceof SyntaxError)) {
+          await delay(1000 * (attempt + 1));
+          continue;
         }
-        return a;
+        throw err;
       }
+    }
+  }
 
-      async function nextTopic() {
-        const deck  = getDeck();
-        const spent = getSpent();
-        const used  = new Set([...deck, ...spent].map((g) => g.value));
+  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-        if (deck.length) {
-          const pick = popFromDeck();
-          const remaining = SEEDS.filter((s) => !used.has(s.value));
-          const pool = remaining.length ? remaining : SEEDS;
-          const next = pool[Math.floor(Math.random() * pool.length)];
-          addToDeck(next);
-          return pick;
-        }
-
-        const remaining = SEEDS.filter((s) => !used.has(s.value));
-        const pool = remaining.length ? remaining : shuffle([...SEEDS]);
-        const pick = pool[Math.floor(Math.random() * pool.length)];
-        addToDeck(pick);
-        return popFromDeck();
-      }
-
-      function parseYear(iso) {
-        if (!iso) return null;
-        if (iso.startsWith("-")) return -parseInt(iso.slice(1, 5), 10);
-        return parseInt(iso.slice(0, 4), 10);
-      }
-
-      function toDisplayYear(y) {
-        return y < 0 ? `${Math.abs(y)} BC` : String(y);
-      }
-
-      function fixImageUrl(url) {
-        return url.replace("http://", "https://") + "?width=120";
-      }
-
-      function setMessage(msg) {
-        const el = document.getElementById("message");
-        el.textContent = msg;
-        el.style.display = msg ? "block" : "none";
-      }
-
-      function adjustLayout() {
-        const topBar  = document.getElementById("top-bar");
-        const bankArea = document.getElementById("bank-area");
-        const content  = document.getElementById("page-content");
-        const topH  = topBar.offsetHeight;
-        const bankH = bankArea.offsetHeight;
-        bankArea.style.top       = `${topH}px`;
-        content.style.paddingTop = `${topH + bankH + 12}px`;
-      }
-
-      function cleanLabel(s) {
-        return s
-          .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)\s*$/g, "")
-          .replace(/\s+\d{4}[–\-]\d{2,4}\s*$/g, "")
-          .trim();
-      }
-
-      function cleanDesc(s) {
-        return s
-          .replace(/\bfrom\s+\d{4}\s+to\s+\d{4}\b/gi, "")
-          .replace(/\b(in|since|until|before|after|around|circa|c\.|by|on)\s+\d{4}([–\-]\d{2,4})?\b/gi, "")
-          .replace(/\b\d{4}[–\-]\d{2,4}\b/g, "")
-          .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, "")
-          .replace(/\s{2,}/g, " ")
-          .replace(/\s+([,.])/g, "$1")
-          .replace(/,\s*$/, "")
-          .replace(/^[\s,–\-]+/, "")
-          .trim();
-      }
-
-      async function searchEntities(query) {
-        const p = new URLSearchParams({
-          action: "wbsearchentities",
-          search: query,
-          language: "en",
-          limit: "10",
-          format: "json",
-          origin: "*",
-          type: "item",
-        });
-        const res = await fetch(`${WIKIDATA_API}?${p}`);
-        if (!res.ok) throw new Error(`${res.status}`);
-        const json = await res.json();
-        return (json.search ?? []).map((r) => ({
-          id: r.id,
-          label: r.label ?? r.id,
-          description: r.description ?? "",
-        }));
-      }
-
-      async function resolveToPlayableClass(qid) {
-        const sparql = `
-SELECT ?class ?classLabel WHERE {
-  wd:${qid} wdt:P31 ?class.
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-LIMIT 10`;
-        try {
-          const json = await sparqlFetch(sparql);
-          const candidates = json.results.bindings.map((b) => ({
-            value: b.class.value.split("/").pop(),
-            label: b.classLabel?.value ?? b.class.value.split("/").pop(),
-          }));
-          return candidates[0] ?? null;
-        } catch {
-          return null;
-        }
-      }
-
-      function buildSparql(entityId, prop) {
-        const dateClause = `
+  function buildSparql(entityId, prop) {
+    const dateClause = `
   { {?item wdt:P571 ?date.} UNION
     {?item wdt:P577 ?date.} UNION
     {?item wdt:P580 ?date.} UNION
     {?item wdt:P569 ?date.} }`;
-        // Use rdfs:label directly so LANG() filter works — SERVICE wikibase:label
-        // strips language tags before FILTER evaluation.
-        const labelClause = `
+    const labelClause = `
   ?item rdfs:label ?itemLabel.
   FILTER(LANG(?itemLabel) = "en")
   OPTIONAL {
     ?item schema:description ?itemDescription.
     FILTER(LANG(?itemDescription) = "en")
   }`;
-        if (prop) {
-          return `
-SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-  ?item wdt:${prop} wd:${entityId};
-        wdt:P18 ?image.
+    if (prop) {
+      return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
+  ?item wdt:${prop} wd:${entityId}; wdt:P18 ?image.
   ${dateClause}
   FILTER(YEAR(?date) > 0)
   ${labelClause}
 } LIMIT 80`;
-        }
-        return `
-SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-  ?item wdt:P31 wd:${entityId};
-        wdt:P18 ?image.
+    }
+    return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
+  ?item wdt:P31 wd:${entityId}; wdt:P18 ?image.
   ${dateClause}
   FILTER(YEAR(?date) > 0)
   ${labelClause}
 } LIMIT 80`;
+  }
+
+  async function fetchGameEvents(entityId, prop = null) {
+    const json     = await sparqlFetch(buildSparql(entityId, prop));
+    const bindings = json.results.bindings;
+    if (!bindings.length) throw new Error('No results for that topic');
+
+    const seen = new Set();
+    const deduped = [];
+    for (const b of bindings) {
+      const id = b.item?.value;
+      if (!id || !b.date?.value || !b.itemLabel?.value || !b.image?.value) continue;
+      const year = parseYear(b.date.value);
+      if (year === null || seen.has(id)) continue;
+      seen.add(id);
+      deduped.push({ ...b, _year: year });
+    }
+
+    if (deduped.length < GAME_SIZE) throw new Error('Not enough dated items with images for this topic');
+
+    const selected = shuffle(deduped).slice(0, GAME_SIZE);
+    selected.sort((a, b) => a._year - b._year);
+
+    return selected.map((b, i) => {
+      const year  = b._year;
+      const label = cleanLabel(b.itemLabel.value);
+      const desc  = cleanDesc(b.itemDescription?.value ?? '');
+      return {
+        id: i + 1,
+        year,
+        displayYear: toDisplayYear(year),
+        description: desc ? `<b>${escapeHtml(label)}</b> — ${escapeHtml(desc)}` : `<b>${escapeHtml(label)}</b>`,
+        image: fixImageUrl(b.image.value),
+      };
+    });
+  }
+
+  async function searchEntities(query) {
+    const p = new URLSearchParams({
+      action: 'wbsearchentities',
+      search: query,
+      language: 'en',
+      limit: '8',
+      format: 'json',
+      origin: '*',
+      type: 'item',
+    });
+    const res = await fetch(`${WIKIDATA_API}?${p}`);
+    if (!res.ok) throw new Error(`${res.status}`);
+    const json = await res.json();
+    return (json.search ?? []).map(r => ({
+      id: r.id,
+      label: r.label ?? r.id,
+      description: r.description ?? '',
+    }));
+  }
+
+  async function resolveToPlayableClass(qid) {
+    const sparql = `SELECT ?class ?classLabel WHERE {
+  wd:${qid} wdt:P31 ?class.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+} LIMIT 10`;
+    try {
+      const json = await sparqlFetch(sparql);
+      const candidates = json.results.bindings.map(b => ({
+        value: b.class.value.split('/').pop(),
+        label: b.classLabel?.value ?? b.class.value.split('/').pop(),
+      }));
+      return candidates[0] ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  // ==================== HISTORY / DECK ====================
+  function loadHistory()  { return safeGet(KEY_HISTORY) ?? []; }
+
+  function pushHistory(game) {
+    const h = loadHistory().filter(g => g.value !== game.value);
+    safeSet(KEY_HISTORY, [game, ...h].slice(0, 20));
+  }
+
+  function getDeck()  { return safeGet(KEY_DECK)  ?? []; }
+  function getSpent() { return safeGet(KEY_SPENT) ?? []; }
+
+  function popFromDeck() {
+    let deck = getDeck();
+    const spent = getSpent();
+    if (!deck.length && spent.length) {
+      deck = shuffle([...spent]);
+      safeSet(KEY_SPENT, []);
+      safeSet(KEY_DECK, deck);
+    }
+    if (!deck.length) return null;
+    const item = deck.shift();
+    safeSet(KEY_DECK, deck);
+    return item;
+  }
+
+  function addToDeck(game) {
+    const deck  = getDeck();
+    const spent = getSpent();
+    if ([...deck, ...spent].some(g => g.value === game.value)) return;
+    safeSet(KEY_DECK, [...deck, game]);
+  }
+
+  function markSpent(game) {
+    safeSet(KEY_DECK, getDeck().filter(g => g.value !== game.value));
+    const spent = getSpent();
+    if (!spent.some(g => g.value === game.value))
+      safeSet(KEY_SPENT, [...spent, game]);
+  }
+
+  async function nextTopic() {
+    const deck  = getDeck();
+    const spent = getSpent();
+    const used  = new Set([...deck, ...spent].map(g => g.value));
+
+    if (deck.length) {
+      const pick = popFromDeck();
+      const remaining = SEEDS.filter(s => !used.has(s.value));
+      const pool = remaining.length ? remaining : SEEDS;
+      addToDeck(pool[Math.floor(Math.random() * pool.length)]);
+      return pick;
+    }
+
+    const remaining = SEEDS.filter(s => !used.has(s.value));
+    const pool = remaining.length ? remaining : shuffle([...SEEDS]);
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+    addToDeck(pick);
+    return popFromDeck();
+  }
+
+  // ==================== STATE PERSISTENCE ====================
+  function saveState() {
+    if (!state.game) return;
+    safeSet(KEY_STATE, {
+      gameValue:      state.game.value,
+      game:           state.game,
+      events:         state.events,
+      timeline:       state.timeline,
+      stack:          state.stack,
+      anchorId:       state.anchorId,
+      placedStatuses: state.placedStatuses,
+      placementOrder: state.placementOrder,
+      correctCount:   state.correctCount,
+      phase:          state.phase,
+    });
+  }
+
+  function clearState() {
+    try { localStorage.removeItem(KEY_STATE); } catch {}
+  }
+
+  function hasSavedState() {
+    const s = safeGet(KEY_STATE);
+    return s && s.events && s.events.length > 0;
+  }
+
+  function loadSavedState() {
+    return safeGet(KEY_STATE);
+  }
+
+  // ==================== GAME LOGIC ====================
+  function isPlacementCorrect(insertAt) {
+    const card = state.timeline[insertAt];
+    const prev = state.timeline[insertAt - 1];
+    const next = state.timeline[insertAt + 1];
+    if (prev && prev.year > card.year) return false;
+    if (next && next.year < card.year) return false;
+    return true;
+  }
+
+  function placeCard(insertAt) {
+    if (state.isAnimating) return;
+    if (!state.stack.length) return;
+
+    state.isAnimating = true;
+
+    const card = state.stack[state.stack.length - 1];
+    state.stack.pop();
+    state.timeline.splice(insertAt, 0, card);
+
+    const correct = isPlacementCorrect(insertAt);
+    state.placedStatuses[card.id] = correct ? 'correct' : 'incorrect';
+    state.placementOrder.push({ id: card.id, status: correct ? 'correct' : 'incorrect' });
+    if (correct) state.correctCount++;
+
+    // Animate current stack card out
+    const stackEl = document.getElementById('stack');
+    const currentCard = stackEl.querySelector('.stack-card:last-child');
+    if (currentCard) {
+      currentCard.classList.add('exit');
+    }
+
+    // After exit animation, re-render
+    setTimeout(() => {
+      saveState();
+      renderProgress();
+      renderTimeline();
+      renderStack();
+
+      if (state.stack.length === 0) {
+        finishGame();
       }
 
-      async function fetchGameEvents(entityId, prop = null) {
-        const json     = await sparqlFetch(buildSparql(entityId, prop));
-        const bindings = json.results.bindings;
-        if (!bindings.length) throw new Error("No results for that topic");
+      state.isAnimating = false;
+    }, 320);
+  }
 
-        const seen = new Set();
-        const deduped = [];
-        for (const b of bindings) {
-          const id = b.item?.value;
-          if (!id || !b.date?.value || !b.itemLabel?.value || !b.image?.value) continue;
-          const year = parseYear(b.date.value);
-          if (year === null || seen.has(id)) continue;
-          seen.add(id);
-          deduped.push({ ...b, _year: year });
-        }
+  function finishGame() {
+    state.phase = 'done';
+    saveState();
 
-        const count = DIFFICULTY_COUNTS[state.difficulty] ?? 7;
-        if (deduped.length < count) throw new Error("Not enough dated items with images");
+    // Update stack / shadow / counter classes
+    document.getElementById('stack').className = 'done';
+    document.getElementById('stack-shadow').className = 'done';
+    document.getElementById('counter').className = 'done';
+    document.getElementById('timeline-container').classList.add('done');
+    document.getElementById('game-screen').classList.add('state-done');
 
-        const selected = shuffle(deduped).slice(0, count);
-        selected.sort((a, b) => a._year - b._year);
+    // Show results
+    const total = state.events.length - 1; // excluding anchor
+    document.getElementById('results-score').textContent =
+      `${state.correctCount} of ${total}`;
+    document.getElementById('results-container').classList.add('show');
 
-        return selected.map((b, i) => {
-          const year  = b._year;
-          const label = cleanLabel(b.itemLabel.value);
-          const desc  = cleanDesc(b.itemDescription?.value ?? "");
-          return {
-            id: i + 1,
-            year,
-            displayYear: toDisplayYear(year),
-            description: desc ? `<b>${label}</b> — ${desc}` : `<b>${label}</b>`,
-            image: fixImageUrl(b.image.value),
-          };
-        });
+    // Hide place zones (re-render without them)
+    renderTimeline();
+  }
+
+  // ==================== RENDERING ====================
+
+  function renderProgress() {
+    const circles = document.getElementById('circles');
+    const totalToPlace = state.events.length - 1; // all cards minus anchor
+    const order = state.placementOrder;
+    const numPlaced = order.length;
+
+    let html = '';
+    for (let i = 0; i < totalToPlace; i++) {
+      if (i < numPlaced) {
+        const cls = order[i].status === 'correct' ? 'correct' : 'wrong';
+        html += `<div class="circle ${cls}"></div>`;
+      } else if (i === numPlaced && state.stack.length > 0) {
+        html += '<div class="circle active"></div>';
+      } else {
+        html += '<div class="circle"></div>';
+      }
+    }
+    circles.innerHTML = html;
+  }
+
+  function renderStack() {
+    const stackEl = document.getElementById('stack');
+    // Remove all existing stack cards
+    stackEl.querySelectorAll('.stack-card').forEach(c => c.remove());
+
+    if (!state.stack.length || state.phase === 'done') return;
+
+    // Add all stack cards — only last child will be visible (CSS)
+    const isFirstCard = state.timeline.length === 1; // only anchor placed so far
+    for (let i = 0; i < state.stack.length; i++) {
+      const ev = state.stack[i];
+      const card = document.createElement('div');
+      const isLast = (i === state.stack.length - 1);
+      card.className = 'stack-card' + (isLast && isFirstCard ? ' animate-in' : '');
+      if (isLast) {
+        card.style.pointerEvents = 'all';
+      }
+      card.innerHTML = cardInnerHtml(ev, false);
+      stackEl.appendChild(card);
+    }
+  }
+
+  function cardInnerHtml(ev, isPlaced) {
+    const imgStyle = isPlaced ? 'style="width:65px;height:65px"' : '';
+    return `<div class="clue-inner">
+      <img src="${ev.image}" alt="" loading="lazy" ${imgStyle}
+        onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
+      <div class="${isPlaced ? 'image-placeholder' : 'image-placeholder'}" style="display:none"></div>
+      <p>${ev.description}</p>
+    </div>`;
+  }
+
+  function renderTimeline() {
+    const el = document.getElementById('timeline');
+    const isDone = state.phase === 'done';
+    let html = `<div class="timeline-label">Earlier</div>`;
+
+    for (let z = 0; z <= state.timeline.length; z++) {
+      // Place zone (only show during active game)
+      if (!isDone) {
+        html += `<div class="place-zone" data-zone="${z}">
+          <div class="place-btn">Place here</div>
+        </div>`;
       }
 
-      async function loadGame(game) {
-        state.game           = game;
-        state.submitted      = false;
-        state.dragging       = null;
-        state.dragOverZone   = null;
-        state.events         = [];
-        state.bank           = [];
-        state.timeline       = [];
-        state.placedStatuses = {};
-        state.potentialPoints = {};
-        state.cardOrder      = [];
-        state.score          = 0;
+      // Placed card at this index
+      if (z < state.timeline.length) {
+        const ev     = state.timeline[z];
+        const status = state.placedStatuses[ev.id] ?? '';
+        const isAnchor = ev.id === state.anchorId;
+        const cls = isAnchor
+          ? 'placed-card start'
+          : `placed-card ${status}`;
 
-        safeSet(KEY_GAME, game);
-        pushHistory(game);
-        state.history = loadHistory();
+        html += `<div class="${cls}" style="margin-top:8px;margin-bottom:8px">
+          <div class="year-outline">&nbsp;</div>
+          <div class="year-badge">${escapeHtml(ev.displayYear)}</div>
+          ${cardInnerHtml(ev, true)}
+        </div>`;
+      }
+    }
 
-        document.getElementById("search-input").placeholder = game.label;
+    html += `<div class="timeline-label">Later</div>`;
+    el.innerHTML = html;
 
-        document.getElementById("empty-state").style.display = "none";
+    // Attach click handlers via event delegation (already set up once on init)
+  }
 
-        // Restore saved state for this game if available
-        const saved = safeGet(KEY_STATE);
-        if (saved && saved.gameValue === game.value && saved.events?.length) {
-          state.events          = saved.events;
-          state.bank            = saved.bank;
-          state.timeline        = saved.timeline;
-          state.placedStatuses  = saved.placedStatuses;
-          state.potentialPoints = saved.potentialPoints;
-          state.cardOrder       = saved.cardOrder;
-          state.score           = saved.score;
-          setMessage("");
-          render();
-          return;
-        }
+  // ==================== START GAME ====================
+  async function startGameFromWikidata(game, isResume = false) {
+    const btn = document.getElementById('btn-new-game');
+    btn.classList.add('loading');
+    btn.textContent = 'Loading…';
+    setMessage('');
 
+    try {
+      let events;
+      if (isResume) {
+        const saved = loadSavedState();
+        state.game           = saved.game;
+        state.events         = saved.events;
+        state.timeline       = saved.timeline;
+        state.stack          = saved.stack;
+        state.anchorId       = saved.anchorId;
+        state.placedStatuses = saved.placedStatuses;
+        state.placementOrder = saved.placementOrder ?? [];
+        state.correctCount   = saved.correctCount;
+        state.phase          = saved.phase ?? 'game';
+      } else {
+        clearState();
         setMessage(`Loading ${game.label}…`);
-        render();
+        events = await fetchGameEvents(game.value, game.prop ?? null);
+        setMessage('');
 
+        // Sort by year, pick middle as anchor
+        events.sort((a, b) => a.year - b.year);
+        const anchorIndex = Math.floor(events.length / 2);
+        const anchor = events[anchorIndex];
+        const rest   = events.filter((_, i) => i !== anchorIndex);
+
+        state.game           = game;
+        state.events         = events;
+        state.timeline       = [anchor];
+        state.stack          = shuffle(rest); // last item = current card
+        state.anchorId       = anchor.id;
+        state.placedStatuses = {};
+        state.placementOrder = [];
+        state.correctCount   = 0;
+        state.phase          = 'game';
+
+        pushHistory(game);
+        markSpent(game);
+        saveState();
+        setMessage('');
+      }
+
+      // Show game screen
+      document.getElementById('welcome-screen').classList.add('hidden');
+      document.getElementById('game-screen').style.display = 'block';
+      document.getElementById('btn-help').classList.add('visible');
+
+      renderProgress();
+      renderStack();
+      renderTimeline();
+
+      if (state.phase === 'done') {
+        finishGame();
+      }
+
+    } catch (err) {
+      setMessage(err.message || 'Failed to load game. Try another topic.');
+      btn.classList.remove('loading');
+      btn.textContent = 'Start the quiz ›';
+    }
+  }
+
+  // ==================== WELCOME SCREEN LOGIC ====================
+  let searchDebounce = null;
+
+  function initWelcome() {
+    const input    = document.getElementById('welcome-search-input');
+    const spinner  = document.getElementById('welcome-spinner');
+    const dropList = document.getElementById('welcome-dropdown-list');
+    const topicDisplay = document.getElementById('topic-display');
+
+    state.history = loadHistory();
+
+    // Check for saved state
+    if (hasSavedState()) {
+      const saved = loadSavedState();
+      document.getElementById('resume-section').classList.add('show');
+      if (saved.game?.label) {
+        topicDisplay.textContent = saved.game.label;
+      }
+    }
+
+    // Pre-select a random topic
+    nextTopic().then(topic => {
+      if (topic && !input.value) {
+        state.pendingGame = topic;
+        topicDisplay.textContent = topic.label;
+      }
+    });
+
+    // Search input
+    input.addEventListener('input', () => {
+      const q = input.value.trim();
+      if (searchDebounce) clearTimeout(searchDebounce);
+      if (!q) {
+        spinner.style.display = 'none';
+        dropList.style.display = 'none';
+        if (state.pendingGame) topicDisplay.textContent = state.pendingGame.label;
+        return;
+      }
+      spinner.style.display = 'block';
+      searchDebounce = setTimeout(async () => {
         try {
-          const events   = await fetchGameEvents(game.value, game.prop ?? null);
-          const shuffled = shuffle([...events]);
-          state.events      = events;
-          state.bank        = shuffled;
-          state.timeline    = [];
-          state.cardOrder   = shuffled.map((e) => e.id);
-          setMessage("");
-          saveGameState();
-        } catch (err) {
-          setMessage(`No playable data for "${game.label}". Try another topic.`);
-        }
-        render();
-      }
-
-      function getCorrectOrder() {
-        return [...state.events].sort((a, b) => a.year - b.year);
-      }
-
-      function getCardStatus(event, index) {
-        return event.id === getCorrectOrder()[index]?.id ? "correct" : "incorrect";
-      }
-
-      function getScore() {
-        const correct = getCorrectOrder();
-        let score = 0;
-        for (let i = 0; i < state.timeline.length; i++) {
-          if (state.timeline[i].id === correct[i]?.id) score++;
-        }
-        return { score, total: state.events.length };
-      }
-
-      function isPlacementCorrect(insertAt) {
-        const card = state.timeline[insertAt];
-        const prev = state.timeline[insertAt - 1];
-        const next = state.timeline[insertAt + 1];
-        if (prev && prev.year > card.year) return false;
-        if (next && next.year < card.year) return false;
-        return true;
-      }
-
-      function recordPlacement(insertAt, slotsAvailable) {
-        const card      = state.timeline[insertAt];
-        const isCorrect = isPlacementCorrect(insertAt);
-        state.placedStatuses[card.id]  = isCorrect ? "correct" : "incorrect";
-        state.potentialPoints[card.id] = slotsAvailable;
-        if (isCorrect) state.score += slotsAvailable;
-        saveGameState();
-      }
-
-      function cardHtml(ev, pts = null) {
-        const ptsHtml = pts !== null
-          ? `<div class="card-pts">${pts} pt${pts !== 1 ? "s" : ""}</div>`
-          : "";
-        return `
-          <div class="img-wrap">
-            <img src="${ev.image}" alt="" loading="lazy"
-              onerror="this.parentElement.style.display='none'" />
-          </div>
-          <div class="card-desc">${ev.description}</div>
-          ${ptsHtml}
-        `;
-      }
-
-      function buildProgressRow() {
-        if (!state.events.length || !state.cardOrder.length) return "";
-        const total    = state.cardOrder.length;
-        const placed   = Object.keys(state.placedStatuses).length;
-        const currentId = state.oneAtATime && state.bank.length > 0 ? state.bank[0].id : null;
-
-        const dots = state.cardOrder.map((id) => {
-          const status = state.placedStatuses[id];
-          if (status)         return `<span class="prog-dot ${status}"></span>`;
-          if (id === currentId) return `<span class="prog-dot current"></span>`;
-          return `<span class="prog-dot remaining"></span>`;
-        }).join("");
-
-        const scoreLabel = state.bank.length === 0
-          ? `${state.score} pts`
-          : `${state.score} pts`;
-
-        return `
-          <div id="progress-row">
-            <span class="progress-count">${placed} of ${total}</span>
-            <div class="progress-dots">${dots}</div>
-            <span class="progress-score">${scoreLabel}</span>
-          </div>
-        `;
-      }
-
-      function renderBank() {
-        const el = document.getElementById("bank-area");
-
-        if (!state.events.length) {
-          el.innerHTML = "";
-          return;
-        }
-
-        const progressHtml = buildProgressRow();
-
-        if (!state.bank.length) {
-          el.innerHTML = progressHtml;
-          return;
-        }
-
-        const visible   = state.oneAtATime ? state.bank.slice(0, 1) : state.bank;
-        const remaining = state.bank.length;
-        const slotsNow  = state.timeline.length + 1;
-
-        const scroll = document.createElement("div");
-        scroll.id = "bank-scroll";
-        if (state.oneAtATime) scroll.classList.add("single-mode");
-
-        visible.forEach((ev, idx) => {
-          const card = document.createElement("div");
-          card.className  = state.oneAtATime ? "bank-card single" : "bank-card";
-          card.draggable  = true;
-          card.dataset.id = ev.id;
-          // Show points badge only on the current card in single mode
-          const pts = (state.oneAtATime && idx === 0) ? slotsNow : null;
-          card.innerHTML  = cardHtml(ev, pts);
-
-          card.addEventListener("dragstart", (e) => {
-            state.dragging = { id: ev.id, from: "bank" };
-            e.dataTransfer.effectAllowed = "move";
-            e.dataTransfer.setData("text/plain", String(ev.id));
-            setTimeout(() => card.classList.add("dragging"), 0);
-          });
-          card.addEventListener("dragend", () => {
-            card.classList.remove("dragging");
-            if (state.dragging) {
-              state.dragging = null;
-              state.dragOverZone = null;
-              renderTimeline();
-            }
-          });
-          scroll.appendChild(card);
-        });
-
-        if (state.oneAtATime && remaining > 1) {
-          const ctr = document.createElement("div");
-          ctr.id = "bank-counter";
-          ctr.textContent = `${remaining} remaining`;
-          scroll.appendChild(ctr);
-        }
-
-        el.innerHTML = progressHtml;
-        el.appendChild(scroll);
-      }
-
-      function renderTimeline() {
-        const el = document.getElementById("timeline");
-        if (!state.events.length) { el.innerHTML = ""; return; }
-
-        const { timeline, dragOverZone } = state;
-        const gameComplete = state.bank.length === 0;
-        let html = `<div class="tl-label">EARLIEST</div>`;
-        if (!gameComplete) html += dropZoneHtml(0, dragOverZone);
-
-        for (let i = 0; i < timeline.length; i++) {
-          const ev     = timeline[i];
-          const status = state.placedStatuses[ev.id] ?? "";
-          const justPlaced = ev.id === state.lastPlacedId ? " just-placed" : "";
-          html += `
-            <div class="tl-card ${status}${justPlaced}" draggable="false" data-id="${ev.id}">
-              <div class="img-wrap">
-                <img src="${ev.image}" alt="" loading="lazy"
-                    onerror="this.parentElement.style.display='none'" />
-              </div>
-              <div class="card-desc">${ev.description}</div>
-              <div class="year-badge">${ev.displayYear}</div>
-            </div>
-          `;
-          if (!gameComplete) html += dropZoneHtml(i + 1, dragOverZone);
-        }
-
-        html += `<div class="tl-label">LATEST</div>`;
-        el.innerHTML = html;
-
-        if (gameComplete) return;
-
-        el.querySelectorAll(".tl-drop-zone").forEach((zone) => {
-          const z = parseInt(zone.dataset.zone, 10);
-
-          // Tap-to-place: only in single mode; click a zone to place the current card
-          zone.addEventListener("click", () => {
-            if (!state.oneAtATime) return;
-            if (state.dragging) return;
-            if (!state.bank.length) return;
-            const ev = state.bank[0];
-            if (!ev) return;
-            state.bank = state.bank.filter((b) => b.id !== ev.id);
-            const insertAt       = Math.max(0, Math.min(z, state.timeline.length));
-            const slotsAvailable = state.timeline.length + 1;
-            state.timeline.splice(insertAt, 0, ev);
-            recordPlacement(insertAt, slotsAvailable);
-            state.lastPlacedId = ev.id;
-            render();
-          });
-
-          zone.addEventListener("dragenter", (e) => {
-            e.preventDefault();
-            state.dragOverZone = z;
-            el.querySelectorAll(".tl-drop-zone").forEach((dz) => dz.classList.remove("active"));
-            zone.classList.add("active");
-          });
-          zone.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = "move";
-          });
-          zone.addEventListener("dragleave", (e) => {
-            if (!zone.contains(e.relatedTarget)) {
-              zone.classList.remove("active");
-              if (state.dragOverZone === z) state.dragOverZone = null;
-            }
-          });
-          zone.addEventListener("drop", (e) => {
-            e.preventDefault();
-            state.dragOverZone = null;
-            if (!state.dragging) return;
-            const { id, from } = state.dragging;
-            if (from !== "bank") return;
-            const ev = state.bank.find((b) => b.id === id);
-            if (!ev) return;
-            state.bank = state.bank.filter((b) => b.id !== id);
-            const insertAt       = Math.max(0, Math.min(z, state.timeline.length));
-            const slotsAvailable = state.timeline.length + 1;
-            state.timeline.splice(insertAt, 0, ev);
-            recordPlacement(insertAt, slotsAvailable);
-            state.lastPlacedId = ev.id;
-            state.dragging = null;
-            render();
-          });
-        });
-      }
-
-      function dropZoneHtml(index, activeZone) {
-        const active = activeZone === index && state.dragging !== null;
-        return `<div class="tl-drop-zone${active ? " active" : ""}" data-zone="${index}"></div>`;
-      }
-
-      function renderSubmitBar() {
-        const bar        = document.getElementById("submit-bar");
-        const btnRestart = document.getElementById("btn-restart");
-        const resultsText = document.getElementById("results-text");
-
-        if (!state.events.length || state.bank.length > 0) {
-          bar.style.display = "none";
-          return;
-        }
-
-        // Game complete
-        bar.style.display = "flex";
-        document.getElementById("btn-submit").style.display = "none";
-        const correct = Object.values(state.placedStatuses).filter((s) => s === "correct").length;
-        resultsText.textContent  = `${correct} of ${state.events.length} correct · ${state.score} pts`;
-        btnRestart.style.display = "inline-block";
-      }
-
-      function render() {
-        renderBank();
-        renderTimeline();
-        renderSubmitBar();
-        requestAnimationFrame(adjustLayout);
-        state.lastPlacedId = null;
-      }
-
-      let debounceTimer = null;
-
-      function renderDropdown() {
-        const dropdown = document.getElementById("search-dropdown");
-        const query    = document.getElementById("search-input").value.trim();
-        const history  = state.history;
-        const results  = state.searchResults;
-
-        if (!state.searchOpen || (!query && !history.length)) {
-          dropdown.style.display = "none";
-          return;
-        }
-
-        let html = "";
-
-        if (!query && history.length) {
-          html += `<div class="dropdown-section-label">Recent</div>`;
-          for (const g of history) {
-            html += `<div class="dropdown-item" data-id="${g.value}" data-label="${escapeAttr(g.label)}">
-              <span class="dropdown-item-label">${escapeHtml(g.label)}</span>
-            </div>`;
-          }
-        }
-
-        if (query && results.length) {
-          html += `<div class="dropdown-section-label">Results</div>`;
-          for (const r of results) {
-            html += `<div class="dropdown-item" data-id="${r.id}" data-label="${escapeAttr(r.label)}">
-              <span class="dropdown-item-label">${escapeHtml(r.label)}</span>
-              ${r.description ? `<span class="dropdown-item-desc">${escapeHtml(r.description)}</span>` : ""}
-            </div>`;
-          }
-        }
-
-        if (!html) { dropdown.style.display = "none"; return; }
-
-        dropdown.innerHTML = html;
-        dropdown.style.display = "block";
-
-        dropdown.querySelectorAll(".dropdown-item").forEach((item) => {
-          item.addEventListener("mousedown", (e) => {
-            e.preventDefault();
-            const id    = item.dataset.id;
-            const label = item.dataset.label;
-            document.getElementById("search-input").value = "";
-            document.getElementById("search-clear").style.display = "none";
-            state.searchResults = [];
-            state.searchOpen    = false;
-            dropdown.style.display = "none";
-
-            showDifficultyModal(async () => {
-              const knownSeed = SEEDS.find((s) => s.value === id);
-              if (knownSeed) {
-                loadGame(knownSeed);
-                return;
-              }
-
-              setMessage(`Resolving "${label}"…`);
-              const resolved = await resolveToPlayableClass(id);
-              setMessage("");
-              if (resolved) {
-                loadGame({ label: resolved.label, value: resolved.value });
-              } else {
-                loadGame({ label, value: id });
-              }
-            });
-          });
-        });
-      }
-
-      function escapeHtml(s) {
-        return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-      }
-
-      function escapeAttr(s) {
-        return s.replace(/"/g, "&quot;");
-      }
-
-      function initTouchDrag() {
-        const ghost = document.createElement("div");
-        ghost.id = "drag-ghost";
-        document.body.appendChild(ghost);
-
-        let touchDrag = null;
-
-        function cardFromTouch(el) {
-          return el.closest(".bank-card, .tl-card");
-        }
-
-        function buildGhost(card) {
-          const img  = card.querySelector("img");
-          const desc = card.querySelector(".card-desc");
-          ghost.innerHTML = `
-            <div class="img-wrap">${img ? `<img src="${img.src}" />` : ""}</div>
-            <div class="card-desc">${desc ? desc.innerHTML : ""}</div>
-          `;
-          ghost.style.width = state.oneAtATime ? "200px" : "100px";
-          const wrap = ghost.querySelector(".img-wrap");
-          if (wrap) wrap.style.height = state.oneAtATime ? "100px" : "66px";
-        }
-
-        function zoneFromPoint(x, y) {
-          const prevDisplay = ghost.style.display;
-          ghost.style.display = "none";
-          const el = document.elementFromPoint(x, y);
-          ghost.style.display = prevDisplay;
-          if (!el) return null;
-          const zone = el.closest(".tl-drop-zone");
-          if (zone) return zone;
-          const bank = el.closest("#bank-area");
-          if (bank) return bank;
-          return null;
-        }
-
-        function clearHighlights() {
-          document.querySelectorAll(".tl-drop-zone.active").forEach((z) =>
-            z.classList.remove("active")
-          );
-          document.getElementById("bank-area").classList.remove("drag-over");
-        }
-
-        document.addEventListener("touchstart", (e) => {
-          const card = cardFromTouch(e.target);
-          if (!card || !card.classList.contains("bank-card")) return;
-          const id   = parseInt(card.dataset.id, 10);
-          const from = "bank";
-          touchDrag      = { id, from };
-          state.dragging = { id, from };
-          buildGhost(card);
-          const t = e.touches[0];
-          ghost.style.left    = `${t.clientX}px`;
-          ghost.style.top     = `${t.clientY}px`;
-          ghost.style.display = "block";
-          card.classList.add("dragging");
-          e.preventDefault();
-        }, { passive: false });
-
-        document.addEventListener("touchmove", (e) => {
-          if (!touchDrag) return;
-          const t = e.touches[0];
-          ghost.style.left = `${t.clientX}px`;
-          ghost.style.top  = `${t.clientY}px`;
-          clearHighlights();
-          const target = zoneFromPoint(t.clientX, t.clientY);
-          if (target?.classList.contains("tl-drop-zone")) {
-            target.classList.add("active");
-            state.dragOverZone = parseInt(target.dataset.zone, 10);
-          } else if (target?.id === "bank-area") {
-            target.classList.add("drag-over");
-            state.dragOverZone = null;
-          } else {
-            state.dragOverZone = null;
-          }
-          e.preventDefault();
-        }, { passive: false });
-
-        document.addEventListener("touchend", (e) => {
-          if (!touchDrag) return;
-          ghost.style.display = "none";
-          clearHighlights();
-
-          const t      = e.changedTouches[0];
-          const target = zoneFromPoint(t.clientX, t.clientY);
-          const { id, from } = touchDrag;
-          touchDrag      = null;
-          state.dragging = null;
-
-          document.querySelectorAll(".bank-card.dragging, .tl-card.dragging")
-            .forEach((c) => c.classList.remove("dragging"));
-
-          if (target?.classList.contains("tl-drop-zone") && from === "bank") {
-            const z  = parseInt(target.dataset.zone, 10);
-            const ev = state.bank.find((b) => b.id === id);
-            if (!ev) return;
-            state.bank = state.bank.filter((b) => b.id !== id);
-            const insertAt       = Math.max(0, Math.min(z, state.timeline.length));
-            const slotsAvailable = state.timeline.length + 1;
-            state.timeline.splice(insertAt, 0, ev);
-            recordPlacement(insertAt, slotsAvailable);
-            state.lastPlacedId = ev.id;
-          } else {
-            render();
-            return;
-          }
-
-          state.dragOverZone = null;
-          render();
-        });
-      }
-
-      function showDifficultyModal(onConfirm) {
-        const modal = document.getElementById("difficulty-modal");
-        modal.style.display = "flex";
-
-        modal.querySelectorAll(".diff-btn").forEach((btn) => {
-          btn.classList.toggle("selected", btn.dataset.diff === state.difficulty);
-          btn.onclick = () => {
-            state.difficulty = btn.dataset.diff;
-            safeSet(KEY_DIFFICULTY, state.difficulty);
-            modal.style.display = "none";
-            onConfirm();
-          };
-        });
-
-        function onBackdrop(e) {
-          if (e.target === modal) {
-            modal.style.display = "none";
-            modal.removeEventListener("click", onBackdrop);
-          }
-        }
-        modal.addEventListener("click", onBackdrop);
-
-        function onEscape(e) {
-          if (e.key === "Escape") {
-            modal.style.display = "none";
-            document.removeEventListener("keydown", onEscape);
-          }
-        }
-        document.addEventListener("keydown", onEscape);
-      }
-
-      function initSearch() {
-        const input      = document.getElementById("search-input");
-        const spinner    = document.getElementById("search-spinner");
-        const clearBtn   = document.getElementById("search-clear");
-        const btnRandom  = document.getElementById("btn-random");
-        const btnRestart = document.getElementById("btn-restart");
-        const btnMode    = document.getElementById("btn-mode");
-
-        state.history = loadHistory();
-        btnMode.classList.toggle("active", state.oneAtATime);
-
-        const savedDiff = safeGet(KEY_DIFFICULTY);
-        if (savedDiff && DIFFICULTY_COUNTS[savedDiff]) {
-          state.difficulty = savedDiff;
-        }
-
-        input.addEventListener("focus", () => {
-          state.searchOpen = true;
-          renderDropdown();
-        });
-
-        input.addEventListener("blur", () => {
-          setTimeout(() => {
-            state.searchOpen = false;
-            document.getElementById("search-dropdown").style.display = "none";
-          }, 150);
-        });
-
-        input.addEventListener("input", () => {
-          const q = input.value;
-          clearBtn.style.display = q ? "block" : "none";
+          state.searchResults = await searchEntities(q);
+        } catch {
           state.searchResults = [];
-          if (debounceTimer) clearTimeout(debounceTimer);
-          if (!q.trim()) {
-            spinner.style.display = "none";
-            renderDropdown();
-            return;
-          }
-          spinner.style.display = "block";
-          debounceTimer = setTimeout(async () => {
-            try {
-              state.searchResults = await searchEntities(q);
-            } catch {
-              state.searchResults = [];
-            }
-            spinner.style.display = "none";
-            renderDropdown();
-          }, 300);
-        });
+        }
+        spinner.style.display = 'none';
+        renderWelcomeDropdown();
+      }, 300);
+    });
 
-        clearBtn.addEventListener("click", () => {
-          input.value = "";
-          clearBtn.style.display = "none";
-          state.searchResults = [];
-          state.searchOpen    = true;
-          renderDropdown();
-          input.focus();
-        });
+    input.addEventListener('focus', () => {
+      if (state.searchResults.length) renderWelcomeDropdown();
+    });
 
-        document.addEventListener("click", (e) => {
-          if (!document.getElementById("search-container").contains(e.target)) {
-            state.searchOpen = false;
-            document.getElementById("search-dropdown").style.display = "none";
-          }
-        });
+    document.addEventListener('click', e => {
+      if (!document.getElementById('welcome-search-wrap').contains(e.target) &&
+          !document.getElementById('welcome-dropdown').contains(e.target)) {
+        dropList.style.display = 'none';
+      }
+    });
 
-        btnRandom.addEventListener("click", () => {
-          showDifficultyModal(async () => {
-            btnRandom.classList.add("loading");
-            try {
-              const game = await nextTopic();
-              if (!game) throw new Error("No topics available");
-              markSpent(game);
-              await loadGame(game);
-            } catch (err) {
-              setMessage(`Failed to load game: ${err.message}`);
-            } finally {
-              btnRandom.classList.remove("loading");
-            }
-          });
-        });
+    // Start new game
+    document.getElementById('btn-new-game').addEventListener('click', async () => {
+      const game = state.pendingGame;
+      if (!game) {
+        // pick random
+        const topic = await nextTopic();
+        if (topic) {
+          state.pendingGame = topic;
+          startGameFromWikidata(topic, false);
+        }
+        return;
+      }
+      startGameFromWikidata(game, false);
+    });
 
-        btnRestart.addEventListener("click", () => {
-          clearGameState();
-          const shuffled = shuffle([...state.events]);
-          state.bank           = shuffled;
-          state.timeline       = [];
-          state.submitted      = false;
-          state.dragging       = null;
-          state.dragOverZone   = null;
-          state.placedStatuses = {};
-          state.potentialPoints = {};
-          state.cardOrder      = shuffled.map((e) => e.id);
-          state.score          = 0;
-          render();
-        });
+    // Resume
+    document.getElementById('btn-resume').addEventListener('click', () => {
+      startGameFromWikidata(null, true);
+    });
 
-        btnMode.addEventListener("click", () => {
-          state.oneAtATime = !state.oneAtATime;
-          btnMode.classList.toggle("active", state.oneAtATime);
-          render();
-        });
+    // Start over
+    document.getElementById('btn-start-over').addEventListener('click', async () => {
+      clearState();
+      document.getElementById('resume-section').classList.remove('show');
+      topicDisplay.textContent = '';
+      // pick new random topic
+      const topic = await nextTopic();
+      if (topic) {
+        state.pendingGame = topic;
+        topicDisplay.textContent = topic.label;
+      }
+    });
+  }
 
-        window.addEventListener("resize", adjustLayout);
+  function renderWelcomeDropdown() {
+    const dropList = document.getElementById('welcome-dropdown-list');
+    const topicDisplay = document.getElementById('topic-display');
 
-        const layoutObserver = new ResizeObserver(() => adjustLayout());
-        layoutObserver.observe(document.getElementById("top-bar"));
-        layoutObserver.observe(document.getElementById("bank-area"));
+    if (!state.searchResults.length) {
+      dropList.style.display = 'none';
+      return;
+    }
 
-        initTouchDrag();
+    dropList.innerHTML = state.searchResults.map(r => `
+      <div class="w-drop-item" data-id="${escapeHtml(r.id)}" data-label="${escapeHtml(r.label)}">
+        ${escapeHtml(r.label)}
+        ${r.description ? `<span class="w-drop-desc">${escapeHtml(r.description)}</span>` : ''}
+      </div>
+    `).join('');
+    dropList.style.display = 'block';
 
-        const savedGame = safeGet(KEY_GAME);
-        if (savedGame) {
-          loadGame(savedGame);
+    dropList.querySelectorAll('.w-drop-item').forEach(item => {
+      item.addEventListener('mousedown', async e => {
+        e.preventDefault();
+        const id    = item.dataset.id;
+        const label = item.dataset.label;
+        dropList.style.display = 'none';
+        document.getElementById('welcome-search-input').value = '';
+        state.searchResults = [];
+
+        setMessage(`Resolving "${label}"…`);
+        let game = SEEDS.find(s => s.value === id);
+        if (!game) {
+          const resolved = await resolveToPlayableClass(id);
+          setMessage('');
+          game = resolved
+            ? { label: resolved.label, value: resolved.value }
+            : { label, value: id };
         } else {
-          document.getElementById("empty-state").style.display = "block";
-          adjustLayout();
+          setMessage('');
         }
-      }
 
-      initSearch();
-    </script>
-  </body>
+        state.pendingGame = game;
+        topicDisplay.textContent = game.label;
+      });
+    });
+  }
+
+  // ==================== POINTER EVENTS DRAG (works on mouse + touch) ====================
+  function initPointerDrag() {
+    const ghost = document.getElementById('drag-ghost');
+    let active = null; // { pointerId, offsetX, offsetY, currentZone }
+
+    function getZoneUnderPoint(x, y) {
+      // Temporarily hide ghost so elementFromPoint can see through it
+      ghost.style.display = 'none';
+      const el = document.elementFromPoint(x, y);
+      ghost.style.display = 'block';
+      return el ? el.closest('.place-zone') : null;
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('.place-zone.drag-over').forEach(z => z.classList.remove('drag-over'));
+    }
+
+    function positionGhost(x, y) {
+      // Center ghost horizontally on pointer, offset y so it's above finger
+      const w = Math.min(360, window.innerWidth - 20);
+      ghost.style.left = `${Math.max(10, Math.min(x - w / 2, window.innerWidth - w - 10))}px`;
+      ghost.style.top  = `${y - 70}px`;
+    }
+
+    // Listen on the stack element for pointer events
+    const stackEl = document.getElementById('stack');
+
+    stackEl.addEventListener('pointerdown', e => {
+      if (active) return;
+      if (state.phase !== 'game' || state.isAnimating || !state.stack.length) return;
+      const card = e.target.closest('.stack-card');
+      if (!card) return;
+
+      // Only the last (top) card is interactive
+      const allCards = stackEl.querySelectorAll('.stack-card');
+      if (card !== allCards[allCards.length - 1]) return;
+
+      e.preventDefault();
+      card.setPointerCapture(e.pointerId);
+
+      const ev = state.stack[state.stack.length - 1];
+      ghost.innerHTML = `<div class="clue-inner">
+        <img src="${ev.image}" alt="" loading="lazy" onerror="this.style.display='none'" />
+        <p>${ev.description}</p>
+      </div>`;
+      positionGhost(e.clientX, e.clientY);
+      ghost.style.display = 'block';
+      card.classList.add('dragging');
+
+      active = { pointerId: e.pointerId, card, currentZone: null };
+    });
+
+    stackEl.addEventListener('pointermove', e => {
+      if (!active || e.pointerId !== active.pointerId) return;
+      e.preventDefault();
+      positionGhost(e.clientX, e.clientY);
+
+      const zone = getZoneUnderPoint(e.clientX, e.clientY);
+      if (zone !== active.currentZone) {
+        clearHighlights();
+        if (zone) zone.classList.add('drag-over');
+        active.currentZone = zone;
+      }
+    });
+
+    function endDrag(e) {
+      if (!active || e.pointerId !== active.pointerId) return;
+      e.preventDefault();
+
+      ghost.style.display = 'none';
+      active.card.classList.remove('dragging');
+      clearHighlights();
+
+      const zone = active.currentZone;
+      active = null;
+
+      if (zone && state.phase === 'game' && !state.isAnimating && state.stack.length) {
+        const z = parseInt(zone.dataset.zone, 10);
+        placeCard(z);
+      }
+    }
+
+    stackEl.addEventListener('pointerup',     endDrag);
+    stackEl.addEventListener('pointercancel', endDrag);
+  }
+
+  // ==================== TIMELINE INTERACTION ====================
+  function initTimeline() {
+    document.getElementById('timeline').addEventListener('click', e => {
+      const zone = e.target.closest('.place-zone');
+      if (!zone || state.phase !== 'game' || state.isAnimating) return;
+      if (!state.stack.length) return;
+
+      // Press animation
+      zone.classList.add('pressing');
+      setTimeout(() => zone.classList.remove('pressing'), 150);
+
+      const z = parseInt(zone.dataset.zone, 10);
+      placeCard(z);
+    });
+  }
+
+  // ==================== HELP MODAL ====================
+  function initHelp() {
+    document.getElementById('btn-help').addEventListener('click', () => {
+      document.getElementById('help-modal').classList.add('show');
+    });
+    document.getElementById('help-close').addEventListener('click', () => {
+      document.getElementById('help-modal').classList.remove('show');
+    });
+    document.getElementById('help-ok').addEventListener('click', () => {
+      document.getElementById('help-modal').classList.remove('show');
+    });
+    document.getElementById('help-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('help-modal')) {
+        document.getElementById('help-modal').classList.remove('show');
+      }
+    });
+  }
+
+  // ==================== SHARE ====================
+  function initShare() {
+    document.getElementById('btn-share').addEventListener('click', () => {
+      const total = state.events.length - 1;
+      const correct = state.correctCount;
+      const topic = state.game?.label ?? 'history';
+
+      const squares = state.events
+        .filter(e => e.id !== state.anchorId)
+        .map(e => state.placedStatuses[e.id] === 'correct' ? '🟩' : '🟥')
+        .join('');
+
+      const text = `BackFlash — ${topic}\n${correct}/${total} correct\n${squares}\nPlay at ${location.href}`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => showShareToast());
+      } else {
+        showShareToast();
+      }
+    });
+
+    document.getElementById('btn-new-game-2').addEventListener('click', () => {
+      clearState();
+      location.reload();
+    });
+  }
+
+  function showShareToast() {
+    const toast = document.getElementById('share-toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  // ==================== INIT ====================
+  function init() {
+    initWelcome();
+    initTimeline();
+    initPointerDrag();
+    initHelp();
+    initShare();
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
 </html>

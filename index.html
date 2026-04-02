@@ -221,15 +221,16 @@
       .progress-dots { display: flex; gap: 4px; align-items: center; }
 
       .prog-dot {
-        width: 28px;
+        width: 24px;
         height: 8px;
         border-radius: 4px;
         flex-shrink: 0;
+        transition: background 0.2s, width 0.15s;
       }
 
       .prog-dot.correct   { background: #4caf78; }
       .prog-dot.incorrect { background: #d04f4f; }
-      .prog-dot.current   { background: #5b8dd9; }
+      .prog-dot.current   { background: #5b8dd9; width: 32px; }
       .prog-dot.remaining { background: #d8d6cc; }
 
       .bank-card .card-pts { display: none; }
@@ -347,33 +348,30 @@
       .bank-card.dragging { opacity: 0.3; transform: scale(0.96); }
 
       .bank-card.single {
-        width: min(320px, calc(100vw - 48px));
+        width: min(340px, calc(100vw - 32px));
         flex-direction: row;
         align-items: stretch;
-        height: 96px;
+        height: 88px;
         border-radius: 10px;
       }
 
       .bank-card.single .img-wrap {
-        width: 120px;
+        width: 110px;
         height: 100%;
         flex-shrink: 0;
+        border-radius: 9px 0 0 9px;
+        background: #f0efe9;
+        overflow: hidden;
       }
 
       .bank-card.single .card-desc {
-        font-size: 13px;
+        font-size: 12.5px;
         padding: 10px 12px;
-        -webkit-line-clamp: 4;
-        display: flex;
-        align-items: center;
-      }
-
-      .bank-card .img-wrap {
-        width: 100%;
-        height: 66px;
-        background: #f0efe9;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
         overflow: hidden;
-        flex-shrink: 0;
+        align-self: center;
       }
 
       .bank-card .img-wrap img {
@@ -412,38 +410,93 @@
         font-weight: 700;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        padding: 16px 0 6px;
+        padding: 14px 0 4px;
+      }
+
+      .tl-place-hint {
+        text-align: center;
+        color: #bbb;
+        font-size: 12px;
+        padding: 6px 0 2px;
+        font-style: italic;
+        pointer-events: none;
+        user-select: none;
       }
 
       .tl-drop-zone {
-        height: 6px;
-        border-radius: 4px;
-        margin: 2px 0;
-        transition: height 0.15s, background 0.15s;
+        height: 44px;
+        border-radius: 8px;
+        margin: 4px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
         position: relative;
+        border: 2px dashed #d4d1c8;
+        background: #faf9f7;
+        transition: height 0.12s ease, background 0.12s ease, border-color 0.12s;
+        -webkit-tap-highlight-color: transparent;
       }
 
+      .tl-drop-zone::before {
+        content: "+";
+        font-size: 18px;
+        font-weight: 400;
+        color: #c8c5bc;
+        line-height: 1;
+        transition: color 0.12s;
+      }
+
+      .tl-drop-zone:hover {
+        border-color: #aaa8a0;
+        background: #f3f2ee;
+      }
+      .tl-drop-zone:hover::before { color: #888; }
+
       .tl-drop-zone.active {
-        height: 72px;
+        height: 68px;
         background: #f5e9c8;
         border: 2px dashed #e0c87a;
         border-radius: 8px;
       }
 
+      .tl-drop-zone.active::before {
+        content: "↓";
+        color: #c8a840;
+        font-size: 20px;
+      }
+
+      @keyframes card-enter {
+        from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+        to   { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      @keyframes correct-flash {
+        0%   { background: #d4f0e3; }
+        100% { background: #f3fbf7; }
+      }
+      @keyframes incorrect-shake {
+        0%, 100% { transform: translateX(0); }
+        20%      { transform: translateX(-5px); }
+        60%      { transform: translateX(5px); }
+        80%      { transform: translateX(-3px); }
+      }
+
       .tl-card {
         background: #fff;
         border: 1.5px solid #e8e6de;
+        border-left: 4px solid #e8e6de;
         border-radius: 10px;
         display: flex;
         align-items: center;
         gap: 12px;
         padding: 10px 12px;
-        margin: 4px 0;
+        margin: 2px 0;
         cursor: grab;
         user-select: none;
-        transition: box-shadow 0.15s;
+        transition: box-shadow 0.15s, border-color 0.15s;
       }
 
+      .tl-card.just-placed { animation: card-enter 0.18s ease-out; }
       .tl-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
       .tl-card:active { cursor: grabbing; }
       .tl-card.dragging { opacity: 0.3; }
@@ -486,10 +539,20 @@
         color: #666;
       }
 
-      .tl-card.correct { border-color: #b8dfc8; background: #f3fbf7; }
+      .tl-card.correct {
+        border-color: #b8dfc8;
+        border-left-color: #4caf78;
+        background: #f3fbf7;
+        animation: correct-flash 0.5s ease-out;
+      }
       .tl-card.correct .year-badge { background: #4caf78; color: #fff; }
 
-      .tl-card.incorrect { border-color: #f0c4c4; background: #fdf5f5; }
+      .tl-card.incorrect {
+        border-color: #f0c4c4;
+        border-left-color: #d04f4f;
+        background: #fdf5f5;
+        animation: incorrect-shake 0.35s ease-out;
+      }
       .tl-card.incorrect .year-badge { background: #d04f4f; color: #fff; }
 
       #submit-bar {
@@ -569,13 +632,13 @@
         position: fixed;
         pointer-events: none;
         z-index: 999;
-        opacity: 0.9;
+        opacity: 0.93;
         border-radius: 8px;
         overflow: hidden;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.20);
+        box-shadow: 0 10px 28px rgba(0,0,0,0.22);
         background: #fff;
         border: 1.5px solid #e2e0d6;
-        transform: translate(-50%, -50%) scale(1.06);
+        transform: translate(-50%, -120%) scale(1.06);
         display: none;
         width: 100px;
       }
@@ -916,6 +979,7 @@
         cardOrder: [],
         score: 0,
         difficulty: "medium",
+        lastPlacedId: null,
       };
 
       function safeGet(key) {
@@ -1376,8 +1440,9 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         for (let i = 0; i < timeline.length; i++) {
           const ev     = timeline[i];
           const status = state.placedStatuses[ev.id] ?? "";
+          const justPlaced = ev.id === state.lastPlacedId ? " just-placed" : "";
           html += `
-            <div class="tl-card ${status}" draggable="false" data-id="${ev.id}">
+            <div class="tl-card ${status}${justPlaced}" draggable="false" data-id="${ev.id}">
               <div class="img-wrap">
                 <img src="${ev.image}" alt="" loading="lazy"
                     onerror="this.parentElement.style.display='none'" />
@@ -1396,6 +1461,23 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
 
         el.querySelectorAll(".tl-drop-zone").forEach((zone) => {
           const z = parseInt(zone.dataset.zone, 10);
+
+          // Tap-to-place: only in single mode; click a zone to place the current card
+          zone.addEventListener("click", () => {
+            if (!state.oneAtATime) return;
+            if (state.dragging) return;
+            if (!state.bank.length) return;
+            const ev = state.bank[0];
+            if (!ev) return;
+            state.bank = state.bank.filter((b) => b.id !== ev.id);
+            const insertAt       = Math.max(0, Math.min(z, state.timeline.length));
+            const slotsAvailable = state.timeline.length + 1;
+            state.timeline.splice(insertAt, 0, ev);
+            recordPlacement(insertAt, slotsAvailable);
+            state.lastPlacedId = ev.id;
+            render();
+          });
+
           zone.addEventListener("dragenter", (e) => {
             e.preventDefault();
             state.dragOverZone = z;
@@ -1425,6 +1507,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             const slotsAvailable = state.timeline.length + 1;
             state.timeline.splice(insertAt, 0, ev);
             recordPlacement(insertAt, slotsAvailable);
+            state.lastPlacedId = ev.id;
             state.dragging = null;
             render();
           });
@@ -1459,6 +1542,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         renderTimeline();
         renderSubmitBar();
         requestAnimationFrame(adjustLayout);
+        state.lastPlacedId = null;
       }
 
       let debounceTimer = null;
@@ -1639,6 +1723,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             const slotsAvailable = state.timeline.length + 1;
             state.timeline.splice(insertAt, 0, ev);
             recordPlacement(insertAt, slotsAvailable);
+            state.lastPlacedId = ev.id;
           } else {
             render();
             return;

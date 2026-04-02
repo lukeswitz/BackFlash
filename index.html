@@ -1384,8 +1384,12 @@
     FILTER(LANG(?itemDescription) = "en")
   }`;
     if (prop) {
+      // For author queries (P50), exclude editions/translations at the source
+      const editionFilter = prop === 'P50'
+        ? '\n  FILTER NOT EXISTS { ?item wdt:P31 wd:Q3331189. }'
+        : '';
       return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-  ?item wdt:${prop} wd:${entityId}.
+  ?item wdt:${prop} wd:${entityId}.${editionFilter}
   ${dateClause}
   FILTER(YEAR(?date) > 0)
   ${labelClause}
@@ -1410,11 +1414,17 @@
     for (const b of bindings) {
       const id = b.item?.value;
       if (!id || !b.date?.value || !b.itemLabel?.value) continue;
+      const rawLabel = b.itemLabel.value;
+      const rawDesc  = b.itemDescription?.value ?? '';
+      // Skip translations and non-Latin-script items
+      if (/translat/i.test(rawLabel) || /translat/i.test(rawDesc)) continue;
+      if (/[\u0400-\u04FF\u0370-\u03FF\u4E00-\u9FFF\u3040-\u30FF\u0600-\u06FF]/.test(rawLabel)) continue;
       const year = parseYear(b.date.value);
       if (year === null) continue;
       const existing = byId.get(id);
-      // Keep this row if: no entry yet, OR this row adds an image the existing lacks
-      if (!existing || (!existing.image?.value && b.image?.value)) {
+      const gainsImage = !existing?.image?.value && b.image?.value;
+      const fixesBadYear = existing && existing._year < 100 && year >= 100;
+      if (!existing || gainsImage || fixesBadYear) {
         byId.set(id, { ...b, _year: year });
       }
     }

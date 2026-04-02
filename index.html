@@ -42,6 +42,7 @@
       #search-container {
         position: relative;
         flex: 1;
+        min-width: 0;
       }
 
       #search-input-wrap {
@@ -247,17 +248,6 @@
         flex-shrink: 0;
       }
 
-      #game-title {
-        font-size: 12px;
-        color: #999;
-        font-style: italic;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100px;
-        display: none;
-        flex-shrink: 1;
-      }
 
       #bank-area {
         position: fixed;
@@ -765,8 +755,8 @@
       @media (max-width: 480px) {
         #nav-inner { padding: 8px 10px; gap: 6px; }
         #btn-random { padding: 8px 12px; font-size: 12px; }
-        #btn-mode   { padding: 7px 10px; font-size: 11px; }
-        #game-title { display: none !important; }
+        #btn-mode   { padding: 7px 9px; font-size: 0; }
+        #btn-mode svg { width: 16px; height: 16px; }
 
         .bank-card {
           width: calc(33.333% - 6px);
@@ -816,7 +806,7 @@
         </div>
 
         <button id="btn-random">
-          <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/><path d="M12 5l7 7-7 7"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
           New Game
         </button>
 
@@ -825,7 +815,6 @@
           Single
         </button>
 
-        <span id="game-title"></span>
       </div>
     </div>
 
@@ -1254,9 +1243,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         pushHistory(game);
         state.history = loadHistory();
 
-        const titleEl = document.getElementById("game-title");
-        titleEl.textContent = game.label;
-        titleEl.style.display = "block";
+        document.getElementById("search-input").placeholder = game.label;
 
         document.getElementById("empty-state").style.display = "none";
 
@@ -1647,9 +1634,10 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         }
 
         function zoneFromPoint(x, y) {
+          const prevDisplay = ghost.style.display;
           ghost.style.display = "none";
           const el = document.elementFromPoint(x, y);
-          ghost.style.display = "block";
+          ghost.style.display = prevDisplay;
           if (!el) return null;
           const zone = el.closest(".tl-drop-zone");
           if (zone) return zone;

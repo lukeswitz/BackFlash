@@ -201,6 +201,49 @@
       #btn-mode.active { border-color: #333; color: #333; background: #f0f0ec; }
       #btn-mode svg { width: 12px; height: 12px; fill: currentColor; }
 
+      #progress-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        padding: 8px 16px 2px;
+        font-size: 12px;
+        font-weight: 700;
+        font-family: "nyt-franklin", arial, sans-serif;
+        width: 100%;
+      }
+
+      .progress-count { color: #666; white-space: nowrap; }
+      .progress-score { color: #333; white-space: nowrap; }
+
+      .progress-dots { display: flex; gap: 4px; align-items: center; }
+
+      .prog-dot {
+        width: 28px;
+        height: 8px;
+        border-radius: 4px;
+        flex-shrink: 0;
+      }
+
+      .prog-dot.correct   { background: #4caf78; }
+      .prog-dot.incorrect { background: #d04f4f; }
+      .prog-dot.current   { background: #5b8dd9; }
+      .prog-dot.remaining { background: #d8d6cc; }
+
+      .bank-card .card-pts { display: none; }
+
+      .bank-card.single .card-pts {
+        display: block;
+        align-self: flex-end;
+        padding: 8px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #aaa;
+        font-family: "nyt-franklin", arial, sans-serif;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
       #game-title {
         font-size: 12px;
         color: #999;
@@ -223,7 +266,8 @@
         z-index: 100;
         padding: 10px 0 20px;
         display: flex;
-        align-items: flex-start;
+        flex-direction: column;
+        align-items: center;
         transition: background 0.15s;
       }
       
@@ -752,6 +796,7 @@
       const KEY_GAME    = "fbq_game";
       const KEY_DECK    = "fbq_deck";
       const KEY_SPENT   = "fbq_spent";
+      const KEY_STATE   = "fbq_state";
 
       const state = {
         game: null,
@@ -764,7 +809,11 @@
         history: [],
         searchResults: [],
         searchOpen: false,
-        oneAtATime: false,
+        oneAtATime: true,
+        placedStatuses: {},
+        potentialPoints: {},
+        cardOrder: [],
+        score: 0,
       };
 
       function safeGet(key) {
@@ -774,6 +823,24 @@
 
       function safeSet(key, val) {
         try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+      }
+
+      function saveGameState() {
+        if (!state.game) return;
+        safeSet(KEY_STATE, {
+          gameValue:      state.game.value,
+          events:         state.events,
+          bank:           state.bank,
+          timeline:       state.timeline,
+          placedStatuses: state.placedStatuses,
+          potentialPoints: state.potentialPoints,
+          cardOrder:      state.cardOrder,
+          score:          state.score,
+        });
+      }
+
+      function clearGameState() {
+        try { localStorage.removeItem(KEY_STATE); } catch {}
       }
 
       function loadHistory()  { return safeGet(KEY_HISTORY) ?? []; }
@@ -953,7 +1020,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         }
         return `
 SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-  ?item wdt:P31/wdt:P279* wd:${entityId};
+  ?item wdt:P31 wd:${entityId};
         wdt:P18 ?image.
   ${dateClause}
   FILTER(YEAR(?date) > 0)
@@ -997,13 +1064,17 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
       }
 
       async function loadGame(game) {
-        state.game         = game;
-        state.submitted    = false;
-        state.dragging     = null;
-        state.dragOverZone = null;
-        state.events       = [];
-        state.bank         = [];
-        state.timeline     = [];
+        state.game           = game;
+        state.submitted      = false;
+        state.dragging       = null;
+        state.dragOverZone   = null;
+        state.events         = [];
+        state.bank           = [];
+        state.timeline       = [];
+        state.placedStatuses = {};
+        state.potentialPoints = {};
+        state.cardOrder      = [];
+        state.score          = 0;
 
         safeSet(KEY_GAME, game);
         pushHistory(game);
@@ -1014,15 +1085,34 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         titleEl.style.display = "block";
 
         document.getElementById("empty-state").style.display = "none";
+
+        // Restore saved state for this game if available
+        const saved = safeGet(KEY_STATE);
+        if (saved && saved.gameValue === game.value && saved.events?.length) {
+          state.events          = saved.events;
+          state.bank            = saved.bank;
+          state.timeline        = saved.timeline;
+          state.placedStatuses  = saved.placedStatuses;
+          state.potentialPoints = saved.potentialPoints;
+          state.cardOrder       = saved.cardOrder;
+          state.score           = saved.score;
+          setMessage("");
+          render();
+          return;
+        }
+
         setMessage(`Loading ${game.label}…`);
         render();
 
         try {
-          const events = await fetchGameEvents(game.value, game.prop ?? null);
-          state.events   = events;
-          state.bank     = shuffle([...events]);
-          state.timeline = [];
+          const events   = await fetchGameEvents(game.value, game.prop ?? null);
+          const shuffled = shuffle([...events]);
+          state.events      = events;
+          state.bank        = shuffled;
+          state.timeline    = [];
+          state.cardOrder   = shuffled.map((e) => e.id);
           setMessage("");
+          saveGameState();
         } catch (err) {
           setMessage(`No playable data for "${game.label}". Try another topic.`);
         }
@@ -1046,42 +1136,95 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         return { score, total: state.events.length };
       }
 
-      function cardHtml(ev) {
+      function isPlacementCorrect(insertAt) {
+        const card = state.timeline[insertAt];
+        const prev = state.timeline[insertAt - 1];
+        const next = state.timeline[insertAt + 1];
+        if (prev && prev.year > card.year) return false;
+        if (next && next.year < card.year) return false;
+        return true;
+      }
+
+      function recordPlacement(insertAt, slotsAvailable) {
+        const card      = state.timeline[insertAt];
+        const isCorrect = isPlacementCorrect(insertAt);
+        state.placedStatuses[card.id]  = isCorrect ? "correct" : "incorrect";
+        state.potentialPoints[card.id] = slotsAvailable;
+        if (isCorrect) state.score += slotsAvailable;
+        saveGameState();
+      }
+
+      function cardHtml(ev, pts = null) {
+        const ptsHtml = pts !== null
+          ? `<div class="card-pts">${pts} pt${pts !== 1 ? "s" : ""}</div>`
+          : "";
         return `
           <div class="img-wrap">
             <img src="${ev.image}" alt="" loading="lazy"
               onerror="this.parentElement.style.display='none'" />
           </div>
           <div class="card-desc">${ev.description}</div>
+          ${ptsHtml}
+        `;
+      }
+
+      function buildProgressRow() {
+        if (!state.events.length || !state.cardOrder.length) return "";
+        const total    = state.cardOrder.length;
+        const placed   = Object.keys(state.placedStatuses).length;
+        const currentId = state.oneAtATime && state.bank.length > 0 ? state.bank[0].id : null;
+
+        const dots = state.cardOrder.map((id) => {
+          const status = state.placedStatuses[id];
+          if (status)         return `<span class="prog-dot ${status}"></span>`;
+          if (id === currentId) return `<span class="prog-dot current"></span>`;
+          return `<span class="prog-dot remaining"></span>`;
+        }).join("");
+
+        const scoreLabel = state.bank.length === 0
+          ? `${state.score} pts`
+          : `${state.score} pts`;
+
+        return `
+          <div id="progress-row">
+            <span class="progress-count">${placed} of ${total}</span>
+            <div class="progress-dots">${dots}</div>
+            <span class="progress-score">${scoreLabel}</span>
+          </div>
         `;
       }
 
       function renderBank() {
         const el = document.getElementById("bank-area");
 
-        if (!state.events.length || state.submitted) {
+        if (!state.events.length) {
           el.innerHTML = "";
           return;
         }
 
+        const progressHtml = buildProgressRow();
+
         if (!state.bank.length) {
-          el.innerHTML = '<span id="bank-empty-hint">All placed — check your answers</span>';
+          el.innerHTML = progressHtml;
           return;
         }
 
         const visible   = state.oneAtATime ? state.bank.slice(0, 1) : state.bank;
         const remaining = state.bank.length;
+        const slotsNow  = state.timeline.length + 1;
 
         const scroll = document.createElement("div");
         scroll.id = "bank-scroll";
         if (state.oneAtATime) scroll.classList.add("single-mode");
 
-        visible.forEach((ev) => {
+        visible.forEach((ev, idx) => {
           const card = document.createElement("div");
           card.className  = state.oneAtATime ? "bank-card single" : "bank-card";
           card.draggable  = true;
           card.dataset.id = ev.id;
-          card.innerHTML  = cardHtml(ev);
+          // Show points badge only on the current card in single mode
+          const pts = (state.oneAtATime && idx === 0) ? slotsNow : null;
+          card.innerHTML  = cardHtml(ev, pts);
 
           card.addEventListener("dragstart", (e) => {
             state.dragging = { id: ev.id, from: "bank" };
@@ -1107,7 +1250,7 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           scroll.appendChild(ctr);
         }
 
-        el.innerHTML = "";
+        el.innerHTML = progressHtml;
         el.appendChild(scroll);
       }
 
@@ -1115,48 +1258,31 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         const el = document.getElementById("timeline");
         if (!state.events.length) { el.innerHTML = ""; return; }
 
-        const { timeline, dragOverZone, submitted } = state;
+        const { timeline, dragOverZone } = state;
+        const gameComplete = state.bank.length === 0;
         let html = `<div class="tl-label">EARLIEST</div>`;
-        if (!submitted) html += dropZoneHtml(0, dragOverZone);
+        if (!gameComplete) html += dropZoneHtml(0, dragOverZone);
 
         for (let i = 0; i < timeline.length; i++) {
           const ev     = timeline[i];
-          const status = submitted ? getCardStatus(ev, i) : "";
+          const status = state.placedStatuses[ev.id] ?? "";
           html += `
-            <div class="tl-card ${status}" draggable="${!submitted}" data-id="${ev.id}">
+            <div class="tl-card ${status}" draggable="false" data-id="${ev.id}">
               <div class="img-wrap">
                 <img src="${ev.image}" alt="" loading="lazy"
                     onerror="this.parentElement.style.display='none'" />
               </div>
               <div class="card-desc">${ev.description}</div>
-              ${submitted ? `<div class="year-badge">${ev.displayYear}</div>` : ""}
+              <div class="year-badge">${ev.displayYear}</div>
             </div>
           `;
-          if (!submitted) html += dropZoneHtml(i + 1, dragOverZone);
+          if (!gameComplete) html += dropZoneHtml(i + 1, dragOverZone);
         }
 
         html += `<div class="tl-label">LATEST</div>`;
         el.innerHTML = html;
 
-        if (submitted) return;
-
-        el.querySelectorAll(".tl-card").forEach((card) => {
-          const id = parseInt(card.dataset.id, 10);
-          card.addEventListener("dragstart", (e) => {
-            state.dragging = { id, from: "timeline" };
-            e.dataTransfer.effectAllowed = "move";
-            e.dataTransfer.setData("text/plain", String(id));
-            setTimeout(() => card.classList.add("dragging"), 0);
-          });
-          card.addEventListener("dragend", () => {
-            card.classList.remove("dragging");
-            if (state.dragging) {
-              state.dragging = null;
-              state.dragOverZone = null;
-              renderTimeline();
-            }
-          });
-        });
+        if (gameComplete) return;
 
         el.querySelectorAll(".tl-drop-zone").forEach((zone) => {
           const z = parseInt(zone.dataset.zone, 10);
@@ -1181,18 +1307,14 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
             state.dragOverZone = null;
             if (!state.dragging) return;
             const { id, from } = state.dragging;
-            let ev;
-            if (from === "bank") {
-              ev = state.bank.find((b) => b.id === id);
-              if (!ev) return;
-              state.bank = state.bank.filter((b) => b.id !== id);
-            } else {
-              ev = state.timeline.find((t) => t.id === id);
-              if (!ev) return;
-              state.timeline = state.timeline.filter((t) => t.id !== id);
-            }
-            const insertAt = Math.max(0, Math.min(z, state.timeline.length));
+            if (from !== "bank") return;
+            const ev = state.bank.find((b) => b.id === id);
+            if (!ev) return;
+            state.bank = state.bank.filter((b) => b.id !== id);
+            const insertAt       = Math.max(0, Math.min(z, state.timeline.length));
+            const slotsAvailable = state.timeline.length + 1;
             state.timeline.splice(insertAt, 0, ev);
+            recordPlacement(insertAt, slotsAvailable);
             state.dragging = null;
             render();
           });
@@ -1205,31 +1327,21 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
       }
 
       function renderSubmitBar() {
-        const bar         = document.getElementById("submit-bar");
-        const btnSubmit   = document.getElementById("btn-submit");
-        const btnRestart  = document.getElementById("btn-restart");
+        const bar        = document.getElementById("submit-bar");
+        const btnRestart = document.getElementById("btn-restart");
         const resultsText = document.getElementById("results-text");
 
-        if (!state.events.length) { bar.style.display = "none"; return; }
-
-        bar.style.display = "flex";
-
-        if (state.submitted) {
-          const { score, total } = getScore();
-          resultsText.textContent = `${score} of ${total} correct`;
-          btnSubmit.style.display  = "none";
-          btnRestart.style.display = "inline-block";
+        if (!state.events.length || state.bank.length > 0) {
+          bar.style.display = "none";
           return;
         }
 
-        resultsText.textContent  = "";
-        btnRestart.style.display = "none";
-
-        if (state.bank.length === 0 && state.timeline.length > 0) {
-          btnSubmit.style.display = "inline-block";
-        } else {
-          bar.style.display = "none";
-        }
+        // Game complete
+        bar.style.display = "flex";
+        document.getElementById("btn-submit").style.display = "none";
+        const correct = Object.values(state.placedStatuses).filter((s) => s === "correct").length;
+        resultsText.textContent  = `${correct} of ${state.events.length} correct · ${state.score} pts`;
+        btnRestart.style.display = "inline-block";
       }
 
       function render() {
@@ -1359,9 +1471,9 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
 
         document.addEventListener("touchstart", (e) => {
           const card = cardFromTouch(e.target);
-          if (!card || state.submitted) return;
+          if (!card || !card.classList.contains("bank-card")) return;
           const id   = parseInt(card.dataset.id, 10);
-          const from = card.classList.contains("bank-card") ? "bank" : "timeline";
+          const from = "bank";
           touchDrag      = { id, from };
           state.dragging = { id, from };
           buildGhost(card);
@@ -1406,25 +1518,15 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           document.querySelectorAll(".bank-card.dragging, .tl-card.dragging")
             .forEach((c) => c.classList.remove("dragging"));
 
-          if (target?.classList.contains("tl-drop-zone")) {
-            const z = parseInt(target.dataset.zone, 10);
-            let ev;
-            if (from === "bank") {
-              ev = state.bank.find((b) => b.id === id);
-              if (!ev) return;
-              state.bank = state.bank.filter((b) => b.id !== id);
-            } else {
-              ev = state.timeline.find((t) => t.id === id);
-              if (!ev) return;
-              state.timeline = state.timeline.filter((t) => t.id !== id);
-            }
-            const insertAt = Math.max(0, Math.min(z, state.timeline.length));
-            state.timeline.splice(insertAt, 0, ev);
-          } else if (target?.id === "bank-area" && from === "timeline") {
-            const ev = state.timeline.find((t) => t.id === id);
+          if (target?.classList.contains("tl-drop-zone") && from === "bank") {
+            const z  = parseInt(target.dataset.zone, 10);
+            const ev = state.bank.find((b) => b.id === id);
             if (!ev) return;
-            state.timeline = state.timeline.filter((t) => t.id !== id);
-            state.bank = [...state.bank, ev];
+            state.bank = state.bank.filter((b) => b.id !== id);
+            const insertAt       = Math.max(0, Math.min(z, state.timeline.length));
+            const slotsAvailable = state.timeline.length + 1;
+            state.timeline.splice(insertAt, 0, ev);
+            recordPlacement(insertAt, slotsAvailable);
           } else {
             render();
             return;
@@ -1440,38 +1542,11 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
         const spinner    = document.getElementById("search-spinner");
         const clearBtn   = document.getElementById("search-clear");
         const btnRandom  = document.getElementById("btn-random");
-        const btnSubmit  = document.getElementById("btn-submit");
         const btnRestart = document.getElementById("btn-restart");
         const btnMode    = document.getElementById("btn-mode");
-        const bankArea   = document.getElementById("bank-area");
 
         state.history = loadHistory();
-
-        bankArea.addEventListener("dragover", (e) => {
-          if (state.dragging?.from === "timeline") {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = "move";
-            bankArea.classList.add("drag-over");
-          }
-        });
-
-        bankArea.addEventListener("dragleave", (e) => {
-          if (!bankArea.contains(e.relatedTarget))
-            bankArea.classList.remove("drag-over");
-        });
-
-        bankArea.addEventListener("drop", (e) => {
-          e.preventDefault();
-          bankArea.classList.remove("drag-over");
-          if (state.dragging?.from !== "timeline") return;
-          const id = state.dragging.id;
-          const ev = state.timeline.find((t) => t.id === id);
-          if (!ev) return;
-          state.timeline = state.timeline.filter((t) => t.id !== id);
-          state.bank     = [...state.bank, ev];
-          state.dragging = null;
-          render();
-        });
+        btnMode.classList.toggle("active", state.oneAtATime);
 
         input.addEventListener("focus", () => {
           state.searchOpen = true;
@@ -1537,18 +1612,18 @@ SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
           }
         });
 
-        btnSubmit.addEventListener("click", () => {
-          if (state.bank.length > 0) return;
-          state.submitted = true;
-          render();
-        });
-
         btnRestart.addEventListener("click", () => {
-          state.bank         = shuffle([...state.events]);
-          state.timeline     = [];
-          state.submitted    = false;
-          state.dragging     = null;
-          state.dragOverZone = null;
+          clearGameState();
+          const shuffled = shuffle([...state.events]);
+          state.bank           = shuffled;
+          state.timeline       = [];
+          state.submitted      = false;
+          state.dragging       = null;
+          state.dragOverZone   = null;
+          state.placedStatuses = {};
+          state.potentialPoints = {};
+          state.cardOrder      = shuffled.map((e) => e.id);
+          state.score          = 0;
           render();
         });
 

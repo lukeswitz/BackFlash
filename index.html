@@ -175,6 +175,7 @@
     .welcome-btns {
       text-align: center;
       padding: 0 10px;
+      margin-top: 12px;
     }
 
     #btn-new-game {
@@ -247,7 +248,7 @@
     /* Cream bar behind counter / stack */
     .top-container {
       background-color: var(--background-color);
-      height: 30px;
+      height: 38px;
       width: 100%;
       position: fixed;
       left: 0; top: 0;
@@ -260,7 +261,7 @@
     #counter {
       position: fixed;
       z-index: 200;
-      top: 10px;
+      top: 6px;
       right: 10px;
       left: 10px;
       margin: auto;
@@ -296,7 +297,7 @@
       position: fixed;
       width: 100%;
       z-index: 100;
-      top: 30px;
+      top: 38px;
       left: 0; right: 0;
       margin: 0;
       background-color: var(--background-color);
@@ -319,7 +320,7 @@
 
     /* Stack shadow line below stack */
     #stack-shadow {
-      top: 30px;
+      top: 38px;
       height: 145px;
       position: fixed;
       border-bottom: 2px solid var(--medium-background);
@@ -479,7 +480,7 @@
     /* ===== TIMELINE ===== */
     #timeline-container {
       position: relative;
-      padding-top: 195px;
+      padding-top: 203px;
       padding-bottom: 60px;
       overscroll-behavior-y: none;
       user-select: none;
@@ -497,7 +498,7 @@
       left: 50%;
       margin-left: -1px;
       z-index: 0;
-      top: 250px;
+      top: 258px;
       bottom: 40px;
     }
 
@@ -642,14 +643,7 @@
       100% { transform: translate(-50%) scale(1); opacity: 1; }
     }
 
-    /* ===== PLACE BUTTONS (absolutely inside each placed card, matching HAR exactly) ===== */
-    /*
-     * From bundle CSS:
-     *   position:absolute; bottom:-80px; left:50%; transform:translate(-50%);
-     *   width:100%; max-width:360px; height:65px;
-     *   background-image: dashed-SVG; background-color: var(--background-color)
-     *   .top { top:-90px }
-     */
+    /* ===== PLACE BUTTONS (absolutely inside each placed card) ===== */
     .placeButton {
       position: absolute;
       bottom: -80px;
@@ -662,8 +656,7 @@
       align-items: center;
       justify-content: center;
       border-radius: 8px;
-      background-color: var(--background-color);
-      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%23B1AEA4FF' stroke-width='4' stroke-dasharray='6%2c 10' stroke-dashoffset='5' stroke-linecap='square'/%3e%3c/svg%3e");
+      background-color: transparent;
       pointer-events: all;
       cursor: pointer;
       z-index: 10;
@@ -702,14 +695,71 @@
     }
 
     /* Drag-over highlight */
-    .placeButton.drag-over {
-      background-color: var(--highlight);
-      background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='8' ry='8' stroke='%235d72c9' stroke-width='4' stroke-dasharray='6%2c 10' stroke-dashoffset='5' stroke-linecap='square'/%3e%3c/svg%3e");
-    }
+    .placeButton.drag-over { background-color: var(--highlight); }
 
     .placeButton.drag-over .place-btn {
       background-color: var(--button-background);
+      border-color: var(--button-background);
       color: #fff;
+    }
+
+    /* ===== MODE CLASSES ===== */
+    /* Drag mode: placeButtons hidden until actively dragging */
+    #game-screen.drag-mode .placeButton { opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+    #game-screen.drag-mode.is-dragging .placeButton { opacity: 1; pointer-events: all; }
+
+    /* Tap mode: top stack card not draggable */
+    #game-screen.tap-mode .stack-card:last-child { pointer-events: none; cursor: default; touch-action: auto; }
+
+    /* ===== CATEGORY HEADER ===== */
+    #topic-label {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--dark-background);
+      margin-bottom: 4px;
+      min-height: 14px;
+    }
+
+    /* ===== WELCOME MODE & SIZE CONTROLS ===== */
+    .mode-row {
+      margin: 10px 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mode-row label {
+      font-size: 13px;
+      color: #555;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--frank);
+    }
+    .mode-row input[type="checkbox"] { cursor: pointer; }
+    .size-row {
+      margin: 8px 10px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .size-row label {
+      font-size: 13px;
+      color: #555;
+      font-family: var(--frank);
+    }
+    .size-row select {
+      font-size: 13px;
+      padding: 4px 8px;
+      border: 1px solid var(--dark-background);
+      border-radius: 6px;
+      background: var(--medium-background);
+      color: #333;
+      font-family: var(--frank);
+      cursor: pointer;
     }
 
     /* ===== RESULTS ===== */
@@ -962,6 +1012,23 @@
 
     <div class="topic-display" id="topic-display"></div>
 
+    <div class="mode-row">
+      <label>
+        <input type="checkbox" id="mode-tap-checkbox" />
+        Tap to place (no dragging)
+      </label>
+    </div>
+    <div class="size-row">
+      <label for="cards-select">Cards to place:</label>
+      <select id="cards-select">
+        <option value="4">3</option>
+        <option value="6">5</option>
+        <option value="9" selected>8</option>
+        <option value="11">10</option>
+        <option value="13">12</option>
+      </select>
+    </div>
+
     <div class="welcome-btns">
       <button id="btn-new-game">Start the quiz ›</button>
     </div>
@@ -978,6 +1045,7 @@
   <div class="top-container"></div>
 
   <div id="counter">
+    <div id="topic-label"></div>
     <div class="circle-container" id="circles"></div>
   </div>
 
@@ -1046,8 +1114,11 @@
   const KEY_DECK    = 'fbq_deck';
   const KEY_SPENT   = 'fbq_spent';
   const KEY_STATE   = 'fbq_state_v3';
+  const KEY_MODE    = 'fbq_mode';   // 'tap' | 'drag'
+  const KEY_SIZE    = 'fbq_size';   // total cards incl anchor
 
-  const GAME_SIZE = 9; // 1 anchor + 8 to place
+  let GAME_SIZE = 9; // 1 anchor + 8 to place (configurable)
+  let tapMode   = false;            // true = tap-to-place, false = drag
 
   // ==================== SEEDS ====================
   const SEEDS = [
@@ -1587,8 +1658,15 @@
 
       // Show game screen
       document.getElementById('welcome-screen').classList.add('hidden');
-      document.getElementById('game-screen').style.display = 'block';
+      const gameEl = document.getElementById('game-screen');
+      gameEl.style.display = 'block';
+      gameEl.classList.toggle('tap-mode',  tapMode);
+      gameEl.classList.toggle('drag-mode', !tapMode);
       document.getElementById('btn-help').classList.add('visible');
+
+      // Set category label
+      const topicLabelEl = document.getElementById('topic-label');
+      if (topicLabelEl) topicLabelEl.textContent = state.game?.label ?? '';
 
       renderProgress();
       renderStack();
@@ -1613,6 +1691,30 @@
     const spinner  = document.getElementById('welcome-spinner');
     const dropList = document.getElementById('welcome-dropdown-list');
     const topicDisplay = document.getElementById('topic-display');
+
+    // Load persisted mode & size
+    const savedMode = safeGet(KEY_MODE);
+    if (savedMode === 'tap') tapMode = true;
+    const savedSize = safeGet(KEY_SIZE);
+    if (savedSize && Number.isInteger(savedSize) && savedSize >= 3) GAME_SIZE = savedSize;
+
+    const tapCheckbox = document.getElementById('mode-tap-checkbox');
+    const sizeSelect  = document.getElementById('cards-select');
+    if (tapCheckbox) tapCheckbox.checked = tapMode;
+    if (sizeSelect)  sizeSelect.value    = String(GAME_SIZE);
+
+    if (tapCheckbox) {
+      tapCheckbox.addEventListener('change', () => {
+        tapMode = tapCheckbox.checked;
+        safeSet(KEY_MODE, tapMode ? 'tap' : 'drag');
+      });
+    }
+    if (sizeSelect) {
+      sizeSelect.addEventListener('change', () => {
+        GAME_SIZE = parseInt(sizeSelect.value, 10);
+        safeSet(KEY_SIZE, GAME_SIZE);
+      });
+    }
 
     state.history = loadHistory();
 
@@ -1769,8 +1871,10 @@
 
     // Listen on the stack element for pointer events
     const stackEl = document.getElementById('stack');
+    const gameEl  = document.getElementById('game-screen');
 
     stackEl.addEventListener('pointerdown', e => {
+      if (tapMode) return; // tap mode: no drag
       if (active) return;
       if (state.phase !== 'game' || state.isAnimating || !state.stack.length) return;
       const card = e.target.closest('.stack-card');
@@ -1782,6 +1886,7 @@
 
       e.preventDefault();
       card.setPointerCapture(e.pointerId);
+      gameEl.classList.add('is-dragging');
 
       const ev = state.stack[state.stack.length - 1];
       ghost.innerHTML = `<div class="clue-inner">
@@ -1815,6 +1920,7 @@
       ghost.style.display = 'none';
       active.card.classList.remove('dragging');
       clearHighlights();
+      gameEl.classList.remove('is-dragging');
 
       const zone = active.currentZone;
       active = null;

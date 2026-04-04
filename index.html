@@ -1212,49 +1212,62 @@
   let tapMode   = false;            // true = tap-to-place, false = drag
 
   // ==================== SEEDS ====================
+
   const SEEDS = [
     // People
-    { value: 'Q11696',   label: 'U.S. Presidents',          prop: 'P39'  },
-    // { value: 'Q901',     label: 'Scientists',                prop: 'P106' },
-    { value: 'Q4964182', label: 'Philosophers',              prop: 'P106' },
-    // { value: 'Q36834',   label: 'Composers',                 prop: 'P106' },
-    { value: 'Q1028181', label: 'Painters',                  prop: 'P106' },
-    { value: 'Q11631',   label: 'Astronauts',                prop: 'P106' },
-    { value: 'Q11900058',label: 'Explorers',                 prop: 'P106' },
+    { value: 'Q11696',    label: 'U.S. Presidents',          prop: 'P39'  },
+    { value: 'Q4964182',  label: 'Philosophers',             prop: 'P106' },
+    { value: 'Q11631',    label: 'Astronauts',               prop: 'P106' },
+    { value: 'Q11900058', label: 'Explorers',                prop: 'P106' },
     // Literature
-    { value: 'Q692',     label: "Shakespeare's Works",       prop: 'P50'  },
-    { value: 'Q23434',   label: "Hemingway's Works",         prop: 'P50'  },
-    { value: 'Q5686',    label: "Dickens's Works",           prop: 'P50'  },
-    { value: 'Q40909',   label: "Virginia Woolf's Works",    prop: 'P50'  },
-    { value: 'Q16867',   label: "Poe's Works",               prop: 'P50'  },
-    { value: 'Q1067',    label: "Tolstoy's Works",           prop: 'P50'  },
+    { value: 'Q692',      label: "Shakespeare's Works",      prop: 'P50'  },
+    { value: 'Q23434',    label: "Hemingway's Works",        prop: 'P50'  },
+    { value: 'Q5686',     label: "Dickens's Works",          prop: 'P50'  },
+    { value: 'Q40909',    label: "Virginia Woolf's Works",   prop: 'P50'  },
+    { value: 'Q16867',    label: "Poe's Works",              prop: 'P50'  },
+    { value: 'Q1067',     label: "Tolstoy's Works",          prop: 'P50'  },
+    { value: 'Q38392',    label: "Faulkner's Works",         prop: 'P50'  },
     // Art & Culture
-    { value: 'Q3305213', label: 'Famous Paintings'                        },
-    { value: 'Q179700',  label: 'Famous Statues'                          },
-    { value: 'Q11424',   label: 'Classic Films'                           },
-    { value: 'Q207694',  label: 'Art Museums'                             },
+    { value: 'Q3305213',  label: 'Famous Paintings'                       },
+    { value: 'Q179700',   label: 'Famous Statues'                         },
+    { value: 'Q11424',    label: 'Classic Films'                          },
+    { value: 'Q207694',   label: 'Art Museums'                            },
     // Science & Technology
-    { value: 'Q205375',  label: 'Inventors',                 prop: 'P106' },
-    { value: 'Q2133344', label: 'Space Missions'                          },
+    { value: 'Q205375',   label: 'Inventors',                prop: 'P106' },
+    { value: 'Q2133344',  label: 'Space Missions'                         },
     // War & Conflict
-    { value: 'Q178561',  label: 'Famous Battles'                          },
-    { value: 'Q198',     label: 'Wars'                                    },
-    { value: 'Q188055',  label: 'Famous Sieges'                           },
-    { value: 'Q350604',  label: 'Assassinations/Conflicts'                },
-    { value: 'Q10931',   label: 'Revolutions'                             },
+    { value: 'Q178561',   label: 'Famous Battles'                         },
+    { value: 'Q198',      label: 'Wars'                                   },
+    { value: 'Q188055',   label: 'Famous Sieges'                          },
+    { value: 'Q350604',   label: 'Assassinations/Conflicts'               },
+    { value: 'Q10931',    label: 'Revolutions'                            },
     // Places & Structures
-    // { value: 'Q839954',  label: 'Archaeological Sites'                    },
-    // { value: 'Q44539',   label: 'Ancient Temples'                         },
-    { value: 'Q23413',   label: 'Famous Castles'                          },
-    // { value: 'Q2977',    label: 'Cathedrals'                              },
-    { value: 'Q57831',   label: 'Fortresses'                              },
-    // { value: 'Q12280',   label: 'Famous Bridges'                          },
-    // { value: 'Q3918',    label: 'Great Universities'                      },
-    { value: 'Q46169',   label: 'National Parks'                          },
-    { value: 'Q3624078', label: 'Nations of the World'                    },
-    { value: 'Q1093829', label: 'U.S. Cities'                             },
-    { value: 'Q33506',   label: 'Great Museums'                           },
+    { value: 'Q23413',    label: 'Famous Castles'                         },
+    { value: 'Q57831',    label: 'Fortresses'                             },
+    { value: 'Q46169',    label: 'National Parks'                         },
+    { value: 'Q3624078',  label: 'Nations of the World'                   },
+    { value: 'Q1093829',  label: 'U.S. Cities'                            },
+    { value: 'Q33506',    label: 'Great Museums'                          },
+    // Sports
+    { value: 'Q32096',  label: 'Super Bowls'        },
+    // Music
+    { value: 'Q868557', label: 'US Music Festivals' },
+    { value: 'Q1299',   label: "The Beatles' Albums",        prop: 'P175' },
+    { value: 'Q5383',   label: "David Bowie's Albums",       prop: 'P175' },
+    { value: 'Q11036',  label: "The Rolling Stones' Albums", prop: 'P175' },
+    { value: 'Q392',    label: "Bob Dylan's Albums",         prop: 'P175' },
+    { value: 'Q2831',   label: "Michael Jackson's Albums",   prop: 'P175' },
+    { value: 'Q2306',   label: "Pink Floyd's Albums",        prop: 'P175' },
+    { value: 'Q2331',   label: "Led Zeppelin's Albums",      prop: 'P175' },
   ];
+
+  //   // { value: 'Q901',     label: 'Scientists',                prop: 'P106' },
+  //   // { value: 'Q36834',   label: 'Composers',                 prop: 'P106' },
+  //   // { value: 'Q839954',  label: 'Archaeological Sites'                    },
+  //   // { value: 'Q44539',   label: 'Ancient Temples'                         },
+  //   // { value: 'Q12280',   label: 'Famous Bridges'                          },
+  //   // { value: 'Q3918',    label: 'Great Universities'                      },
+
 
   // ==================== STATE ====================
   const state = {
@@ -1309,6 +1322,7 @@
 
   function cleanLabel(s) {
     return s
+      .replace(/\b(M{0,4})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\b/g, '')
       .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)\s*/g, '')
       .replace(/\b\d{4}[–\-]\d{2,4}\b/g, '')
       .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, '')
@@ -1372,37 +1386,72 @@
 
   function buildSparql(entityId, prop) {
     const dateClause = `
-  { {?item wdt:P571 ?date.} UNION
-    {?item wdt:P577 ?date.} UNION
-    {?item wdt:P580 ?date.} UNION
-    {?item wdt:P569 ?date.} }`;
+    { {?item wdt:P571 ?date.} UNION
+      {?item wdt:P577 ?date.} UNION
+      {?item wdt:P580 ?date.} UNION
+      {?item wdt:P569 ?date.} UNION
+      {?item wdt:P585 ?date.} }`;
+
     const labelClause = `
-  ?item rdfs:label ?itemLabel.
-  FILTER(LANG(?itemLabel) = "en")
-  OPTIONAL {
-    ?item schema:description ?itemDescription.
-    FILTER(LANG(?itemDescription) = "en")
-  }`;
+    ?item rdfs:label ?itemLabel.
+    FILTER(LANG(?itemLabel) = "en")
+    OPTIONAL {
+      ?item schema:description ?itemDescription.
+      FILTER(LANG(?itemDescription) = "en")
+    }`;
+
     if (prop) {
-      // For author queries (P50), exclude editions/translations at the source
       const editionFilter = prop === 'P50'
         ? '\n  FILTER NOT EXISTS { ?item wdt:P31 wd:Q3331189. }'
         : '';
+      const humanFilter = prop !== 'P50' && prop !== 'P175'
+        ? '\n  ?item wdt:P31 wd:Q5.'
+        : '';
       return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-  ?item wdt:${prop} wd:${entityId}.${editionFilter}
-  ${dateClause}
-  FILTER(YEAR(?date) > 0)
-  ${labelClause}
-  OPTIONAL { ?item wdt:P18 ?image. }
-} LIMIT 80`;
+    ?item wdt:${prop} wd:${entityId}.${editionFilter}${humanFilter}
+    ${dateClause}
+    FILTER(YEAR(?date) > 0)
+    ${labelClause}
+    OPTIONAL { ?item wdt:P18 ?image. }
+  } LIMIT 80`;
     }
+
+    if (entityId === 'Q32096') {
+      return `SELECT ?item ?itemLabel ?date ?image
+      (GROUP_CONCAT(DISTINCT ?teamLabel; separator=" vs ") AS ?teams) WHERE {
+        ?item wdt:P31 wd:Q32096.
+        ${dateClause}
+        FILTER(YEAR(?date) > 0)
+        ?item rdfs:label ?itemLabel.
+        FILTER(LANG(?itemLabel) = "en")
+        OPTIONAL {
+          ?item wdt:P1923 ?team.
+          ?team rdfs:label ?teamLabel.
+          FILTER(LANG(?teamLabel) = "en")
+        }
+        OPTIONAL { ?item wdt:P18 ?image. }
+      } GROUP BY ?item ?itemLabel ?date ?image
+      LIMIT 80`;
+    }
+
+    if (entityId === 'Q868557') {
+      return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
+      ?item wdt:P31 wd:Q868557.
+      ?item wdt:P17 wd:Q30.
+      ${dateClause}
+      FILTER(YEAR(?date) > 0)
+      ${labelClause}
+      OPTIONAL { ?item wdt:P18 ?image. }
+    } LIMIT 80`;
+    }
+
     return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-  ?item wdt:P31 wd:${entityId}.
-  ${dateClause}
-  FILTER(YEAR(?date) > 0)
-  ${labelClause}
-  OPTIONAL { ?item wdt:P18 ?image. }
-} LIMIT 80`;
+    ?item wdt:P31 wd:${entityId}.
+    ${dateClause}
+    FILTER(YEAR(?date) > 0)
+    ${labelClause}
+    OPTIONAL { ?item wdt:P18 ?image. }
+  } LIMIT 80`;
   }
 
   async function fetchGameEvents(entityId, prop = null) {
@@ -1415,7 +1464,11 @@
       const id = b.item?.value;
       if (!id || !b.date?.value || !b.itemLabel?.value) continue;
       const rawLabel = b.itemLabel.value;
-      const rawDesc  = b.itemDescription?.value ?? '';
+      const rawDesc = (b.teams?.value && b.teams.value.length > 3)
+        ? b.teams.value
+        : (b.winner?.value
+          ? `Winner: ${b.winner.value}`
+          : (b.itemDescription?.value ?? ''));
       // Skip translations and non-Latin-script items
       if (/translat/i.test(rawLabel) || /translat/i.test(rawDesc)) continue;
       if (/[\u0400-\u04FF\u0370-\u03FF\u4E00-\u9FFF\u3040-\u30FF\u0600-\u06FF]/.test(rawLabel)) continue;
@@ -1438,7 +1491,11 @@
     return selected.map((b, i) => {
       const year  = b._year;
       const label = cleanLabel(b.itemLabel.value);
-      const desc  = cleanDesc(b.itemDescription?.value ?? '');
+      const desc = (b.teams?.value && b.teams.value.length > 3)
+        ? b.teams.value
+        : (b.winner?.value
+          ? `Winner: ${b.winner.value}`
+          : cleanDesc(b.itemDescription?.value ?? ''));
       return {
         id: i + 1,
         year,

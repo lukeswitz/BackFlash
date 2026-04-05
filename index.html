@@ -1225,7 +1225,7 @@
     { value: 'Q5686',     label: "Dickens's Works",          prop: 'P50'  },
     { value: 'Q40909',    label: "Virginia Woolf's Works",   prop: 'P50'  },
     { value: 'Q16867',    label: "Poe's Works",              prop: 'P50'  },
-    { value: 'Q1067',     label: "Tolstoy's Works",          prop: 'P50'  },
+    { value: 'Q7243',     label: "Tolstoy's Works",          prop: 'P50'  },
     { value: 'Q38392',    label: "Faulkner's Works",         prop: 'P50'  },
     // Art & Culture
     { value: 'Q3305213',  label: 'Famous Paintings'                       },
@@ -1239,7 +1239,7 @@
     { value: 'Q178561',   label: 'Famous Battles'                         },
     { value: 'Q198',      label: 'Wars'                                   },
     { value: 'Q188055',   label: 'Famous Sieges'                          },
-    { value: 'Q350604',   label: 'Assassinations/Conflicts'               },
+    { value: 'Q3882219',  label: 'Assassinations'                          },
     { value: 'Q10931',    label: 'Revolutions'                            },
     // Places & Structures
     { value: 'Q23413',    label: 'Famous Castles'                         },
@@ -1249,18 +1249,18 @@
     { value: 'Q1093829',  label: 'U.S. Cities'                            },
     { value: 'Q33506',    label: 'Great Museums'                          },
     // Sports
-    { value: 'Q32096',  label: 'Super Bowls'        },
+    { value: 'Q32096',  label: 'Super Bowls'                              },
     // Music
-    { value: 'Q868557', label: 'US Music Festivals' },
+    { value: 'Q868557', label: 'US Music Festivals'                       },
     { value: 'Q1299',   label: "The Beatles' Albums",        prop: 'P175' },
     { value: 'Q5383',   label: "David Bowie's Albums",       prop: 'P175' },
     { value: 'Q11036',  label: "The Rolling Stones' Albums", prop: 'P175' },
     { value: 'Q392',    label: "Bob Dylan's Albums",         prop: 'P175' },
-    { value: 'Q2831',   label: "Michael Jackson's Albums",   prop: 'P175' },
     { value: 'Q2306',   label: "Pink Floyd's Albums",        prop: 'P175' },
     { value: 'Q2331',   label: "Led Zeppelin's Albums",      prop: 'P175' },
   ];
 
+  //      { value: 'Q2831',   label: "Michael Jackson's Albums",   prop: 'P175' },
   //   // { value: 'Q901',     label: 'Scientists',                prop: 'P106' },
   //   // { value: 'Q36834',   label: 'Composers',                 prop: 'P106' },
   //   // { value: 'Q839954',  label: 'Archaeological Sites'                    },
@@ -1404,11 +1404,14 @@
       const editionFilter = prop === 'P50'
         ? '\n  FILTER NOT EXISTS { ?item wdt:P31 wd:Q3331189. }'
         : '';
+      const albumFilter = prop === 'P175'
+        ? '\n  ?item wdt:P31/wdt:P279* wd:Q482994.'
+        : '';
       const humanFilter = prop !== 'P50' && prop !== 'P175'
         ? '\n  ?item wdt:P31 wd:Q5.'
         : '';
       return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-    ?item wdt:${prop} wd:${entityId}.${editionFilter}${humanFilter}
+    ?item wdt:${prop} wd:${entityId}.${editionFilter}${albumFilter}${humanFilter}
     ${dateClause}
     FILTER(YEAR(?date) > 0)
     ${labelClause}

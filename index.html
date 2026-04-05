@@ -1249,7 +1249,9 @@
     { value: 'Q1093829',  label: 'U.S. Cities'                            },
     { value: 'Q33506',    label: 'Great Museums'                          },
     // Sports
-    { value: 'Q32096',  label: 'Super Bowls'                              },
+    { value: 'Q32096',      label: 'Super Bowls'                          },
+    { value: 'Q135976384',  label: 'Summer Olympics'                      },
+    { value: 'Q137592217',  label: 'Winter Olympics'                      },
     // Music
     { value: 'Q868557', label: 'US Music Festivals'                       },
     { value: 'Q1299',   label: "The Beatles' Albums",        prop: 'P175' },
@@ -1437,6 +1439,22 @@
       LIMIT 80`;
     }
 
+    if (entityId === 'Q135976384' || entityId === 'Q137592217') {
+      return `SELECT DISTINCT ?item ?itemLabel ?date ?image ?locLabel WHERE {
+    ?item wdt:P31 wd:${entityId}.
+    { {?item wdt:P571 ?date.} UNION {?item wdt:P580 ?date.} }
+    FILTER(YEAR(?date) > 0)
+    ?item rdfs:label ?itemLabel.
+    FILTER(LANG(?itemLabel) = "en")
+    OPTIONAL {
+      ?item wdt:P276 ?loc.
+      ?loc rdfs:label ?locLabel.
+      FILTER(LANG(?locLabel) = "en")
+    }
+    OPTIONAL { ?item wdt:P18 ?image. }
+  } LIMIT 80`;
+    }
+
     if (entityId === 'Q868557') {
       return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
       ?item wdt:P31 wd:Q868557.
@@ -1467,11 +1485,13 @@
       const id = b.item?.value;
       if (!id || !b.date?.value || !b.itemLabel?.value) continue;
       const rawLabel = b.itemLabel.value;
-      const rawDesc = (b.teams?.value && b.teams.value.length > 3)
-        ? b.teams.value
-        : (b.winner?.value
-          ? `Winner: ${b.winner.value}`
-          : (b.itemDescription?.value ?? ''));
+      const rawDesc = (b.locLabel?.value)
+        ? b.locLabel.value
+        : (b.teams?.value && b.teams.value.length > 3)
+          ? b.teams.value
+          : (b.winner?.value
+            ? `Winner: ${b.winner.value}`
+            : (b.itemDescription?.value ?? ''));
       // Skip translations and non-Latin-script items
       if (/translat/i.test(rawLabel) || /translat/i.test(rawDesc)) continue;
       if (/[\u0400-\u04FF\u0370-\u03FF\u4E00-\u9FFF\u3040-\u30FF\u0600-\u06FF]/.test(rawLabel)) continue;
@@ -1494,11 +1514,13 @@
     return selected.map((b, i) => {
       const year  = b._year;
       const label = cleanLabel(b.itemLabel.value);
-      const desc = (b.teams?.value && b.teams.value.length > 3)
-        ? b.teams.value
-        : (b.winner?.value
-          ? `Winner: ${b.winner.value}`
-          : cleanDesc(b.itemDescription?.value ?? ''));
+      const desc = (b.locLabel?.value)
+        ? b.locLabel.value
+        : (b.teams?.value && b.teams.value.length > 3)
+          ? b.teams.value
+          : (b.winner?.value
+            ? `Winner: ${b.winner.value}`
+            : cleanDesc(b.itemDescription?.value ?? ''));
       return {
         id: i + 1,
         year,

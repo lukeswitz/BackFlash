@@ -1260,15 +1260,19 @@
     { value: 'Q392',    label: "Bob Dylan's Albums",         prop: 'P175' },
     { value: 'Q2306',   label: "Pink Floyd's Albums",        prop: 'P175' },
     { value: 'Q2331',   label: "Led Zeppelin's Albums",      prop: 'P175' },
+    { value: 'Q189635', label: "Eagles Albums",               prop: 'P175' },
+    // Concert Tours
+    { value: 'Q11036',  label: "Rolling Stones Tours",        prop: 'tour' },
+    { value: 'Q2306',   label: "Pink Floyd Tours",            prop: 'tour' },
+    { value: 'Q5383',   label: "David Bowie Tours",           prop: 'tour' },
+    // Awards
+    { value: 'Q221401', label: 'Vezina Trophy Winners',       prop: 'P166' },
+    { value: 'Q35637',  label: 'Nobel Peace Prize Winners',   prop: 'P166' },
+    { value: 'Q37922',  label: 'Nobel Literature Winners',    prop: 'P166' },
+    // History & Nature
+    { value: 'Q131569', label: 'Famous Treaties'                            },
+    { value: 'Q7692360', label: 'Volcanic Eruptions'                       },
   ];
-
-  //      { value: 'Q2831',   label: "Michael Jackson's Albums",   prop: 'P175' },
-  //   // { value: 'Q901',     label: 'Scientists',                prop: 'P106' },
-  //   // { value: 'Q36834',   label: 'Composers',                 prop: 'P106' },
-  //   // { value: 'Q839954',  label: 'Archaeological Sites'                    },
-  //   // { value: 'Q44539',   label: 'Ancient Temples'                         },
-  //   // { value: 'Q12280',   label: 'Famous Bridges'                          },
-  //   // { value: 'Q3918',    label: 'Great Universities'                      },
 
 
   // ==================== STATE ====================
@@ -1290,6 +1294,8 @@
   };
 
   // ==================== UTILITIES ====================
+  function gameKey(g) { return g.value + '|' + (g.prop || ''); }
+
   function safeGet(key) {
     try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; }
     catch { return null; }
@@ -1401,6 +1407,20 @@
       ?item schema:description ?itemDescription.
       FILTER(LANG(?itemDescription) = "en")
     }`;
+
+    if (prop === 'tour') {
+      return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
+    wd:${entityId} rdfs:label ?bandLabel. FILTER(LANG(?bandLabel) = "en")
+    ?item wdt:P31 wd:Q1573906.
+    ?item wdt:P175 wd:${entityId}.
+    ${dateClause}
+    FILTER(YEAR(?date) > 0)
+    FILTER(!STRSTARTS(?itemLabel, ?bandLabel))
+    FILTER(!CONTAINS(?itemLabel, " tours"))
+    ${labelClause}
+    OPTIONAL { ?item wdt:P18 ?image. }
+  } LIMIT 80`;
+    }
 
     if (prop) {
       const editionFilter = prop === 'P50'
@@ -1573,7 +1593,7 @@
   function loadHistory()  { return safeGet(KEY_HISTORY) ?? []; }
 
   function pushHistory(game) {
-    const h = loadHistory().filter(g => g.value !== game.value);
+    const h = loadHistory().filter(g => gameKey(g) !== gameKey(game));
     safeSet(KEY_HISTORY, [game, ...h].slice(0, 20));
   }
 
@@ -1597,31 +1617,31 @@
   function addToDeck(game) {
     const deck  = getDeck();
     const spent = getSpent();
-    if ([...deck, ...spent].some(g => g.value === game.value)) return;
+    if ([...deck, ...spent].some(g => gameKey(g) === gameKey(game))) return;
     safeSet(KEY_DECK, [...deck, game]);
   }
 
   function markSpent(game) {
-    safeSet(KEY_DECK, getDeck().filter(g => g.value !== game.value));
+    safeSet(KEY_DECK, getDeck().filter(g => gameKey(g) !== gameKey(game)));
     const spent = getSpent();
-    if (!spent.some(g => g.value === game.value))
+    if (!spent.some(g => gameKey(g) === gameKey(game)))
       safeSet(KEY_SPENT, [...spent, game]);
   }
 
   async function nextTopic() {
     const deck  = getDeck();
     const spent = getSpent();
-    const used  = new Set([...deck, ...spent].map(g => g.value));
+    const used  = new Set([...deck, ...spent].map(g => gameKey(g)));
 
     if (deck.length) {
       const pick = popFromDeck();
-      const remaining = SEEDS.filter(s => !used.has(s.value));
+      const remaining = SEEDS.filter(s => !used.has(gameKey(s)));
       const pool = remaining.length ? remaining : SEEDS;
       addToDeck(pool[Math.floor(Math.random() * pool.length)]);
       return pick;
     }
 
-    const remaining = SEEDS.filter(s => !used.has(s.value));
+    const remaining = SEEDS.filter(s => !used.has(gameKey(s)));
     const pool = remaining.length ? remaining : shuffle([...SEEDS]);
     const pick = pool[Math.floor(Math.random() * pool.length)];
     addToDeck(pick);
@@ -1920,9 +1940,9 @@
     const topicDisplay = document.getElementById('topic-display');
 
     // Purge stale deck/spent entries whose QIDs are no longer in SEEDS
-    const validValues = new Set(SEEDS.map(s => s.value));
-    safeSet(KEY_DECK,  (safeGet(KEY_DECK)  ?? []).filter(g => validValues.has(g.value)));
-    safeSet(KEY_SPENT, (safeGet(KEY_SPENT) ?? []).filter(g => validValues.has(g.value)));
+    const validKeys = new Set(SEEDS.map(s => gameKey(s)));
+    safeSet(KEY_DECK,  (safeGet(KEY_DECK)  ?? []).filter(g => validKeys.has(gameKey(g))));
+    safeSet(KEY_SPENT, (safeGet(KEY_SPENT) ?? []).filter(g => validKeys.has(gameKey(g))));
 
     // Load persisted mode & size
     const savedMode = safeGet(KEY_MODE);
@@ -1994,7 +2014,7 @@
       const ql = q.toLowerCase();
       const seedMatches = SEEDS
         .filter(s => s.label.toLowerCase().includes(ql))
-        .map(s => ({ id: s.value, label: s.label, description: '' }));
+        .map(s => ({ id: gameKey(s), label: s.label, description: '' }));
       state.searchResults = seedMatches;
       renderWelcomeDropdown();
 
@@ -2085,7 +2105,7 @@
         state.searchResults = [];
 
         setMessage(`Resolving "${label}"…`);
-        let game = SEEDS.find(s => s.value === id);
+        let game = SEEDS.find(s => gameKey(s) === id);
         if (!game) {
           const resolved = await resolveToPlayableClass(id);
           setMessage('');

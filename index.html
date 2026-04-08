@@ -114,15 +114,15 @@
       background: var(--medium-background);
       border-radius: 8px;
       padding: 0 10px;
-      margin: 14px 10px 0;
+      margin: 10px 10px 0;
     }
 
     #welcome-search-input {
       flex: 1;
       border: none;
       outline: none;
-      padding: 10px 0;
-      font-size: 14px;
+      padding: 8px 0;
+      font-size: 13px;
       font-family: var(--frank);
       background: transparent;
       color: #333;
@@ -235,43 +235,51 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 8px 10px 0;
-      min-height: 28px;
+      gap: 10px;
+      padding: 14px 10px 0;
+      min-height: 40px;
     }
 
     #topic-display {
-      font-size: 13px;
-      color: #555;
-      font-weight: 600;
+      font-size: 18px;
+      color: #222;
+      font-weight: 700;
       font-family: var(--frank);
       text-align: center;
     }
 
     #btn-rotate-topic {
       background: none;
-      border: 1.5px solid var(--dark-background);
+      border: 2px solid var(--button-background);
       border-radius: 50%;
-      width: 24px;
-      height: 24px;
+      width: 30px;
+      height: 30px;
       cursor: pointer;
-      color: var(--dark-background);
-      font-size: 15px;
+      color: var(--button-background);
+      font-size: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
       line-height: 1;
-      transition: border-color 0.2s, color 0.2s, transform 0.4s;
+      transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.4s;
       flex-shrink: 0;
     }
 
     #btn-rotate-topic:hover {
-      border-color: var(--button-background);
-      color: var(--button-background);
+      background: var(--button-background);
+      color: #fff;
     }
 
     #btn-rotate-topic.spinning { transform: rotate(360deg); }
+
+    .topic-hint {
+      font-size: 11px;
+      color: #999;
+      text-align: center;
+      font-family: var(--frank);
+      margin-top: 4px;
+    }
 
     @media (max-width: 374px) {
       .welcome-inner { width: calc(100vw - 16px); }
@@ -1067,6 +1075,67 @@
       100% { opacity: 0; transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); }
     }
 
+    /* ===== FIRST-LAUNCH TUTORIAL ===== */
+    #tutorial-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(0,0,0,0.35);
+      align-items: center;
+      justify-content: center;
+    }
+    #tutorial-overlay.show { display: flex; }
+
+    .tutorial-card {
+      background: #fff;
+      border-radius: 12px;
+      border: 2px solid var(--medium-background);
+      padding: 24px 22px 18px;
+      width: 300px;
+      max-width: calc(100vw - 30px);
+      text-align: center;
+    }
+    .tutorial-card h2 {
+      font-family: var(--chelt);
+      font-size: 24px;
+      font-weight: 500;
+      margin: 0 0 14px;
+      letter-spacing: -0.3px;
+    }
+    .tutorial-card p {
+      font-family: var(--imperial);
+      font-size: 15px;
+      line-height: 1.4;
+      color: #444;
+      margin: 0 0 10px;
+    }
+    .tutorial-dots {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      margin: 14px 0 0;
+    }
+    .tutorial-dots span {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--medium-background);
+    }
+    .tutorial-dots span.active { background: var(--button-background); }
+    .tutorial-next-btn {
+      background: var(--button-background);
+      color: #fff;
+      font-family: var(--frank);
+      font-weight: 600;
+      font-size: 15px;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 28px;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    .tutorial-next-btn:hover { background: var(--button-background-dark); }
+
   </style>
 </head>
 <body>
@@ -1085,17 +1154,18 @@
     </div>
     <h2 class="welcome-subtitle">Can you place these events in chronological order?</h2>
 
+    <div class="topic-row">
+      <span id="topic-display"></span>
+      <button id="btn-rotate-topic" title="Shuffle topic">&#x21BB;</button>
+    </div>
+    <div class="topic-hint">Don't like this topic? Tap the arrow to shuffle.</div>
+
     <div id="welcome-search-wrap">
-      <input id="welcome-search-input" type="text" placeholder="Search any topic…" autocomplete="off" />
+      <input id="welcome-search-input" type="text" placeholder="or search for any topic…" autocomplete="off" />
       <div id="welcome-spinner"></div>
     </div>
     <div id="welcome-dropdown">
       <div id="welcome-dropdown-list"></div>
-    </div>
-
-    <div class="topic-row">
-      <span id="topic-display"></span>
-      <button id="btn-rotate-topic" title="Try a different topic">&#x21BB;</button>
     </div>
 
     <div class="settings-section">
@@ -1183,6 +1253,16 @@
   </div>
 </div>
 
+<!-- ===== FIRST-LAUNCH TUTORIAL ===== -->
+<div id="tutorial-overlay">
+  <div class="tutorial-card">
+    <h2 id="tut-title"></h2>
+    <p id="tut-text"></p>
+    <button class="tutorial-next-btn" id="tut-btn">Next</button>
+    <div class="tutorial-dots" id="tut-dots"></div>
+  </div>
+</div>
+
 <!-- ===== DRAG GHOST ===== -->
 <div id="drag-ghost"></div>
 
@@ -1207,6 +1287,7 @@
   const KEY_STATE   = 'fbq_state_v3';
   const KEY_MODE    = 'fbq_mode';   // 'tap' | 'drag'
   const KEY_SIZE    = 'fbq_size';   // total cards incl anchor
+  const KEY_TUTORIAL = 'fbq_tutorial_seen';
 
   let GAME_SIZE = 9; // 1 anchor + 8 to place (configurable)
   let tapMode   = false;            // true = tap-to-place, false = drag
@@ -2312,6 +2393,43 @@
     }
   }
 
+  // ==================== FIRST-LAUNCH TUTORIAL ====================
+  const TUT_STEPS = [
+    { title: 'Welcome to BackFlash!', text: 'We picked a topic for you. If you don\u2019t like it, tap the \u21BB arrow to shuffle to a new one.' },
+    { title: 'We\u2019ll place one for you', text: 'One event is already on the timeline to get you started.' },
+    { title: 'Place the rest', text: 'New events appear at the top. Drag or tap to place each one in the right spot on the timeline.' },
+    { title: 'Good luck!', text: 'Try to get every event in the correct chronological order.' },
+  ];
+  let tutStep = 0;
+
+  function renderTutStep() {
+    document.getElementById('tut-title').textContent = TUT_STEPS[tutStep].title;
+    document.getElementById('tut-text').textContent = TUT_STEPS[tutStep].text;
+    const isLast = tutStep === TUT_STEPS.length - 1;
+    document.getElementById('tut-btn').textContent = isLast ? 'Got it!' : 'Next';
+    document.getElementById('tut-dots').innerHTML = TUT_STEPS.map((_, i) =>
+      `<span${i === tutStep ? ' class="active"' : ''}></span>`
+    ).join('');
+  }
+
+  function initTutorial() {
+    if (safeGet(KEY_TUTORIAL)) return;
+    const overlay = document.getElementById('tutorial-overlay');
+    tutStep = 0;
+    renderTutStep();
+    overlay.classList.add('show');
+
+    document.getElementById('tut-btn').addEventListener('click', () => {
+      if (tutStep < TUT_STEPS.length - 1) {
+        tutStep++;
+        renderTutStep();
+      } else {
+        overlay.classList.remove('show');
+        safeSet(KEY_TUTORIAL, true);
+      }
+    });
+  }
+
   // ==================== INIT ====================
   function init() {
     initWelcome();
@@ -2319,6 +2437,7 @@
     initPointerDrag();
     initHelp();
     initShare();
+    initTutorial();
   }
 
   document.addEventListener('DOMContentLoaded', init);

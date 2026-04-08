@@ -1782,6 +1782,15 @@
     const correct = isPlacementCorrect(insertAt);
     state.placedStatuses[card.id] = correct ? 'correct' : 'incorrect';
     state.placementOrder.push({ id: card.id, status: correct ? 'correct' : 'incorrect' });
+
+    // If wrong, move card to its correct chronological position so the
+    // timeline always remains a sorted sequence.
+    if (!correct) {
+      state.timeline.splice(insertAt, 1);
+      let correctIdx = state.timeline.findIndex(ev => ev.year > card.year);
+      if (correctIdx === -1) correctIdx = state.timeline.length;
+      state.timeline.splice(correctIdx, 0, card);
+    }
     if (correct) state.correctCount++;
 
     // Animate current stack card out

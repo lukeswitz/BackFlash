@@ -21,7 +21,8 @@
       --highlight: #f9d988;
       --button-background: #5d72c9;
       --button-background-dark: #1f3282;
-      --lh: 1.2rem;
+      --lh: 1.35rem;
+      --card-width: min(calc(100vw - 24px), 500px);
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -71,7 +72,8 @@
 
     .empty-box {
       background: #DDBD6C;
-      width: 300px;
+      width: 320px;
+      max-width: calc(100vw - 60px);
       margin: 10px auto;
       height: 85px;
       overflow: hidden;
@@ -83,8 +85,8 @@
       position: relative;
       z-index: 2;
       background: #fff;
-      padding: 30px 10px 0;
-      width: 350px;
+      padding: 30px 14px 0;
+      width: 380px;
       max-width: calc(100vw - 24px);
       border-radius: 10px;
       border: 2px solid var(--medium-background);
@@ -100,11 +102,11 @@
     }
 
     .welcome-subtitle {
-      font-size: 19px;
+      font-size: 20px;
       font-weight: 500;
-      line-height: 1.2;
+      line-height: 1.25;
       text-align: center;
-      max-width: 14.5em;
+      max-width: 15em;
       margin: 0 auto;
     }
 
@@ -121,8 +123,8 @@
       flex: 1;
       border: none;
       outline: none;
-      padding: 8px 0;
-      font-size: 13px;
+      padding: 10px 0;
+      font-size: 15px;
       font-family: var(--frank);
       background: transparent;
       color: #333;
@@ -158,9 +160,9 @@
     }
 
     .w-drop-item {
-      padding: 10px 14px;
+      padding: 12px 14px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 16px;
       color: #222;
       font-weight: 600;
     }
@@ -168,7 +170,7 @@
     .w-drop-item:hover { background: var(--medium-background); }
 
     .w-drop-item .w-drop-desc {
-      font-size: 11px;
+      font-size: 13px;
       color: #999;
       font-weight: 400;
       display: block;
@@ -274,7 +276,7 @@
     #btn-rotate-topic.spinning { transform: rotate(360deg); }
 
     .topic-hint {
-      font-size: 11px;
+      font-size: 13px;
       color: #999;
       text-align: center;
       font-family: var(--frank);
@@ -284,6 +286,37 @@
     @media (max-width: 374px) {
       .welcome-inner { width: calc(100vw - 16px); }
       h1.game-name { font-size: 30px; }
+      .stack-card p { font-size: 15px; }
+      .placed-card p { font-size: 14px; }
+      .placed-year { font-size: 13px; min-width: 52px; }
+    }
+
+    /* Larger phones */
+    @media (min-width: 430px) {
+      .stack-card img,
+      .stack-card .image-placeholder { width: 88px; height: 88px; }
+      .card-symbol { font-size: 34px; }
+      #stack { height: 120px; }
+      #stack-shadow { height: 120px; }
+      .stack-background { height: 106px; }
+      #timeline-container { padding-top: 170px; }
+      .vl { top: 220px; }
+      .stack-card p { font-size: 18px; }
+      .placed-card p { font-size: 17px; }
+      .placed-year { font-size: 16px; min-width: 64px; }
+    }
+
+    /* Tablets */
+    @media (min-width: 768px) {
+      .stack-card img,
+      .stack-card .image-placeholder { width: 100px; height: 100px; }
+      .card-symbol { font-size: 36px; }
+      #stack { height: 132px; }
+      #stack-shadow { height: 132px; }
+      .stack-background { height: 118px; }
+      #timeline-container { padding-top: 182px; }
+      .vl { top: 232px; }
+      .welcome-inner { width: 420px; }
     }
 
     /* ===== GAME SCREEN ===== */
@@ -292,7 +325,7 @@
     /* Cream bar behind counter / stack */
     .top-container {
       background-color: var(--background-color);
-      height: 38px;
+      height: 32px;
       width: 100%;
       position: fixed;
       left: 0; top: 0;
@@ -305,9 +338,9 @@
     #counter {
       position: fixed;
       z-index: 200;
-      top: 6px;
-      right: 10px;
-      left: 10px;
+      top: 4px;
+      right: 12px;
+      left: 12px;
       margin: auto;
       max-width: 600px;
     }
@@ -337,11 +370,11 @@
 
     /* ===== STACK (fixed top, shows current card) ===== */
     #stack {
-      height: 145px;
+      height: 110px;
       position: fixed;
       width: 100%;
       z-index: 100;
-      top: 38px;
+      top: 32px;
       left: 0; right: 0;
       margin: 0;
       background-color: var(--background-color);
@@ -353,19 +386,18 @@
     .stack-background {
       border-radius: 8px;
       user-select: none;
-      width: 360px;
-      max-width: calc(100vw - 20px);
+      width: var(--card-width);
       background-color: var(--medium-background);
-      height: 128px;
-      transform: translateY(5px);
+      height: 96px;
+      transform: translateY(4px);
       margin: 0 auto;
       opacity: 0.4;
     }
 
     /* Stack shadow line below stack */
     #stack-shadow {
-      top: 38px;
-      height: 145px;
+      top: 32px;
+      height: 110px;
       position: fixed;
       border-bottom: 2px solid var(--medium-background);
       clip-path: inset(0px 0px -15px 0px);
@@ -384,17 +416,16 @@
       margin: auto;
       border-radius: 8px;
       user-select: none;
-      width: 360px;
-      max-width: calc(100vw - 20px);
+      width: var(--card-width);
       box-sizing: border-box;
       display: flex;
       flex-direction: row;
       align-items: center;
       border: 1px solid var(--medium-background);
-      box-shadow: 0 6px 0 0 var(--dark-background);
+      box-shadow: 0 5px 0 0 var(--dark-background);
       top: -500px;
       pointer-events: none;
-      transform: translateY(5px);
+      transform: translateY(4px);
     }
 
     .stack-card:last-child {
@@ -405,7 +436,7 @@
     }
 
     .stack-card .clue-inner {
-      padding: 12px 10px;
+      padding: 10px;
       display: flex;
       background-color: var(--white-background);
       border-radius: 8px;
@@ -414,27 +445,28 @@
     }
 
     .stack-card img {
-      width: 100px;
-      height: 100px;
+      width: 72px;
+      height: 72px;
       object-fit: cover;
       flex-shrink: 0;
       pointer-events: none;
+      border-radius: 4px;
     }
 
     .stack-card .image-placeholder {
-      width: 100px;
-      min-width: 100px;
-      height: 100px;
+      width: 72px;
+      min-width: 72px;
+      height: 72px;
       background-color: var(--medium-background);
       flex-shrink: 0;
-      border-radius: 2px;
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .card-symbol {
-      font-size: 36px;
+      font-size: 30px;
       font-weight: 700;
       font-family: var(--chelt);
       color: var(--dark-background);
@@ -444,11 +476,11 @@
     .stack-card p {
       font-family: var(--imperial);
       color: #121212;
-      font-size: 15px;
+      font-size: 17px;
       font-weight: 500;
       line-height: var(--lh);
       text-align: left;
-      padding: 0 0 0 10px;
+      padding: 0 0 0 12px;
       margin: 0;
       pointer-events: none;
     }
@@ -468,10 +500,10 @@
     }
 
     @keyframes card-wiggle {
-      0%  { transform: translateY(5px); }
-      20% { transform: translateY(5px); }
-      80% { transform: translateY(15px); }
-      100% { transform: translateY(5px); }
+      0%  { transform: translateY(4px); }
+      20% { transform: translateY(4px); }
+      80% { transform: translateY(14px); }
+      100% { transform: translateY(4px); }
     }
 
     /* Dragging state */
@@ -486,8 +518,7 @@
       pointer-events: none;
       z-index: 9999;
       display: none;
-      width: 360px;
-      max-width: calc(100vw - 20px);
+      width: var(--card-width);
       border-radius: 8px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.25);
       transform: rotate(2deg) scale(0.97);
@@ -496,7 +527,7 @@
     }
 
     #drag-ghost .clue-inner {
-      padding: 12px 10px;
+      padding: 10px;
       display: flex;
       background-color: var(--white-background);
       border-radius: 8px;
@@ -505,19 +536,20 @@
     }
 
     #drag-ghost img {
-      width: 100px;
-      height: 100px;
+      width: 72px;
+      height: 72px;
       object-fit: cover;
       flex-shrink: 0;
+      border-radius: 4px;
     }
 
     #drag-ghost p {
       font-family: var(--imperial);
       color: #121212;
-      font-size: 15px;
+      font-size: 17px;
       font-weight: 500;
       line-height: var(--lh);
-      padding: 0 0 0 10px;
+      padding: 0 0 0 12px;
       margin: 0;
     }
 
@@ -528,14 +560,14 @@
     }
 
     @keyframes card-exit {
-      0%   { opacity: 1; top: 0; transform: translateY(5px); }
+      0%   { opacity: 1; top: 0; transform: translateY(4px); }
       100% { opacity: 0; top: -40px; transform: translateY(0); }
     }
 
     /* ===== TIMELINE ===== */
     #timeline-container {
       position: relative;
-      padding-top: 203px;
+      padding-top: 160px;
       padding-bottom: 60px;
       overscroll-behavior-y: none;
       user-select: none;
@@ -553,7 +585,7 @@
       left: 50%;
       margin-left: -1px;
       z-index: 0;
-      top: 258px;
+      top: 210px;
       bottom: 40px;
     }
 
@@ -568,33 +600,32 @@
       flex-direction: column;
       align-items: center;
       gap: 0;
-      padding-top: 100px; /* room for first card's .placeButton.top at top:-90px */
+      padding-top: 70px;
     }
 
     .timeline-label {
       color: #666;
-      font-size: 14px;
+      font-size: 15px;
       font-family: var(--frank);
       font-weight: 700;
       letter-spacing: 0.05em;
       text-align: center;
-      padding: 12px 0;
+      padding: 10px 0;
       user-select: none;
     }
 
     /* ===== PLACED CARDS ===== */
     .placed-card {
       position: relative;
-      width: calc(100vw - 20px);
-      max-width: 360px;
-      border: var(--background-color) 4px solid;
+      width: var(--card-width);
+      border: var(--background-color) 3px solid;
       border-radius: 8px;
       display: flex;
       flex-direction: row;
       align-items: stretch;
       box-sizing: border-box;
       pointer-events: none;
-      margin: 0 auto 78px;
+      margin: 0 auto 56px;
     }
 
     .placed-card:last-child { margin-bottom: 40px; }
@@ -603,7 +634,7 @@
       padding: 0;
       display: flex;
       background-color: var(--medium-background);
-      border-radius: 4px;
+      border-radius: 5px;
       align-items: stretch;
       width: 100%;
       overflow: hidden;
@@ -611,13 +642,13 @@
 
     /* Year column — colour driven by placement result */
     .placed-year {
-      min-width: 56px;
+      min-width: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: var(--frank);
       font-weight: 700;
-      font-size: 12px;
+      font-size: 15px;
       color: #fff;
       background-color: var(--color-neutral);
       flex-shrink: 0;
@@ -633,12 +664,12 @@
     .placed-card p {
       font-family: var(--imperial);
       color: #121212;
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 500;
       line-height: var(--lh);
-      padding: 10px 10px;
+      padding: 10px 12px;
       margin: 0;
-      opacity: 0.85;
+      opacity: 0.9;
     }
 
     /* ===== PLACEMENT ANIMATIONS ===== */
@@ -672,12 +703,12 @@
     /* ===== PLACE BUTTONS (absolutely inside each placed card) ===== */
     .placeButton {
       position: absolute;
-      bottom: -80px;
+      bottom: -58px;
       left: 50%;
       transform: translate(-50%);
       width: 100%;
-      max-width: 360px;
-      height: 65px;
+      max-width: var(--card-width);
+      height: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -691,17 +722,17 @@
     /* Top button hangs above first card */
     .placeButton.top {
       bottom: auto;
-      top: -90px;
+      top: -62px;
     }
 
     /* Inner "Place here" pill button */
     .place-btn {
       background-color: #fff;
       border-radius: 30px;
-      padding: 10px 20px;
+      padding: 8px 18px;
       color: var(--button-background);
       font-weight: 700;
-      font-size: 16px;
+      font-size: 15px;
       border: 2px solid var(--button-background);
       font-family: var(--frank);
       cursor: pointer;
@@ -740,12 +771,12 @@
     /* ===== CATEGORY HEADER ===== */
     #topic-label {
       text-align: center;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: var(--dark-background);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       min-height: 14px;
     }
 
@@ -770,7 +801,7 @@
     }
 
     .setting-label {
-      font-size: 14px;
+      font-size: 16px;
       color: #333;
       font-family: var(--frank);
       font-weight: 500;
@@ -818,7 +849,7 @@
     .select-wrap select {
       appearance: none;
       -webkit-appearance: none;
-      font-size: 14px;
+      font-size: 16px;
       font-family: var(--frank);
       font-weight: 600;
       color: var(--button-background);
@@ -844,10 +875,9 @@
     #results-container {
       display: none;
       text-align: center;
-      padding: 20px 17px;
+      padding: 24px 20px;
       position: relative;
-      width: 315px;
-      max-width: calc(100vw - 30px);
+      width: var(--card-width);
       left: 0; right: 0;
       margin: 30px auto 20px;
       z-index: 5;
@@ -870,7 +900,7 @@
 
     #results-score {
       font-family: var(--chelt);
-      font-size: 30px;
+      font-size: 34px;
       font-weight: 500;
       letter-spacing: -0.5px;
       margin-bottom: 4px;
@@ -878,7 +908,7 @@
 
     #results-subtitle {
       font-family: var(--frank);
-      font-size: 14px;
+      font-size: 16px;
       color: #666;
       margin-bottom: 16px;
     }
@@ -923,15 +953,15 @@
     /* ===== HELP BUTTON ===== */
     #btn-help {
       position: fixed;
-      top: 6px;
-      right: 10px;
+      top: 4px;
+      right: 12px;
       border: 2px solid var(--dark-background);
       color: var(--dark-background);
       font-size: 14px;
       font-weight: 700;
       border-radius: 50%;
-      height: 20px;
-      width: 20px;
+      height: 22px;
+      width: 22px;
       box-sizing: border-box;
       text-align: center;
       z-index: 1001;
@@ -960,8 +990,8 @@
 
     .help-inner {
       position: relative;
-      padding: 20px;
-      width: 296px;
+      padding: 24px;
+      width: 340px;
       max-width: calc(100vw - 30px);
       background-color: #fff;
       border-radius: 10px;
@@ -2230,9 +2260,9 @@
 
     function positionGhost(x, y) {
       // Center ghost horizontally on pointer, offset y so it's above finger
-      const w = Math.min(360, window.innerWidth - 20);
+      const w = Math.min(500, window.innerWidth - 24);
       ghost.style.left = `${Math.max(10, Math.min(x - w / 2, window.innerWidth - w - 10))}px`;
-      ghost.style.top  = `${y - 70}px`;
+      ghost.style.top  = `${y - 60}px`;
     }
 
     // Listen on the stack element for pointer events

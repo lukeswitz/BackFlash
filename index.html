@@ -1313,9 +1313,256 @@
   const tapMode   = false; // always drag mode
   const WIKIMEDIA_IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
 
-  // ==================== ITEM POOL (from WikiTrivia dataset — top 2000 by Wikipedia page views) ====================
-  // Format: [label, year, description, image_filename, category]
-  let ITEM_POOL = []; // loaded from items.json
+  // ==================== ITEM POOL ====================
+  let ITEM_POOL = []; // loaded from WikiTrivia items.json + bonus items
+
+  // Hand-curated bonus events the WikiTrivia dataset misses
+  // Format matches WikiTrivia: {label, year, description, image, instance_of, date_prop_id, id, page_views}
+  const BONUS_ITEMS = [
+    // Tech milestones
+    { label: 'iPhone', year: 2007, description: 'Apple\'s revolutionary smartphone', instance_of: ['consumer electronics'], date_prop_id: 'P577', id: 'B001', page_views: 500000 },
+    { label: 'World Wide Web', year: 1991, description: 'Tim Berners-Lee\'s information system that changed everything', instance_of: ['invention'], date_prop_id: 'P575', id: 'B002', page_views: 400000 },
+    { label: 'Google', year: 1998, description: 'Search engine created by Larry Page and Sergey Brin', instance_of: ['website'], date_prop_id: 'P571', id: 'B003', page_views: 600000 },
+    { label: 'YouTube', year: 2005, description: 'Video sharing platform', instance_of: ['website'], date_prop_id: 'P571', id: 'B004', page_views: 500000 },
+    { label: 'Wikipedia', year: 2001, description: 'Free online encyclopedia', instance_of: ['website'], date_prop_id: 'P571', id: 'B005', page_views: 450000 },
+    { label: 'Twitter', year: 2006, description: 'Social media platform for short messages', instance_of: ['social network'], date_prop_id: 'P571', id: 'B006', page_views: 400000 },
+    { label: 'Facebook', year: 2004, description: 'Social networking service created by Mark Zuckerberg', instance_of: ['social network'], date_prop_id: 'P571', id: 'B007', page_views: 500000 },
+    { label: 'Netflix streaming', year: 2007, description: 'Netflix begins its video streaming service', instance_of: ['website'], date_prop_id: 'P571', id: 'B008', page_views: 400000 },
+    { label: 'Spotify', year: 2008, description: 'Music streaming service from Sweden', instance_of: ['software'], date_prop_id: 'P577', id: 'B009', page_views: 350000 },
+    { label: 'Instagram', year: 2010, description: 'Photo sharing social network', instance_of: ['social network'], date_prop_id: 'P571', id: 'B010', page_views: 400000 },
+    { label: 'TikTok', year: 2016, description: 'Short-form video platform from ByteDance', instance_of: ['mobile app'], date_prop_id: 'P571', id: 'B011', page_views: 450000 },
+    { label: 'ChatGPT', year: 2022, description: 'OpenAI\'s AI chatbot that sparked the AI boom', instance_of: ['software'], date_prop_id: 'P577', id: 'B012', page_views: 500000 },
+    { label: 'Bitcoin', year: 2009, description: 'First decentralized cryptocurrency by Satoshi Nakamoto', instance_of: ['cryptocurrency'], date_prop_id: 'P571', id: 'B013', page_views: 400000 },
+    { label: 'Amazon.com', year: 1994, description: 'Online marketplace started by Jeff Bezos', instance_of: ['website'], date_prop_id: 'P571', id: 'B014', page_views: 400000 },
+    { label: 'Uber', year: 2009, description: 'Ride-hailing service', instance_of: ['mobile app'], date_prop_id: 'P571', id: 'B015', page_views: 300000 },
+    { label: 'Airbnb', year: 2008, description: 'Home-sharing platform', instance_of: ['website'], date_prop_id: 'P571', id: 'B016', page_views: 300000 },
+    // Gaming
+    { label: 'Atari 2600', year: 1977, description: 'Home video game console that popularized cartridge gaming', instance_of: ['video game console'], date_prop_id: 'P577', id: 'B020', page_views: 300000 },
+    { label: 'Nintendo Entertainment System', year: 1983, description: 'Console that revived the video game industry', instance_of: ['video game console'], date_prop_id: 'P577', id: 'B021', page_views: 350000 },
+    { label: 'Game Boy', year: 1989, description: 'Nintendo\'s handheld gaming device', instance_of: ['video game console'], date_prop_id: 'P577', id: 'B022', page_views: 300000 },
+    { label: 'PlayStation', year: 1994, description: 'Sony\'s first home video game console', instance_of: ['video game console'], date_prop_id: 'P577', id: 'B023', page_views: 350000 },
+    { label: 'Xbox', year: 2001, description: 'Microsoft\'s entry into console gaming', instance_of: ['video game console'], date_prop_id: 'P577', id: 'B024', page_views: 300000 },
+    { label: 'Nintendo Wii', year: 2006, description: 'Motion-controlled console that became a cultural phenomenon', instance_of: ['video game console'], date_prop_id: 'P577', id: 'B025', page_views: 300000 },
+    { label: 'Minecraft', year: 2011, description: 'Sandbox video game by Mojang', instance_of: ['video game'], date_prop_id: 'P577', id: 'B026', page_views: 500000 },
+    { label: 'Fortnite', year: 2017, description: 'Battle royale game by Epic Games', instance_of: ['video game'], date_prop_id: 'P577', id: 'B027', page_views: 400000 },
+    { label: 'Pac-Man', year: 1980, description: 'Iconic arcade game by Namco', instance_of: ['video game'], date_prop_id: 'P577', id: 'B028', page_views: 350000 },
+    { label: 'Tetris', year: 1985, description: 'Puzzle game created by Alexey Pajitnov', instance_of: ['video game'], date_prop_id: 'P577', id: 'B029', page_views: 300000 },
+    { label: 'Super Mario Bros.', year: 1985, description: 'Nintendo platformer that defined a generation', instance_of: ['video game'], date_prop_id: 'P577', id: 'B030', page_views: 400000 },
+    { label: 'Pong', year: 1972, description: 'One of the first commercially successful video games', instance_of: ['video game'], date_prop_id: 'P577', id: 'B031', page_views: 250000 },
+    { label: 'Pokemon Red and Blue', year: 1996, description: 'Game that launched the global Pokemon phenomenon', instance_of: ['video game'], date_prop_id: 'P577', id: 'B032', page_views: 350000 },
+    { label: 'Grand Theft Auto III', year: 2001, description: 'Groundbreaking open-world action game', instance_of: ['video game'], date_prop_id: 'P577', id: 'B033', page_views: 300000 },
+    { label: 'The Legend of Zelda', year: 1986, description: 'Nintendo\'s legendary adventure game', instance_of: ['video game'], date_prop_id: 'P577', id: 'B034', page_views: 300000 },
+    // Space
+    { label: 'Moon landing', year: 1969, description: 'Apollo 11 puts the first humans on the Moon', instance_of: ['space mission'], date_prop_id: 'P585', id: 'B040', page_views: 600000 },
+    { label: 'Sputnik', year: 1957, description: 'Soviet Union launches the first artificial satellite', instance_of: ['satellite'], date_prop_id: 'P580', id: 'B041', page_views: 300000 },
+    { label: 'Hubble Space Telescope', year: 1990, description: 'NASA\'s iconic space telescope', instance_of: ['spacecraft'], date_prop_id: 'P580', id: 'B042', page_views: 350000 },
+    { label: 'International Space Station', year: 1998, description: 'Habitable artificial satellite in low Earth orbit', instance_of: ['spacecraft'], date_prop_id: 'P580', id: 'B043', page_views: 400000 },
+    { label: 'Mars Curiosity Rover', year: 2012, description: 'NASA rover exploring the surface of Mars', instance_of: ['space mission'], date_prop_id: 'P580', id: 'B044', page_views: 300000 },
+    // Brands & Products
+    { label: 'Coca-Cola', year: 1886, description: 'World\'s most famous soft drink', instance_of: ['business'], date_prop_id: 'P571', id: 'B050', page_views: 500000 },
+    { label: 'McDonald\'s', year: 1940, description: 'American fast food restaurant chain', instance_of: ['business'], date_prop_id: 'P571', id: 'B051', page_views: 450000 },
+    { label: 'IKEA', year: 1943, description: 'Swedish furniture retailer', instance_of: ['business'], date_prop_id: 'P571', id: 'B052', page_views: 350000 },
+    { label: 'LEGO', year: 1932, description: 'Danish toy company famous for plastic bricks', instance_of: ['business'], date_prop_id: 'P571', id: 'B053', page_views: 400000 },
+    { label: 'Nike', year: 1964, description: 'American athletic footwear and apparel company', instance_of: ['business'], date_prop_id: 'P571', id: 'B054', page_views: 350000 },
+    { label: 'Starbucks', year: 1971, description: 'American coffeehouse chain', instance_of: ['business'], date_prop_id: 'P571', id: 'B055', page_views: 350000 },
+    { label: 'Tesla Motors', year: 2003, description: 'Electric vehicle and clean energy company', instance_of: ['automobile manufacturer'], date_prop_id: 'P571', id: 'B056', page_views: 400000 },
+    { label: 'SpaceX', year: 2002, description: 'Elon Musk\'s private space exploration company', instance_of: ['business'], date_prop_id: 'P571', id: 'B057', page_views: 400000 },
+    // Music events
+    { label: 'Woodstock Festival', year: 1969, description: 'Legendary three-day music festival in New York', instance_of: ['music festival'], date_prop_id: 'P585', id: 'B060', page_views: 350000 },
+    { label: 'MTV', year: 1981, description: 'Music Television launches with "Video Killed the Radio Star"', instance_of: ['television series'], date_prop_id: 'P571', id: 'B061', page_views: 350000 },
+    { label: 'Live Aid', year: 1985, description: 'Massive benefit concert organized by Bob Geldof', instance_of: ['music festival'], date_prop_id: 'P585', id: 'B062', page_views: 300000 },
+    { label: 'Thriller by Michael Jackson', year: 1982, description: 'Best-selling album of all time', instance_of: ['album'], date_prop_id: 'P577', id: 'B063', page_views: 400000 },
+    // Movies & TV
+    { label: 'Star Wars: A New Hope', year: 1977, description: 'George Lucas\'s space opera that changed cinema', instance_of: ['film'], date_prop_id: 'P577', id: 'B070', page_views: 500000 },
+    { label: 'Jaws', year: 1975, description: 'Spielberg\'s shark thriller — the first summer blockbuster', instance_of: ['film'], date_prop_id: 'P577', id: 'B071', page_views: 400000 },
+    { label: 'The Wizard of Oz', year: 1939, description: 'Classic musical fantasy film', instance_of: ['film'], date_prop_id: 'P577', id: 'B072', page_views: 350000 },
+    { label: 'Snow White and the Seven Dwarfs', year: 1937, description: 'Disney\'s first full-length animated feature', instance_of: ['film'], date_prop_id: 'P577', id: 'B073', page_views: 300000 },
+    { label: 'The Simpsons', year: 1989, description: 'Longest-running American animated series', instance_of: ['television series'], date_prop_id: 'P577', id: 'B074', page_views: 400000 },
+    { label: 'Friends', year: 1994, description: 'Iconic American sitcom about six New Yorkers', instance_of: ['television series'], date_prop_id: 'P577', id: 'B075', page_views: 400000 },
+    { label: 'Game of Thrones', year: 2011, description: 'HBO fantasy drama based on George R.R. Martin\'s novels', instance_of: ['television series'], date_prop_id: 'P577', id: 'B076', page_views: 500000 },
+    { label: 'Breaking Bad', year: 2008, description: 'AMC crime drama about a chemistry teacher turned drug lord', instance_of: ['television series'], date_prop_id: 'P577', id: 'B077', page_views: 400000 },
+    { label: 'The Sopranos', year: 1999, description: 'HBO crime drama that launched the golden age of TV', instance_of: ['television series'], date_prop_id: 'P577', id: 'B078', page_views: 350000 },
+    { label: 'Stranger Things', year: 2016, description: 'Netflix sci-fi horror series set in the \'80s', instance_of: ['television series'], date_prop_id: 'P577', id: 'B079', page_views: 400000 },
+    { label: 'Toy Story', year: 1995, description: 'First fully computer-animated feature film by Pixar', instance_of: ['film'], date_prop_id: 'P577', id: 'B080', page_views: 400000 },
+    { label: 'Avatar', year: 2009, description: 'James Cameron\'s 3D sci-fi epic', instance_of: ['film'], date_prop_id: 'P577', id: 'B081', page_views: 450000 },
+    { label: 'Jurassic Park', year: 1993, description: 'Spielberg brings dinosaurs back to life with CGI', instance_of: ['film'], date_prop_id: 'P577', id: 'B082', page_views: 400000 },
+    { label: 'The Matrix', year: 1999, description: 'Wachowskis\' mind-bending sci-fi action film', instance_of: ['film'], date_prop_id: 'P577', id: 'B083', page_views: 400000 },
+    { label: 'Titanic (film)', year: 1997, description: 'James Cameron\'s epic romance-disaster film', instance_of: ['film'], date_prop_id: 'P577', id: 'B084', page_views: 450000 },
+    // Historical events
+    { label: 'Berlin Wall falls', year: 1989, description: 'East and West Berlin reunited after decades of division', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B090', page_views: 500000 },
+    { label: 'Titanic sinks', year: 1912, description: 'The "unsinkable" ship strikes an iceberg on its maiden voyage', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B091', page_views: 500000 },
+    { label: 'Hiroshima atomic bombing', year: 1945, description: 'First use of a nuclear weapon in warfare', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B092', page_views: 500000 },
+    { label: 'September 11 attacks', year: 2001, description: 'Terrorist attacks on the World Trade Center and Pentagon', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B093', page_views: 600000 },
+    { label: 'Chernobyl disaster', year: 1986, description: 'Catastrophic nuclear accident in Soviet Ukraine', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B094', page_views: 400000 },
+    { label: 'COVID-19 pandemic declared', year: 2020, description: 'WHO declares coronavirus a global pandemic', instance_of: ['pandemic'], date_prop_id: 'P585', id: 'B095', page_views: 600000 },
+    { label: 'D-Day', year: 1944, description: 'Allied invasion of Normandy in World War II', instance_of: ['battle'], date_prop_id: 'P585', id: 'B096', page_views: 400000 },
+    { label: 'Cuban Missile Crisis', year: 1962, description: 'Tense nuclear standoff between the US and Soviet Union', instance_of: ['conflict'], date_prop_id: 'P585', id: 'B097', page_views: 350000 },
+    { label: 'Panama Canal opens', year: 1914, description: 'Waterway connecting the Atlantic and Pacific Oceans', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B098', page_views: 300000 },
+    { label: 'Prohibition begins in the US', year: 1920, description: 'Nationwide ban on alcoholic beverages', instance_of: ['historical event'], date_prop_id: 'P580', id: 'B099', page_views: 300000 },
+    // Inventions & Science
+    { label: 'Telephone', year: 1876, description: 'Alexander Graham Bell patents the telephone', instance_of: ['invention'], date_prop_id: 'P575', id: 'B100', page_views: 400000 },
+    { label: 'Light bulb', year: 1879, description: 'Thomas Edison develops a practical incandescent light bulb', instance_of: ['invention'], date_prop_id: 'P575', id: 'B101', page_views: 400000 },
+    { label: 'Radio broadcasting', year: 1920, description: 'First commercial radio broadcasts begin', instance_of: ['invention'], date_prop_id: 'P575', id: 'B102', page_views: 300000 },
+    { label: 'Television broadcasting', year: 1928, description: 'First experimental TV broadcasts', instance_of: ['invention'], date_prop_id: 'P575', id: 'B103', page_views: 350000 },
+    { label: 'Penicillin', year: 1928, description: 'Alexander Fleming discovers the first antibiotic', instance_of: ['discovery'], date_prop_id: 'P575', id: 'B104', page_views: 350000 },
+    { label: 'DNA double helix', year: 1953, description: 'Watson and Crick reveal the structure of DNA', instance_of: ['discovery'], date_prop_id: 'P575', id: 'B105', page_views: 400000 },
+    { label: 'First email sent', year: 1971, description: 'Ray Tomlinson sends the first network email', instance_of: ['invention'], date_prop_id: 'P575', id: 'B106', page_views: 300000 },
+    { label: 'Dolly the Sheep cloned', year: 1996, description: 'First mammal cloned from an adult cell', instance_of: ['discovery'], date_prop_id: 'P575', id: 'B107', page_views: 300000 },
+    { label: 'Human Genome Project completed', year: 2003, description: 'First complete mapping of all human DNA', instance_of: ['discovery'], date_prop_id: 'P582', id: 'B108', page_views: 300000 },
+    { label: 'Dynamite', year: 1867, description: 'Alfred Nobel invents a safer explosive', instance_of: ['invention'], date_prop_id: 'P575', id: 'B109', page_views: 300000 },
+    // Sports
+    { label: 'First modern Olympic Games', year: 1896, description: 'International athletic competition revived in Athens', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B110', page_views: 350000 },
+    { label: 'First FIFA World Cup', year: 1930, description: 'Inaugural football World Cup held in Uruguay', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B111', page_views: 350000 },
+    { label: 'First Super Bowl', year: 1967, description: 'Green Bay Packers defeat Kansas City Chiefs', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B112', page_views: 400000 },
+    { label: 'Jesse Owens wins 4 gold medals', year: 1936, description: 'Dominates the Berlin Olympics', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B113', page_views: 300000 },
+    { label: 'Miracle on Ice', year: 1980, description: 'US hockey team defeats the Soviet Union at the Winter Olympics', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B114', page_views: 300000 },
+    // More Tech & Internet
+    { label: 'Snapchat', year: 2011, description: 'Disappearing photo messaging app', instance_of: ['mobile app'], date_prop_id: 'P571', id: 'B120', page_views: 300000 },
+    { label: 'Reddit', year: 2005, description: 'Social news and discussion platform', instance_of: ['website'], date_prop_id: 'P571', id: 'B121', page_views: 350000 },
+    { label: 'Skype', year: 2003, description: 'Voice and video calling over the internet', instance_of: ['software'], date_prop_id: 'P577', id: 'B122', page_views: 300000 },
+    { label: 'WhatsApp', year: 2009, description: 'Mobile messaging app', instance_of: ['mobile app'], date_prop_id: 'P571', id: 'B123', page_views: 350000 },
+    { label: 'Napster', year: 1999, description: 'Peer-to-peer music sharing service that disrupted the music industry', instance_of: ['software'], date_prop_id: 'P577', id: 'B124', page_views: 250000 },
+    { label: 'eBay', year: 1995, description: 'Online auction and shopping website', instance_of: ['website'], date_prop_id: 'P571', id: 'B125', page_views: 300000 },
+    { label: 'PayPal', year: 1998, description: 'Online payments system', instance_of: ['business'], date_prop_id: 'P571', id: 'B126', page_views: 300000 },
+    { label: 'Zoom', year: 2013, description: 'Video conferencing platform', instance_of: ['software'], date_prop_id: 'P577', id: 'B127', page_views: 350000 },
+    { label: 'Slack', year: 2013, description: 'Workplace messaging platform', instance_of: ['software'], date_prop_id: 'P577', id: 'B128', page_views: 250000 },
+    { label: 'Dropbox', year: 2008, description: 'Cloud file storage service', instance_of: ['software'], date_prop_id: 'P577', id: 'B129', page_views: 250000 },
+    { label: 'Kindle', year: 2007, description: 'Amazon\'s e-book reader', instance_of: ['consumer electronics'], date_prop_id: 'P577', id: 'B130', page_views: 300000 },
+    { label: 'iPod', year: 2001, description: 'Apple\'s portable music player', instance_of: ['consumer electronics'], date_prop_id: 'P577', id: 'B131', page_views: 350000 },
+    { label: 'iPad', year: 2010, description: 'Apple\'s tablet computer', instance_of: ['consumer electronics'], date_prop_id: 'P577', id: 'B132', page_views: 350000 },
+    { label: 'Bluetooth', year: 1998, description: 'Wireless technology standard for short-range data exchange', instance_of: ['technical standard'], date_prop_id: 'P575', id: 'B133', page_views: 300000 },
+    { label: 'Wi-Fi', year: 1997, description: 'Wireless networking technology', instance_of: ['technical standard'], date_prop_id: 'P575', id: 'B134', page_views: 350000 },
+    { label: 'GPS (civilian use)', year: 1983, description: 'US opens satellite navigation to civilian use', instance_of: ['invention'], date_prop_id: 'P575', id: 'B135', page_views: 300000 },
+    { label: 'First smartphone (IBM Simon)', year: 1994, description: 'First phone with a touchscreen and apps', instance_of: ['consumer electronics'], date_prop_id: 'P577', id: 'B136', page_views: 250000 },
+    { label: 'BlackBerry', year: 1999, description: 'Smartphone with a physical keyboard', instance_of: ['consumer electronics'], date_prop_id: 'P577', id: 'B137', page_views: 250000 },
+    { label: 'Android', year: 2008, description: 'Google\'s mobile operating system', instance_of: ['operating system'], date_prop_id: 'P577', id: 'B138', page_views: 400000 },
+    { label: 'Linux', year: 1991, description: 'Open-source operating system by Linus Torvalds', instance_of: ['operating system'], date_prop_id: 'P577', id: 'B139', page_views: 350000 },
+    { label: 'Windows 95', year: 1995, description: 'Microsoft\'s groundbreaking consumer operating system', instance_of: ['operating system'], date_prop_id: 'P577', id: 'B140', page_views: 300000 },
+    { label: 'Macintosh', year: 1984, description: 'Apple\'s first mass-market personal computer with a GUI', instance_of: ['consumer electronics'], date_prop_id: 'P577', id: 'B141', page_views: 350000 },
+    { label: 'IBM Personal Computer', year: 1981, description: 'The PC that started the personal computer revolution', instance_of: ['consumer electronics'], date_prop_id: 'P577', id: 'B142', page_views: 300000 },
+    { label: '3D printing', year: 1984, description: 'Chuck Hull invents stereolithography', instance_of: ['invention'], date_prop_id: 'P575', id: 'B143', page_views: 250000 },
+    // More Gaming
+    { label: 'Sega Genesis', year: 1988, description: 'Sega\'s home console that challenged Nintendo', instance_of: ['video game console'], date_prop_id: 'P577', id: 'B150', page_views: 250000 },
+    { label: 'Nintendo 64', year: 1996, description: 'Nintendo\'s first 3D home console', instance_of: ['video game console'], date_prop_id: 'P577', id: 'B151', page_views: 300000 },
+    { label: 'PlayStation 2', year: 2000, description: 'Best-selling video game console of all time', instance_of: ['video game console'], date_prop_id: 'P577', id: 'B152', page_views: 350000 },
+    { label: 'Nintendo Switch', year: 2017, description: 'Nintendo\'s hybrid home/portable console', instance_of: ['video game console'], date_prop_id: 'P577', id: 'B153', page_views: 350000 },
+    { label: 'Doom', year: 1993, description: 'Pioneering first-person shooter', instance_of: ['video game'], date_prop_id: 'P577', id: 'B154', page_views: 300000 },
+    { label: 'The Sims', year: 2000, description: 'Life simulation game by Maxis', instance_of: ['video game'], date_prop_id: 'P577', id: 'B155', page_views: 300000 },
+    { label: 'World of Warcraft', year: 2004, description: 'Massively multiplayer online role-playing game by Blizzard', instance_of: ['video game'], date_prop_id: 'P577', id: 'B156', page_views: 350000 },
+    { label: 'Halo: Combat Evolved', year: 2001, description: 'Xbox\'s defining first-person shooter', instance_of: ['video game'], date_prop_id: 'P577', id: 'B157', page_views: 300000 },
+    { label: 'Wii Sports', year: 2006, description: 'Motion-controlled sports game bundled with the Wii', instance_of: ['video game'], date_prop_id: 'P577', id: 'B158', page_views: 300000 },
+    { label: 'Sonic the Hedgehog', year: 1991, description: 'Sega\'s speedy blue mascot platformer', instance_of: ['video game'], date_prop_id: 'P577', id: 'B159', page_views: 300000 },
+    { label: 'Angry Birds', year: 2009, description: 'Mobile game phenomenon by Rovio', instance_of: ['video game'], date_prop_id: 'P577', id: 'B160', page_views: 300000 },
+    { label: 'Candy Crush Saga', year: 2012, description: 'Addictive mobile puzzle game by King', instance_of: ['video game'], date_prop_id: 'P577', id: 'B161', page_views: 250000 },
+    { label: 'Among Us', year: 2018, description: 'Multiplayer social deduction game', instance_of: ['video game'], date_prop_id: 'P577', id: 'B162', page_views: 350000 },
+    { label: 'Roblox', year: 2006, description: 'Online platform for user-created games', instance_of: ['video game'], date_prop_id: 'P577', id: 'B163', page_views: 350000 },
+    // More Movies
+    { label: 'E.T. the Extra-Terrestrial', year: 1982, description: 'Spielberg\'s beloved alien-friend story', instance_of: ['film'], date_prop_id: 'P577', id: 'B170', page_views: 350000 },
+    { label: 'The Godfather', year: 1972, description: 'Coppola\'s iconic mafia epic', instance_of: ['film'], date_prop_id: 'P577', id: 'B171', page_views: 400000 },
+    { label: 'Back to the Future', year: 1985, description: 'Time-travel adventure comedy', instance_of: ['film'], date_prop_id: 'P577', id: 'B172', page_views: 350000 },
+    { label: 'The Lion King', year: 1994, description: 'Disney animated musical about a lion cub\'s destiny', instance_of: ['film'], date_prop_id: 'P577', id: 'B173', page_views: 400000 },
+    { label: 'Frozen', year: 2013, description: 'Disney animated musical about two sisters', instance_of: ['film'], date_prop_id: 'P577', id: 'B174', page_views: 400000 },
+    { label: 'Finding Nemo', year: 2003, description: 'Pixar\'s animated underwater adventure', instance_of: ['film'], date_prop_id: 'P577', id: 'B175', page_views: 350000 },
+    { label: 'Shrek', year: 2001, description: 'DreamWorks animated fairytale comedy', instance_of: ['film'], date_prop_id: 'P577', id: 'B176', page_views: 350000 },
+    { label: 'The Lord of the Rings: The Fellowship of the Ring', year: 2001, description: 'Peter Jackson\'s epic fantasy adaptation', instance_of: ['film'], date_prop_id: 'P577', id: 'B177', page_views: 400000 },
+    { label: 'Harry Potter and the Philosopher\'s Stone (film)', year: 2001, description: 'First film adaptation of J.K. Rowling\'s wizarding world', instance_of: ['film'], date_prop_id: 'P577', id: 'B178', page_views: 400000 },
+    { label: 'The Dark Knight', year: 2008, description: 'Christopher Nolan\'s Batman masterpiece', instance_of: ['film'], date_prop_id: 'P577', id: 'B179', page_views: 400000 },
+    { label: 'Pulp Fiction', year: 1994, description: 'Tarantino\'s nonlinear crime classic', instance_of: ['film'], date_prop_id: 'P577', id: 'B180', page_views: 350000 },
+    { label: 'Schindler\'s List', year: 1993, description: 'Spielberg\'s Holocaust drama', instance_of: ['film'], date_prop_id: 'P577', id: 'B181', page_views: 350000 },
+    { label: 'Alien', year: 1979, description: 'Ridley Scott\'s sci-fi horror in space', instance_of: ['film'], date_prop_id: 'P577', id: 'B182', page_views: 350000 },
+    { label: 'Blade Runner', year: 1982, description: 'Ridley Scott\'s dystopian cyberpunk noir', instance_of: ['film'], date_prop_id: 'P577', id: 'B183', page_views: 300000 },
+    { label: 'Ghostbusters', year: 1984, description: 'Supernatural comedy starring Bill Murray', instance_of: ['film'], date_prop_id: 'P577', id: 'B184', page_views: 300000 },
+    { label: 'The Avengers', year: 2012, description: 'Marvel\'s superhero crossover blockbuster', instance_of: ['film'], date_prop_id: 'P577', id: 'B185', page_views: 450000 },
+    { label: 'Black Panther', year: 2018, description: 'Marvel\'s groundbreaking Afrofuturist superhero film', instance_of: ['film'], date_prop_id: 'P577', id: 'B186', page_views: 400000 },
+    { label: 'Inception', year: 2010, description: 'Nolan\'s mind-bending heist-within-dreams thriller', instance_of: ['film'], date_prop_id: 'P577', id: 'B187', page_views: 350000 },
+    // More TV
+    { label: 'Sesame Street', year: 1969, description: 'Beloved children\'s educational TV show', instance_of: ['television series'], date_prop_id: 'P577', id: 'B190', page_views: 350000 },
+    { label: 'Saturday Night Live', year: 1975, description: 'Iconic late-night sketch comedy show', instance_of: ['television series'], date_prop_id: 'P577', id: 'B191', page_views: 350000 },
+    { label: 'The Office (US)', year: 2005, description: 'Mockumentary sitcom set in a paper company', instance_of: ['television series'], date_prop_id: 'P577', id: 'B192', page_views: 400000 },
+    { label: 'Lost', year: 2004, description: 'Mystery drama about plane crash survivors on a strange island', instance_of: ['television series'], date_prop_id: 'P577', id: 'B193', page_views: 350000 },
+    { label: 'The Wire', year: 2002, description: 'HBO crime drama exploring Baltimore\'s institutions', instance_of: ['television series'], date_prop_id: 'P577', id: 'B194', page_views: 300000 },
+    { label: 'South Park', year: 1997, description: 'Irreverent animated comedy', instance_of: ['television series'], date_prop_id: 'P577', id: 'B195', page_views: 350000 },
+    { label: 'SpongeBob SquarePants', year: 1999, description: 'Nickelodeon animated comedy about a sea sponge', instance_of: ['television series'], date_prop_id: 'P577', id: 'B196', page_views: 400000 },
+    { label: 'The Walking Dead', year: 2010, description: 'Post-apocalyptic zombie horror drama', instance_of: ['television series'], date_prop_id: 'P577', id: 'B197', page_views: 350000 },
+    { label: 'Rick and Morty', year: 2013, description: 'Sci-fi animated comedy about a mad scientist and his grandson', instance_of: ['television series'], date_prop_id: 'P577', id: 'B198', page_views: 350000 },
+    { label: 'Squid Game', year: 2021, description: 'Korean survival drama that became a global sensation', instance_of: ['television series'], date_prop_id: 'P577', id: 'B199', page_views: 450000 },
+    { label: 'Downton Abbey', year: 2010, description: 'British period drama about an aristocratic family', instance_of: ['television series'], date_prop_id: 'P577', id: 'B200', page_views: 300000 },
+    { label: 'Peaky Blinders', year: 2013, description: 'British crime drama set in post-WWI Birmingham', instance_of: ['television series'], date_prop_id: 'P577', id: 'B201', page_views: 300000 },
+    // More Historical
+    { label: 'Gutenberg printing press', year: 1440, description: 'Johannes Gutenberg invents movable-type printing in Europe', instance_of: ['invention'], date_prop_id: 'P575', id: 'B210', page_views: 400000 },
+    { label: 'Columbus reaches the Americas', year: 1492, description: 'Christopher Columbus sails across the Atlantic', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B211', page_views: 400000 },
+    { label: 'Declaration of Independence signed', year: 1776, description: 'The thirteen American colonies declare independence from Britain', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B212', page_views: 500000 },
+    { label: 'French Revolution begins', year: 1789, description: 'Storming of the Bastille sparks revolution in France', instance_of: ['revolution'], date_prop_id: 'P580', id: 'B213', page_views: 400000 },
+    { label: 'Abolition of slavery in the US', year: 1865, description: 'The 13th Amendment ends slavery in America', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B214', page_views: 400000 },
+    { label: 'Women gain voting rights in the US', year: 1920, description: 'The 19th Amendment grants women the right to vote', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B215', page_views: 350000 },
+    { label: 'Great Depression begins', year: 1929, description: 'Stock market crash triggers worldwide economic collapse', instance_of: ['disaster'], date_prop_id: 'P580', id: 'B216', page_views: 400000 },
+    { label: 'Pearl Harbor attack', year: 1941, description: 'Japan attacks the US naval base, bringing America into WWII', instance_of: ['battle'], date_prop_id: 'P585', id: 'B217', page_views: 400000 },
+    { label: 'United Nations founded', year: 1945, description: 'International organization for world peace and cooperation', instance_of: ['intergovernmental organization'], date_prop_id: 'P571', id: 'B218', page_views: 400000 },
+    { label: 'NATO established', year: 1949, description: 'Military alliance of Western nations', instance_of: ['intergovernmental organization'], date_prop_id: 'P571', id: 'B219', page_views: 350000 },
+    { label: 'Korean War begins', year: 1950, description: 'Conflict between North and South Korea', instance_of: ['war'], date_prop_id: 'P580', id: 'B220', page_views: 350000 },
+    { label: 'Martin Luther King Jr. delivers "I Have a Dream"', year: 1963, description: 'Iconic speech during the March on Washington', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B221', page_views: 400000 },
+    { label: 'JFK assassination', year: 1963, description: 'President Kennedy is shot in Dallas, Texas', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B222', page_views: 500000 },
+    { label: 'Vietnam War ends', year: 1975, description: 'Fall of Saigon marks the end of the conflict', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B223', page_views: 350000 },
+    { label: 'Nelson Mandela freed from prison', year: 1990, description: 'Anti-apartheid leader released after 27 years', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B224', page_views: 400000 },
+    { label: 'Soviet Union dissolves', year: 1991, description: 'End of the USSR and the Cold War era', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B225', page_views: 400000 },
+    { label: 'Hong Kong returned to China', year: 1997, description: 'Britain hands over sovereignty of Hong Kong', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B226', page_views: 300000 },
+    { label: 'Euro currency introduced', year: 1999, description: 'European single currency begins circulation', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B227', page_views: 300000 },
+    { label: 'Arab Spring begins', year: 2010, description: 'Wave of pro-democracy protests across the Middle East', instance_of: ['revolution'], date_prop_id: 'P580', id: 'B228', page_views: 300000 },
+    { label: 'Brexit referendum', year: 2016, description: 'UK votes to leave the European Union', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B229', page_views: 350000 },
+    // More Brands & Food
+    { label: 'Disney World opens', year: 1971, description: 'Walt Disney World theme park in Florida', instance_of: ['theme park'], date_prop_id: 'P1619', id: 'B230', page_views: 350000 },
+    { label: 'Disneyland opens', year: 1955, description: 'Walt Disney\'s first theme park in Anaheim, California', instance_of: ['theme park'], date_prop_id: 'P1619', id: 'B231', page_views: 350000 },
+    { label: 'Walmart', year: 1962, description: 'American retail corporation', instance_of: ['business'], date_prop_id: 'P571', id: 'B232', page_views: 350000 },
+    { label: 'Pepsi', year: 1893, description: 'American soft drink brand', instance_of: ['business'], date_prop_id: 'P571', id: 'B233', page_views: 300000 },
+    { label: 'Adidas', year: 1949, description: 'German athletic shoe and apparel company', instance_of: ['business'], date_prop_id: 'P571', id: 'B234', page_views: 300000 },
+    { label: 'Chanel', year: 1910, description: 'French luxury fashion house', instance_of: ['business'], date_prop_id: 'P571', id: 'B235', page_views: 300000 },
+    { label: 'Red Bull', year: 1987, description: 'Austrian energy drink brand', instance_of: ['business'], date_prop_id: 'P571', id: 'B236', page_views: 300000 },
+    { label: 'KFC', year: 1930, description: 'Kentucky Fried Chicken fast food chain', instance_of: ['business'], date_prop_id: 'P571', id: 'B237', page_views: 300000 },
+    { label: 'Pizza Hut', year: 1958, description: 'American pizza restaurant chain', instance_of: ['business'], date_prop_id: 'P571', id: 'B238', page_views: 250000 },
+    { label: 'Subway', year: 1965, description: 'American fast food sandwich chain', instance_of: ['business'], date_prop_id: 'P571', id: 'B239', page_views: 250000 },
+    { label: 'Taco Bell', year: 1962, description: 'American fast food Mexican chain', instance_of: ['business'], date_prop_id: 'P571', id: 'B240', page_views: 250000 },
+    { label: 'Burger King', year: 1953, description: 'American fast food hamburger chain', instance_of: ['business'], date_prop_id: 'P571', id: 'B241', page_views: 250000 },
+    // More Music
+    { label: 'Coachella Festival', year: 1999, description: 'Annual music and arts festival in California', instance_of: ['music festival'], date_prop_id: 'P571', id: 'B250', page_views: 300000 },
+    { label: 'Glastonbury Festival', year: 1970, description: 'Legendary British music festival', instance_of: ['music festival'], date_prop_id: 'P571', id: 'B251', page_views: 300000 },
+    { label: 'Lollapalooza', year: 1991, description: 'Alternative rock music festival', instance_of: ['music festival'], date_prop_id: 'P571', id: 'B252', page_views: 250000 },
+    { label: 'Burning Man', year: 1986, description: 'Annual gathering in the Nevada desert', instance_of: ['music festival'], date_prop_id: 'P571', id: 'B253', page_views: 300000 },
+    // More Inventions & Science
+    { label: 'Aspirin', year: 1899, description: 'Bayer introduces the common painkiller', instance_of: ['invention'], date_prop_id: 'P575', id: 'B260', page_views: 300000 },
+    { label: 'X-rays discovered', year: 1895, description: 'Wilhelm Roentgen discovers a new form of radiation', instance_of: ['discovery'], date_prop_id: 'P575', id: 'B261', page_views: 300000 },
+    { label: 'Theory of Relativity published', year: 1905, description: 'Einstein revolutionizes physics', instance_of: ['discovery'], date_prop_id: 'P577', id: 'B262', page_views: 400000 },
+    { label: 'First heart transplant', year: 1967, description: 'Dr. Christiaan Barnard performs the operation in Cape Town', instance_of: ['discovery'], date_prop_id: 'P575', id: 'B263', page_views: 300000 },
+    { label: 'Transistor invented', year: 1947, description: 'Bell Labs creates the foundation of modern electronics', instance_of: ['invention'], date_prop_id: 'P575', id: 'B264', page_views: 300000 },
+    { label: 'Microprocessor', year: 1971, description: 'Intel releases the first commercial microprocessor', instance_of: ['invention'], date_prop_id: 'P575', id: 'B265', page_views: 300000 },
+    { label: 'CRISPR gene editing', year: 2012, description: 'Revolutionary tool for editing DNA sequences', instance_of: ['discovery'], date_prop_id: 'P575', id: 'B266', page_views: 300000 },
+    { label: 'Hubble Deep Field image', year: 1995, description: 'Telescope reveals thousands of galaxies in a tiny patch of sky', instance_of: ['discovery'], date_prop_id: 'P575', id: 'B267', page_views: 250000 },
+    { label: 'Polio vaccine', year: 1955, description: 'Jonas Salk\'s vaccine begins mass distribution', instance_of: ['invention'], date_prop_id: 'P575', id: 'B268', page_views: 350000 },
+    { label: 'Nylon', year: 1935, description: 'DuPont introduces the first synthetic fiber', instance_of: ['invention'], date_prop_id: 'P575', id: 'B269', page_views: 250000 },
+    { label: 'Velcro', year: 1955, description: 'Hook-and-loop fastener inspired by burrs', instance_of: ['invention'], date_prop_id: 'P575', id: 'B270', page_views: 250000 },
+    { label: 'Microwave oven', year: 1945, description: 'Percy Spencer accidentally invents a new way to cook', instance_of: ['invention'], date_prop_id: 'P575', id: 'B271', page_views: 250000 },
+    { label: 'Higgs boson discovered', year: 2012, description: 'CERN confirms the "God particle" at the Large Hadron Collider', instance_of: ['discovery'], date_prop_id: 'P575', id: 'B272', page_views: 350000 },
+    { label: 'Gravitational waves detected', year: 2015, description: 'LIGO confirms Einstein\'s prediction', instance_of: ['discovery'], date_prop_id: 'P575', id: 'B273', page_views: 300000 },
+    // More Sports
+    { label: 'NBA founded', year: 1946, description: 'National Basketball Association established in New York', instance_of: ['sporting event'], date_prop_id: 'P571', id: 'B280', page_views: 350000 },
+    { label: 'World Series begins', year: 1903, description: 'First modern championship series in Major League Baseball', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B281', page_views: 300000 },
+    { label: 'Tour de France begins', year: 1903, description: 'First edition of the famous cycling race', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B282', page_views: 250000 },
+    { label: 'Wimbledon tennis begins', year: 1877, description: 'First lawn tennis championship held in London', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B283', page_views: 300000 },
+    { label: 'Muhammad Ali defeats Sonny Liston', year: 1964, description: 'Cassius Clay shocks the world to become heavyweight champion', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B284', page_views: 300000 },
+    // Transport milestones
+    { label: 'Wright brothers\' first flight', year: 1903, description: 'First successful powered airplane flight at Kitty Hawk', instance_of: ['invention'], date_prop_id: 'P575', id: 'B290', page_views: 400000 },
+    { label: 'Ford Model T', year: 1908, description: 'Henry Ford\'s affordable car that put America on wheels', instance_of: ['automobile'], date_prop_id: 'P577', id: 'B291', page_views: 350000 },
+    { label: 'Concorde\'s first flight', year: 1969, description: 'Supersonic passenger jet takes to the skies', instance_of: ['invention'], date_prop_id: 'P575', id: 'B292', page_views: 300000 },
+    { label: 'Channel Tunnel opens', year: 1994, description: 'Undersea rail tunnel connecting England and France', instance_of: ['tunnel'], date_prop_id: 'P1619', id: 'B293', page_views: 300000 },
+    { label: 'Transcontinental Railroad completed', year: 1869, description: 'Railroad linking the east and west coasts of America', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B294', page_views: 300000 },
+    { label: 'Suez Canal opens', year: 1869, description: 'Waterway connecting the Mediterranean and Red Seas', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B295', page_views: 300000 },
+    // Landmarks
+    { label: 'Statue of Liberty dedicated', year: 1886, description: 'France\'s gift to America unveiled in New York Harbor', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B300', page_views: 350000 },
+    { label: 'Empire State Building completed', year: 1931, description: 'New York\'s iconic Art Deco skyscraper', instance_of: ['skyscraper'], date_prop_id: 'P571', id: 'B301', page_views: 350000 },
+    { label: 'Golden Gate Bridge opens', year: 1937, description: 'Iconic suspension bridge in San Francisco', instance_of: ['bridge'], date_prop_id: 'P1619', id: 'B302', page_views: 350000 },
+    { label: 'Sydney Opera House opens', year: 1973, description: 'Australia\'s iconic performing arts venue', instance_of: ['tourist attraction'], date_prop_id: 'P1619', id: 'B303', page_views: 300000 },
+    { label: 'Hoover Dam completed', year: 1936, description: 'Massive concrete dam on the Colorado River', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B304', page_views: 250000 },
+    { label: 'Mount Rushmore completed', year: 1941, description: 'Giant presidential sculpture carved into South Dakota rock', instance_of: ['sculpture'], date_prop_id: 'P571', id: 'B305', page_views: 300000 },
+  ];
 
   // ==================== STATE ====================
   const state = {
@@ -1356,22 +1603,31 @@
 
   function stripYears(s) {
     return s
-      // (1940-2022), (1940–present), (1940)
-      .replace(/\s*\(\d{3,4}\s*[-–]\s*(\d{3,4}|present|)\)/gi, '')
-      .replace(/\s*\(\d{3,4}\)/g, '')
-      // "born 1940", "founded 1865", "est. 1900", "since 1999"
-      .replace(/\b(born|founded|est\.?|established|created|since|from|in|circa|c\.)\s+\d{3,4}\b/gi, '')
+      // (1940-2022), (1940–present), (1940), (c. 1200)
+      .replace(/\s*\(c?\.?\s*\d{3,4}\s*[-–]?\s*(\d{3,4}|present|)\)/gi, '')
+      // "born 1940", "founded 1865", "est. 1900", "since 1999", "in 1969"
+      .replace(/\b(born|founded|est\.?|established|created|since|from|in|on|circa|c\.|active)\s+\d{3,4}\b/gi, '')
       // "1940-2022", "1940–present"
       .replace(/\b\d{3,4}\s*[-–]\s*(\d{3,4}|present)\b/gi, '')
-      // Standalone years like "1969" or "300 BC"
-      .replace(/\b\d{3,4}\s*(BC|AD|CE|BCE)?\b/gi, '')
-      // Date patterns "January 1, 1969", "1st January 1969"
-      .replace(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s*\d{4}\b/gi, '')
-      .replace(/\b\d{1,2}\s+(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{4}\b/gi, '')
-      // Clean up leftover punctuation and spaces
+      // "January 1, 1969", "1st January 1969", "Dec 7, 1941"
+      .replace(/\b(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2},?\s*\d{4}\b/gi, '')
+      .replace(/\b\d{1,2}\s+(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{4}\b/gi, '')
+      // "the 19th century", "20th-century", "mid-1800s", "1960s", "the '80s"
+      .replace(/\b(the\s+)?\d{1,2}(st|nd|rd|th)[- ]century\b/gi, '')
+      .replace(/\b(early|mid|late)[- ]?\d{4}s\b/gi, '')
+      .replace(/\b\d{4}s\b/gi, '')
+      .replace(/\bthe\s+'\d{2}s\b/gi, '')
+      // Standalone years "1969", "300 BC", "AD 500"
+      .replace(/\b(AD|circa|c\.)\s*\d{3,4}\b/gi, '')
+      .replace(/\b\d{3,4}\s*(BC|AD|CE|BCE)\b/gi, '')
+      .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, '')
+      // Ordinal dates "1st", "2nd", "15th" when standalone
+      .replace(/\b\d{1,2}(st|nd|rd|th)\s+(of\s+)?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*/gi, '')
+      // Clean up leftover artifacts
       .replace(/\(\s*\)/g, '')
-      .replace(/\s*[-–]\s*$/g, '')
-      .replace(/^\s*[-–]\s*/g, '')
+      .replace(/,\s*,/g, ',')
+      .replace(/\s*[-–,;]\s*$/g, '')
+      .replace(/^\s*[-–,;]\s*/g, '')
       .replace(/\s{2,}/g, ' ')
       .trim();
   }
@@ -1406,7 +1662,11 @@
     others.sort((a, b) => (b.page_views || 0) - (a.page_views || 0));
 
     // Keep ALL non-humans and top 500 most famous humans — maximize variety
-    ITEM_POOL = [...others, ...humans.slice(0, 500)];
+    // Merge in hand-curated bonus items
+    const bonusIds = new Set(BONUS_ITEMS.map(b => b.id));
+    const existingLabels = new Set(all.map(i => i.label.toLowerCase()));
+    const newBonus = BONUS_ITEMS.filter(b => !existingLabels.has(b.label.toLowerCase()));
+    ITEM_POOL = [...others, ...humans.slice(0, 500), ...newBonus];
   }
 
   function makeWikimediaUrl(filename) {
@@ -1434,6 +1694,14 @@
     const cat = cats[0] || '';
     const prop = item.date_prop_id || '';
     const desc = stripYears(item.description || '');
+
+    // If label already reads like an event (contains a verb), use it directly
+    const eventWords = /\b(falls|sinks|lands|opens|begins|attacks|declared|completed|cloned|sent|wins|defeats)\b/i;
+    if (eventWords.test(label)) {
+      return desc
+        ? `<b>${escapeHtml(label)}</b> — ${escapeHtml(desc)}`
+        : `<b>${escapeHtml(label)}</b>`;
+    }
 
     // Date property verbs
     const propVerbs = {

@@ -6,9 +6,7 @@
 
 ### You know *what* happened. But do you know *when*?
 
-**Order Faulkner's novels, Led Zeppelin's albums or sequence the wars.**
-
-**Sort US music festivals by founding year. Or search anything and build your own.**
+**iPhones, moon landings, Pac-Man, the French Revolution -- one timeline, no mercy.**
 
 **[Play now -- no install, no account, no excuses](https://lukeswitz.github.io/BackFlash/)**
 
@@ -18,50 +16,50 @@
 
 ## What is BackFlash?
 
-Pick a category. Get a handful of cards from that category. Drag them into chronological order on a timeline.
+The game starts immediately. One event is already on the timeline. Cards appear one at a time -- each from a different category -- and you drag them into the right spot. That's it.
 
-Simple concept. Quietly humbling. Every wrong placement is a gap in your knowledge you didn't know you had.
+The trick: you never know what's next. A video game console, then a war, then a TV show premiere. You're inferring dates from context clues in the event description alone.
 
 ---
 
 ## How to Play
 
-1. Pick a preset category or search any topic to generate your own
-2. One anchor event is pre-placed so you're not starting blind
-3. A card appears -- drag it onto the timeline, or tap **Place here** on mobile
-4. Placed cards compress into a compact strip so the timeline stays readable as it fills
-5. Green pulse = correct. Red shake = rethink your life choices
-6. All cards placed? The page scrolls down to your results
+1. Game starts instantly -- no menus, no setup
+2. One anchor event is pre-placed on the timeline
+3. A new event card appears at the top -- drag it to where it belongs
+4. Green pulse = correct. Red shake = it snaps to the right spot
+5. 8 cards to place. Try to get them all right
+6. Hit **New game** anytime for a fresh set
 
 ---
 
-## Built-in Categories
+## What Kind of Events?
 
-**People** -- U.S. Presidents, Philosophers, Astronauts, Explorers
+Every game pulls from a massive pool of 4,700+ events across dozens of categories:
 
-**Literature** -- Shakespeare, Hemingway, Dickens, Virginia Woolf, Poe, Tolstoy, Faulkner
+**Tech** -- iPhone, Google, ChatGPT, Bitcoin, Wi-Fi, Windows 95, World Wide Web
 
-**Art & Culture** -- Famous Paintings, Statues, Classic Films, Art Museums
+**Gaming** -- Atari 2600, Game Boy, PlayStation, Minecraft, Pac-Man, Fortnite
 
-**Science & Technology** -- Inventors, Space Missions
+**Movies** -- Star Wars, Jurassic Park, The Matrix, Frozen, The Godfather
 
-**War & Conflict** -- Famous Battles, Wars, Sieges, Assassinations, Revolutions
+**TV** -- Seinfeld, Breaking Bad, Game of Thrones, Sesame Street, Squid Game
 
-**Places & Structures** -- Castles, Fortresses, National Parks, Nations, U.S. Cities
+**History** -- Moon landing, Berlin Wall falls, D-Day, Declaration of Independence
 
-**Sports** -- Super Bowls, Winter & Summer Olympics
+**Science** -- Penicillin, DNA double helix, CRISPR, Higgs boson, Theory of Relativity
 
-**Music** -- US Music Festivals, Beatles, Bowie, Rolling Stones, Dylan, Pink Floyd, Led Zeppelin
+**Sports** -- First Super Bowl, FIFA World Cup, Miracle on Ice, Wimbledon
 
-Or search any topic to pull a live custom game from [Wikidata](https://www.wikidata.org/).
+**Brands** -- Coca-Cola, McDonald's, LEGO, Nike, Starbucks, Tesla, SpaceX
 
----
+**Music** -- Woodstock, MTV, Thriller, Coachella, Beastie Boys, Pink Floyd
 
-## Options
+**Landmarks** -- Statue of Liberty, Golden Gate Bridge, Sydney Opera House
 
-- Drag-and-drop or tap-to-place -- toggle on the welcome screen, saved across sessions
-- Choose your card count: 3, 5, 8, 10, or 12
-- Progress saves if you close mid-game -- resume or start fresh on the welcome screen
+Events are dynamically generated with proper phrasing -- "**Seinfeld** premieres on television", "**LEGO** is founded", "**Berlin Wall falls**" -- not just flat labels.
+
+No two consecutive cards share a category. Items spread across eras. No repeats across games.
 
 ---
 
@@ -69,7 +67,7 @@ Or search any topic to pull a live custom game from [Wikidata](https://www.wikid
 
 One HTML file. No frameworks. No build step. No backend. No telemetry. No accounts.
 
-All data is live from [Wikidata](https://www.wikidata.org/) -- open, freely licensed, community-maintained. Built mobile-first, works everywhere.
+Event data sourced from [WikiTrivia](https://github.com/tom-james-watson/wikitrivia) (MIT licensed, Wikidata-derived) plus 220+ hand-curated bonus events. Event descriptions are dynamically generated from category and date-property metadata. All years are regex-stripped from descriptions so you can't cheat.
 
 ---
 
@@ -79,7 +77,7 @@ All data is live from [Wikidata](https://www.wikidata.org/) -- open, freely lice
 open index.html
 ```
 
-Needs internet access for Wikidata queries. That's the only dependency.
+Needs internet for the initial data fetch from GitHub. After that, games are instant.
 
 ---
 

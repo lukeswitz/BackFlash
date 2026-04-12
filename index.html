@@ -110,6 +110,29 @@
       margin: 0 auto;
     }
 
+    .loading-dots {
+      text-align: center;
+      padding: 24px 0 20px;
+    }
+
+    .loading-dots span {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin: 0 4px;
+      background: var(--button-background);
+      border-radius: 50%;
+      animation: loading-bounce 1.2s infinite ease-in-out;
+    }
+
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes loading-bounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
     #welcome-search-wrap {
       display: flex;
       align-items: center;
@@ -568,7 +591,7 @@
     #timeline-container {
       position: relative;
       padding-top: 160px;
-      padding-bottom: 60px;
+      padding-bottom: 40vh;
       overscroll-behavior-y: none;
       user-select: none;
       -webkit-user-select: none;
@@ -951,6 +974,26 @@
     }
 
     /* ===== HELP BUTTON ===== */
+    #btn-new-game-top {
+      position: fixed;
+      top: 6px;
+      left: 12px;
+      z-index: 100;
+      background: none;
+      border: 1.5px solid var(--dark-background);
+      color: var(--dark-background);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: var(--frank);
+      border-radius: 14px;
+      padding: 3px 10px;
+      cursor: pointer;
+      display: none;
+    }
+
+    #btn-new-game-top.visible { display: block; }
+    #btn-new-game-top:hover { background: var(--dark-background); color: #fff; }
+
     #btn-help {
       position: fixed;
       top: 4px;
@@ -1170,7 +1213,7 @@
 </head>
 <body>
 
-<!-- ===== WELCOME SCREEN ===== -->
+<!-- ===== LOADING SPLASH ===== -->
 <div id="welcome-screen">
   <div class="welcome-bg">
     <div class="welcome-vl"></div>
@@ -1183,51 +1226,7 @@
       <h1 class="game-name">BackFlash</h1>
     </div>
     <h2 class="welcome-subtitle">Can you place these events in chronological order?</h2>
-
-    <div class="topic-row">
-      <span id="topic-display"></span>
-      <button id="btn-rotate-topic" title="Shuffle topic">&#x21BB;</button>
-    </div>
-    <div class="topic-hint">Don't like this topic? Tap the arrow to shuffle.</div>
-
-    <div id="welcome-search-wrap">
-      <input id="welcome-search-input" type="text" placeholder="or search for any topic…" autocomplete="off" />
-      <div id="welcome-spinner"></div>
-    </div>
-    <div id="welcome-dropdown">
-      <div id="welcome-dropdown-list"></div>
-    </div>
-
-    <div class="settings-section">
-      <div class="setting-row">
-        <span class="setting-label">Tap to place</span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="mode-tap-checkbox" />
-          <span class="toggle-track"><span class="toggle-knob"></span></span>
-        </label>
-      </div>
-      <div class="setting-row">
-        <span class="setting-label">Cards to place</span>
-        <div class="select-wrap">
-          <select id="cards-select">
-            <option value="4">3</option>
-            <option value="6">5</option>
-            <option value="9" selected>8</option>
-            <option value="11">10</option>
-            <option value="13">12</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="welcome-btns">
-      <button id="btn-new-game">Start the quiz ›</button>
-    </div>
-
-    <div class="resume-section" id="resume-section">
-      <button id="btn-resume">Resume quiz ›</button>
-      <button id="btn-start-over">Start over</button>
-    </div>
+    <div class="loading-dots"><span></span><span></span><span></span></div>
   </div>
 </div>
 
@@ -1236,7 +1235,7 @@
   <div class="top-container"></div>
 
   <div id="counter">
-    <div id="topic-label"></div>
+    <div id="topic-label" style="display:none"></div>
     <div class="circle-container" id="circles"></div>
   </div>
 
@@ -1263,7 +1262,8 @@
   </div>
 </div>
 
-<!-- ===== HELP BUTTON ===== -->
+<!-- ===== TOP BUTTONS ===== -->
+<button id="btn-new-game-top" title="New game">New game</button>
 <button id="btn-help">?</button>
 
 <!-- ===== HELP MODAL ===== -->
@@ -1274,7 +1274,7 @@
     <ol>
       <li>One event is placed on the timeline to get you started.</li>
       <li>A new event appears at the top of the screen.</li>
-      <li>Tap <strong>Place here</strong> to position it in the timeline.</li>
+      <li>Drag it to the right spot on the timeline.</li>
       <li>Try to place all events in the correct chronological order.</li>
     </ol>
     <div class="help-btn-container">
@@ -1306,89 +1306,20 @@
   'use strict';
 
   // ==================== CONSTANTS ====================
-  const SPARQL_ENDPOINT = 'https://query.wikidata.org/sparql';
-  const WIKIDATA_API    = 'https://www.wikidata.org/w/api.php';
-  const UA              = 'BackFlashQuiz/1.0 (github.com/flashback-quiz; contact via repo)';
-
-  const KEY_HISTORY = 'fbq_history';
-  const KEY_GAME    = 'fbq_game';
-  const KEY_DECK    = 'fbq_deck';
-  const KEY_SPENT   = 'fbq_spent';
-  const KEY_STATE   = 'fbq_state_v3';
-  const KEY_MODE    = 'fbq_mode';   // 'tap' | 'drag'
-  const KEY_SIZE    = 'fbq_size';   // total cards incl anchor
+  const KEY_STATE   = 'fbq_state_v5';
   const KEY_TUTORIAL = 'fbq_tutorial_seen';
 
-  let GAME_SIZE = 9; // 1 anchor + 8 to place (configurable)
-  let tapMode   = false;            // true = tap-to-place, false = drag
+  const GAME_SIZE = 9; // 1 anchor + 8 to place
+  const tapMode   = false; // always drag mode
+  const WIKIMEDIA_IMG = 'https://upload.wikimedia.org/wikipedia/commons/thumb/';
 
-  // ==================== SEEDS ====================
-
-  const SEEDS = [
-    // People
-    { value: 'Q11696',    label: 'U.S. Presidents',          prop: 'P39'  },
-    { value: 'Q4964182',  label: 'Philosophers',             prop: 'P106' },
-    { value: 'Q11631',    label: 'Astronauts',               prop: 'P106' },
-    { value: 'Q11900058', label: 'Explorers',                prop: 'P106' },
-    // Literature
-    { value: 'Q692',      label: "Shakespeare's Works",      prop: 'P50'  },
-    { value: 'Q23434',    label: "Hemingway's Works",        prop: 'P50'  },
-    { value: 'Q5686',     label: "Dickens's Works",          prop: 'P50'  },
-    { value: 'Q40909',    label: "Virginia Woolf's Works",   prop: 'P50'  },
-    { value: 'Q16867',    label: "Poe's Works",              prop: 'P50'  },
-    { value: 'Q7243',     label: "Tolstoy's Works",          prop: 'P50'  },
-    { value: 'Q38392',    label: "Faulkner's Works",         prop: 'P50'  },
-    // Art & Culture
-    { value: 'Q3305213',  label: 'Famous Paintings'                       },
-    { value: 'Q179700',   label: 'Famous Statues'                         },
-    { value: 'Q11424',    label: 'Classic Films'                          },
-    { value: 'Q207694',   label: 'Art Museums'                            },
-    // Science & Technology
-    { value: 'Q205375',   label: 'Inventors',                prop: 'P106' },
-    { value: 'Q2133344',  label: 'Space Missions'                         },
-    // War & Conflict
-    { value: 'Q178561',   label: 'Famous Battles'                         },
-    { value: 'Q198',      label: 'Wars'                                   },
-    { value: 'Q188055',   label: 'Famous Sieges'                          },
-    { value: 'Q3882219',  label: 'Assassinations'                          },
-    { value: 'Q10931',    label: 'Revolutions'                            },
-    // Places & Structures
-    { value: 'Q23413',    label: 'Famous Castles'                         },
-    { value: 'Q57831',    label: 'Fortresses'                             },
-    { value: 'Q46169',    label: 'National Parks'                         },
-    { value: 'Q3624078',  label: 'Nations of the World'                   },
-    { value: 'Q1093829',  label: 'U.S. Cities'                            },
-    { value: 'Q33506',    label: 'Great Museums'                          },
-    // Sports
-    { value: 'Q32096',      label: 'Super Bowls'                          },
-    { value: 'Q135976384',  label: 'Summer Olympics'                      },
-    { value: 'Q137592217',  label: 'Winter Olympics'                      },
-    // Music
-    { value: 'Q868557', label: 'US Music Festivals'                       },
-    { value: 'Q1299',   label: "The Beatles' Albums",        prop: 'P175' },
-    { value: 'Q5383',   label: "David Bowie's Albums",       prop: 'P175' },
-    { value: 'Q11036',  label: "The Rolling Stones' Albums", prop: 'P175' },
-    { value: 'Q392',    label: "Bob Dylan's Albums",         prop: 'P175' },
-    { value: 'Q2306',   label: "Pink Floyd's Albums",        prop: 'P175' },
-    { value: 'Q2331',   label: "Led Zeppelin's Albums",      prop: 'P175' },
-    { value: 'Q189635', label: "Eagles Albums",               prop: 'P175' },
-    // Concert Tours
-    { value: 'Q11036',  label: "Rolling Stones Tours",        prop: 'tour' },
-    { value: 'Q2306',   label: "Pink Floyd Tours",            prop: 'tour' },
-    { value: 'Q5383',   label: "David Bowie Tours",           prop: 'tour' },
-    // Awards
-    { value: 'Q221401', label: 'Vezina Trophy Winners',       prop: 'P166' },
-    { value: 'Q35637',  label: 'Nobel Peace Prize Winners',   prop: 'P166' },
-    { value: 'Q37922',  label: 'Nobel Literature Winners',    prop: 'P166' },
-    // History & Nature
-    { value: 'Q131569', label: 'Famous Treaties'                            },
-    { value: 'Q7692360', label: 'Volcanic Eruptions'                       },
-  ];
-
+  // ==================== ITEM POOL (from WikiTrivia dataset — top 2000 by Wikipedia page views) ====================
+  // Format: [label, year, description, image_filename, category]
+  let ITEM_POOL = []; // loaded from items.json
 
   // ==================== STATE ====================
   const state = {
-    phase: 'welcome',       // 'game' | 'done'
+    phase: 'loading',       // 'loading' | 'game' | 'done'
     events: [],             // all events sorted by year
     timeline: [],           // placed events (in order on screen)
     stack: [],              // remaining to place (last = current card)
@@ -1396,17 +1327,11 @@
     placedStatuses: {},     // id -> 'correct'|'incorrect'
     placementOrder: [],     // [{id, status}] in placement order
     correctCount: 0,
-    game: null,             // { value, label, prop? }
-    history: [],
-    searchResults: [],
-    pendingGame: null,      // game selected on welcome screen
     isAnimating: false,
     isDragging: false,
   };
 
   // ==================== UTILITIES ====================
-  function gameKey(g) { return g.value + '|' + (g.prop || ''); }
-
   function safeGet(key) {
     try { const r = localStorage.getItem(key); return r ? JSON.parse(r) : null; }
     catch { return null; }
@@ -1425,42 +1350,29 @@
     return a;
   }
 
-  function parseYear(iso) {
-    if (!iso) return null;
-    if (iso.startsWith('-')) return -parseInt(iso.slice(1, 5), 10);
-    return parseInt(iso.slice(0, 4), 10);
-  }
-
   function toDisplayYear(y) {
     return y < 0 ? `${Math.abs(y)} BC` : String(y);
   }
 
-  function fixImageUrl(url) {
-    return url.replace('http://', 'https://') + '?width=200';
-  }
-
-  function cleanLabel(s) {
+  function stripYears(s) {
     return s
-      .replace(/\b(M{0,4})(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})\b/g, '')
-      .replace(/\s*\(\d{4}([–\-]\d{2,4})?\)\s*/g, '')
-      .replace(/\b\d{4}[–\-]\d{2,4}\b/g, '')
-      .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, '')
-      .replace(/\s+\b(of|in|from|the|at|on|by)\s*$/gi, '')
+      // (1940-2022), (1940–present), (1940)
+      .replace(/\s*\(\d{3,4}\s*[-–]\s*(\d{3,4}|present|)\)/gi, '')
+      .replace(/\s*\(\d{3,4}\)/g, '')
+      // "born 1940", "founded 1865", "est. 1900", "since 1999"
+      .replace(/\b(born|founded|est\.?|established|created|since|from|in|circa|c\.)\s+\d{3,4}\b/gi, '')
+      // "1940-2022", "1940–present"
+      .replace(/\b\d{3,4}\s*[-–]\s*(\d{3,4}|present)\b/gi, '')
+      // Standalone years like "1969" or "300 BC"
+      .replace(/\b\d{3,4}\s*(BC|AD|CE|BCE)?\b/gi, '')
+      // Date patterns "January 1, 1969", "1st January 1969"
+      .replace(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{1,2},?\s*\d{4}\b/gi, '')
+      .replace(/\b\d{1,2}\s+(january|february|march|april|may|june|july|august|september|october|november|december)\s+\d{4}\b/gi, '')
+      // Clean up leftover punctuation and spaces
+      .replace(/\(\s*\)/g, '')
+      .replace(/\s*[-–]\s*$/g, '')
+      .replace(/^\s*[-–]\s*/g, '')
       .replace(/\s{2,}/g, ' ')
-      .trim();
-  }
-
-  function cleanDesc(s) {
-    return s
-      .replace(/\bfrom\s+\d{4}\s+to\s+\d{4}\b/gi, '')
-      .replace(/\b(in|since|until|before|after|around|circa|c\.|by|on)\s+\d{4}([–\-]\d{2,4})?\b/gi, '')
-      .replace(/\b\d{4}[–\-]\d{2,4}\b/g, '')
-      .replace(/\b(1[0-9]{3}|20[0-9]{2})\b/g, '')
-      .replace(/\(\s*[–\-]?\s*\)/g, '')
-      .replace(/\s{2,}/g, ' ')
-      .replace(/\s+([,.])/g, '$1')
-      .replace(/,\s*$/, '')
-      .replace(/^[\s,–\-]+/, '')
       .trim();
   }
 
@@ -1476,295 +1388,253 @@
     el.style.display = msg ? 'block' : 'none';
   }
 
-  // ==================== SPARQL ====================
-  async function sparqlFetch(sparql, retries = 2) {
-    const url = `${SPARQL_ENDPOINT}?query=${encodeURIComponent(sparql)}&format=json&useragent=${encodeURIComponent(UA)}`;
-    for (let attempt = 0; attempt <= retries; attempt++) {
-      try {
-        const res = await fetch(url, {
-          headers: { Accept: 'application/sparql-results+json' },
-          signal: AbortSignal.timeout(15000),
-        });
-        if (res.status === 429 || res.status === 504) {
-          if (attempt < retries) { await delay(1000 * (attempt + 1)); continue; }
-          throw new Error(`SPARQL ${res.status}`);
-        }
-        if (!res.ok) throw new Error(`SPARQL ${res.status}`);
-        return res.json();
-      } catch (err) {
-        if (attempt < retries && !(err instanceof SyntaxError)) {
-          await delay(1000 * (attempt + 1));
-          continue;
-        }
-        throw err;
-      }
-    }
+  // ==================== ITEM POOL LOADING ====================
+  const ITEMS_URL = 'https://raw.githubusercontent.com/tom-james-watson/wikitrivia/master/public/items.json';
+
+  async function loadItemPool() {
+    const res = await fetch(ITEMS_URL, { signal: AbortSignal.timeout(20000) });
+    if (!res.ok) throw new Error(`Failed to load items: ${res.status}`);
+    const text = await res.text();
+    const all = text.trim().split('\n').map(line => JSON.parse(line));
+
+    // Separate humans from non-humans
+    const humans = all.filter(i => i.instance_of?.includes('human'));
+    const others = all.filter(i => !i.instance_of?.includes('human'));
+
+    // Sort each group by page_views
+    humans.sort((a, b) => (b.page_views || 0) - (a.page_views || 0));
+    others.sort((a, b) => (b.page_views || 0) - (a.page_views || 0));
+
+    // Keep ALL non-humans and top 500 most famous humans — maximize variety
+    ITEM_POOL = [...others, ...humans.slice(0, 500)];
   }
 
-  function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-  function buildSparql(entityId, prop) {
-    const dateClause = `
-    { {?item wdt:P571 ?date.} UNION
-      {?item wdt:P577 ?date.} UNION
-      {?item wdt:P580 ?date.} UNION
-      {?item wdt:P569 ?date.} UNION
-      {?item wdt:P585 ?date.} }`;
-
-    const labelClause = `
-    ?item rdfs:label ?itemLabel.
-    FILTER(LANG(?itemLabel) = "en")
-    OPTIONAL {
-      ?item schema:description ?itemDescription.
-      FILTER(LANG(?itemDescription) = "en")
-    }`;
-
-    if (prop === 'tour') {
-      return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-    wd:${entityId} rdfs:label ?bandLabel. FILTER(LANG(?bandLabel) = "en")
-    ?item wdt:P31 wd:Q1573906.
-    ?item wdt:P175 wd:${entityId}.
-    ${dateClause}
-    FILTER(YEAR(?date) > 0)
-    FILTER(!STRSTARTS(?itemLabel, ?bandLabel))
-    FILTER(!CONTAINS(?itemLabel, " tours"))
-    ${labelClause}
-    OPTIONAL { ?item wdt:P18 ?image. }
-  } LIMIT 80`;
-    }
-
-    if (prop) {
-      const editionFilter = prop === 'P50'
-        ? '\n  FILTER NOT EXISTS { ?item wdt:P31 wd:Q3331189. }'
-        : '';
-      const albumFilter = prop === 'P175'
-        ? '\n  ?item wdt:P31/wdt:P279* wd:Q482994.'
-        : '';
-      const humanFilter = prop !== 'P50' && prop !== 'P175'
-        ? '\n  ?item wdt:P31 wd:Q5.'
-        : '';
-      return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-    ?item wdt:${prop} wd:${entityId}.${editionFilter}${albumFilter}${humanFilter}
-    ${dateClause}
-    FILTER(YEAR(?date) > 0)
-    ${labelClause}
-    OPTIONAL { ?item wdt:P18 ?image. }
-  } LIMIT 80`;
-    }
-
-    if (entityId === 'Q32096') {
-      return `SELECT ?item ?itemLabel ?date ?image
-      (GROUP_CONCAT(DISTINCT ?teamLabel; separator=" vs ") AS ?teams) WHERE {
-        ?item wdt:P31 wd:Q32096.
-        ${dateClause}
-        FILTER(YEAR(?date) > 0)
-        ?item rdfs:label ?itemLabel.
-        FILTER(LANG(?itemLabel) = "en")
-        OPTIONAL {
-          ?item wdt:P1923 ?team.
-          ?team rdfs:label ?teamLabel.
-          FILTER(LANG(?teamLabel) = "en")
-        }
-        OPTIONAL { ?item wdt:P18 ?image. }
-      } GROUP BY ?item ?itemLabel ?date ?image
-      LIMIT 80`;
-    }
-
-    if (entityId === 'Q135976384' || entityId === 'Q137592217') {
-      return `SELECT DISTINCT ?item ?itemLabel ?date ?image ?locLabel WHERE {
-    ?item wdt:P31 wd:${entityId}.
-    { {?item wdt:P571 ?date.} UNION {?item wdt:P580 ?date.} }
-    FILTER(YEAR(?date) > 0)
-    ?item rdfs:label ?itemLabel.
-    FILTER(LANG(?itemLabel) = "en")
-    OPTIONAL {
-      ?item wdt:P276 ?loc.
-      ?loc rdfs:label ?locLabel.
-      FILTER(LANG(?locLabel) = "en")
-    }
-    OPTIONAL { ?item wdt:P18 ?image. }
-  } LIMIT 80`;
-    }
-
-    if (entityId === 'Q868557') {
-      return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-      ?item wdt:P31 wd:Q868557.
-      ?item wdt:P17 wd:Q30.
-      ${dateClause}
-      FILTER(YEAR(?date) > 0)
-      ${labelClause}
-      OPTIONAL { ?item wdt:P18 ?image. }
-    } LIMIT 80`;
-    }
-
-    return `SELECT DISTINCT ?item ?itemLabel ?itemDescription ?date ?image WHERE {
-    ?item wdt:P31 wd:${entityId}.
-    ${dateClause}
-    FILTER(YEAR(?date) > 0)
-    ${labelClause}
-    OPTIONAL { ?item wdt:P18 ?image. }
-  } LIMIT 80`;
+  function makeWikimediaUrl(filename) {
+    if (!filename) return null;
+    const encoded = encodeURIComponent(filename.replace(/ /g, '_'));
+    // Wikimedia uses MD5-based path
+    const md5 = encoded; // simplified — use full URL via Special:FilePath
+    return `https://commons.wikimedia.org/wiki/Special:FilePath/${encoded}?width=200`;
   }
 
-  async function fetchGameEvents(entityId, prop = null) {
-    const json     = await sparqlFetch(buildSparql(entityId, prop));
-    const bindings = json.results.bindings;
-    if (!bindings.length) throw new Error('No results for that topic');
+  // Track played item IDs across games so we don't repeat
+  const KEY_PLAYED = 'fbq_played_ids';
+  function getPlayedIds() { return new Set(safeGet(KEY_PLAYED) ?? []); }
+  function markPlayed(ids) {
+    const played = safeGet(KEY_PLAYED) ?? [];
+    const updated = [...new Set([...played, ...ids])];
+    // Keep last 500 to avoid filling localStorage, then cycle
+    safeSet(KEY_PLAYED, updated.slice(-500));
+  }
 
-    const byId = new Map();
-    for (const b of bindings) {
-      const id = b.item?.value;
-      if (!id || !b.date?.value || !b.itemLabel?.value) continue;
-      const rawLabel = b.itemLabel.value;
-      const rawDesc = (b.locLabel?.value)
-        ? b.locLabel.value
-        : (b.teams?.value && b.teams.value.length > 3)
-          ? b.teams.value
-          : (b.winner?.value
-            ? `Winner: ${b.winner.value}`
-            : (b.itemDescription?.value ?? ''));
-      // Skip translations and non-Latin-script items
-      if (/translat/i.test(rawLabel) || /translat/i.test(rawDesc)) continue;
-      if (/[\u0400-\u04FF\u0370-\u03FF\u4E00-\u9FFF\u3040-\u30FF\u0600-\u06FF]/.test(rawLabel)) continue;
-      const year = parseYear(b.date.value);
-      if (year === null) continue;
-      const existing = byId.get(id);
-      const gainsImage = !existing?.image?.value && b.image?.value;
-      const fixesBadYear = existing && existing._year < 100 && year >= 100;
-      if (!existing || gainsImage || fixesBadYear) {
-        byId.set(id, { ...b, _year: year });
+  // Generate event-style description from WikiTrivia item data
+  function makeEventText(item) {
+    const label = item.label;
+    const cats = item.instance_of || [];
+    const cat = cats[0] || '';
+    const prop = item.date_prop_id || '';
+    const desc = stripYears(item.description || '');
+
+    // Date property verbs
+    const propVerbs = {
+      P569: 'is born',
+      P570: 'dies',
+      P571: 'is founded',
+      P575: 'is invented',
+      P576: 'is dissolved',
+      P577: 'is released',
+      P580: 'begins',
+      P582: 'ends',
+      P1191: 'premieres',
+      P1619: 'officially opens',
+    };
+
+    // Category-specific overrides for P571 (inception) and P577 (publication)
+    const catVerbs = {
+      'television series':  'premieres on television',
+      'film':               'is released in theaters',
+      'war':                'breaks out',
+      'battle':             'is fought',
+      'musical group':      'is formed',
+      'rock group':         'is formed',
+      'boy band':           'is formed',
+      'girl group':         'is formed',
+      'musical duo':        'is formed',
+      'vocal group':        'is formed',
+      'musical ensemble':   'is formed',
+      'sovereign state':    'is established as a nation',
+      'historical country': 'is established',
+      'empire':             'is established',
+      'dynasty':            'comes to power',
+      'political party':    'is founded',
+      'business':           'is founded',
+      'public company':     'is founded',
+      'enterprise':         'is founded',
+      'record label':       'is founded',
+      'painting':           'is painted',
+      'literary work':      'is published',
+      'written work':       'is published',
+      'play':               'premieres on stage',
+      'automobile manufacturer': 'is founded',
+      'intergovernmental organization': 'is established',
+      'disease outbreak':   'breaks out',
+      'genocide':           'begins',
+      'revolution':         'begins',
+      'website':            'launches',
+      'programming language': 'is created',
+      'operating system':   'is released',
+      'video game':         'is released',
+      'video game console': 'is released',
+      'tourist attraction': 'opens to the public',
+      'skyscraper':         'is completed',
+      'bridge':             'is completed',
+      'model':              'is introduced',
+      'model series':       'is introduced',
+      'file format':        'is introduced',
+      'protocol':           'is introduced',
+      'technical standard': 'is introduced',
+      'school':             'is founded',
+      'university':         'is founded',
+      'college':            'is founded',
+      'newspaper':          'begins publication',
+      'magazine':           'begins publication',
+      'airline':            'is founded',
+      'spacecraft':         'launches',
+      'space mission':      'launches',
+      'satellite':          'is launched into orbit',
+      'treaty':             'is signed',
+      'archaeological site': 'is discovered',
+      'fossil taxon':       'is discovered',
+      'natural script':     'is developed',
+      'alphabet':           'is developed',
+      'religion':           'is founded',
+      'philosophical movement': 'emerges',
+      'political movement': 'emerges',
+      'pandemic':           'breaks out',
+      'famine':             'begins',
+      'coup d\u2019\u00e9tat': 'takes place',
+      'coup d\'etat':       'takes place',
+      'military operation': 'is launched',
+      'invention':          'is invented',
+      'discovery':          'is made',
+      'ballet':             'premieres',
+      'opera':              'premieres',
+      'musical':            'premieres',
+      'symphony':           'premieres',
+      'sculpture':          'is completed',
+      'cathedral':          'is completed',
+      'castle':             'is built',
+      'fort':               'is built',
+      'stadium':            'opens',
+      'theme park':         'opens',
+      'amusement park':     'opens',
+      'national park':      'is established',
+      'cryptocurrency':     'is launched',
+      'social network':     'launches',
+      'mobile app':         'launches',
+      'software':           'is released',
+      'comic book':         'is first published',
+      'animated series':    'premieres',
+      'anime':              'premieres',
+      'holiday':            'is first observed',
+      'award':              'is first awarded',
+    };
+
+    // Find the best verb
+    let verb = propVerbs[prop] || 'occurs';
+    for (const c of cats) {
+      if (catVerbs[c]) { verb = catVerbs[c]; break; }
+    }
+
+    // For humans, include occupation from description
+    if (cats.includes('human')) {
+      if (prop === 'P569') {
+        return desc
+          ? `<b>${escapeHtml(label)}</b> is born — ${escapeHtml(desc)}`
+          : `<b>${escapeHtml(label)}</b> is born`;
+      }
+      if (prop === 'P570') {
+        return desc
+          ? `<b>${escapeHtml(label)}</b> dies — ${escapeHtml(desc)}`
+          : `<b>${escapeHtml(label)}</b> dies`;
       }
     }
-    const deduped = Array.from(byId.values());
 
-    if (deduped.length < GAME_SIZE) throw new Error('Not enough dated items for this topic');
+    // Build the event card text
+    const eventLine = `<b>${escapeHtml(label)}</b> ${verb}`;
+    return desc ? `${eventLine} — ${escapeHtml(desc)}` : eventLine;
+  }
 
-    const selected = shuffle(deduped).slice(0, GAME_SIZE);
-    selected.sort((a, b) => a._year - b._year);
+  function selectGameItems(size) {
+    if (ITEM_POOL.length < size) throw new Error('Item pool too small');
 
-    return selected.map((b, i) => {
-      const year  = b._year;
-      const label = cleanLabel(b.itemLabel.value);
-      const desc = (b.locLabel?.value)
-        ? b.locLabel.value
-        : (b.teams?.value && b.teams.value.length > 3)
-          ? b.teams.value
-          : (b.winner?.value
-            ? `Winner: ${b.winner.value}`
-            : cleanDesc(b.itemDescription?.value ?? ''));
+    const playedIds = getPlayedIds();
+
+    // Separate humans from interesting items
+    const nonHumans = ITEM_POOL.filter(i => !i.instance_of?.includes('human'));
+    const humans = ITEM_POOL.filter(i => i.instance_of?.includes('human'));
+
+    // Prefer unplayed items, fall back to played if needed
+    const freshNonHumans = nonHumans.filter(i => !playedIds.has(i.id));
+    const freshHumans = humans.filter(i => !playedIds.has(i.id));
+
+    const maxHumans = 2;
+    const nhPool = freshNonHumans.length >= size ? freshNonHumans : nonHumans;
+    const hPool = freshHumans.length >= maxHumans ? freshHumans : humans;
+
+    const pool = shuffle([...nhPool]);
+    const humanPool = shuffle([...hPool]).slice(0, maxHumans);
+    for (const h of humanPool) {
+      pool.splice(Math.floor(Math.random() * pool.length), 0, h);
+    }
+
+    const picked = [];
+
+    for (const item of pool) {
+      if (picked.length >= size) break;
+      const cat = item.instance_of?.[0] || 'other';
+
+      // Skip if same category as previous item
+      if (picked.length > 0) {
+        const lastCat = picked[picked.length - 1].instance_of?.[0] || 'other';
+        if (cat === lastCat) continue;
+      }
+
+      // Enforce max humans
+      if (item.instance_of?.includes('human')) {
+        const humanCount = picked.filter(p => p.instance_of?.includes('human')).length;
+        if (humanCount >= maxHumans) continue;
+      }
+
+      // Skip items too close in year to already-picked items
+      const tooClose = picked.some(p => Math.abs(p.year - item.year) < 20);
+      if (tooClose && picked.length < size - 2) continue;
+
+      picked.push(item);
+    }
+
+    // Mark these as played
+    markPlayed(picked.map(i => i.id));
+
+    // Convert to game event format with generated event text
+    return picked.map((item, i) => {
+      const year = item.year;
       return {
         id: i + 1,
         year,
         displayYear: toDisplayYear(year),
-        description: desc ? `<b>${escapeHtml(label)}</b> — ${escapeHtml(desc)}` : `<b>${escapeHtml(label)}</b>`,
-        image: b.image?.value ? fixImageUrl(b.image.value) : null,
-        symbol: label.charAt(0).toUpperCase(),
+        description: makeEventText(item),
+        image: makeWikimediaUrl(item.image),
+        symbol: item.label.charAt(0).toUpperCase(),
+        categoryLabel: item.instance_of?.[0] || 'other',
       };
     });
   }
 
-  async function searchEntities(query) {
-    const p = new URLSearchParams({
-      action: 'wbsearchentities',
-      search: query,
-      language: 'en',
-      limit: '8',
-      format: 'json',
-      origin: '*',
-      type: 'item',
-    });
-    const res = await fetch(`${WIKIDATA_API}?${p}`);
-    if (!res.ok) throw new Error(`${res.status}`);
-    const json = await res.json();
-    return (json.search ?? []).map(r => ({
-      id: r.id,
-      label: r.label ?? r.id,
-      description: r.description ?? '',
-    }));
-  }
-
-  async function resolveToPlayableClass(qid) {
-    const sparql = `SELECT ?class ?classLabel WHERE {
-  wd:${qid} wdt:P31 ?class.
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-} LIMIT 10`;
-    try {
-      const json = await sparqlFetch(sparql);
-      const candidates = json.results.bindings.map(b => ({
-        value: b.class.value.split('/').pop(),
-        label: b.classLabel?.value ?? b.class.value.split('/').pop(),
-      }));
-      return candidates[0] ?? null;
-    } catch {
-      return null;
-    }
-  }
-
-  // ==================== HISTORY / DECK ====================
-  function loadHistory()  { return safeGet(KEY_HISTORY) ?? []; }
-
-  function pushHistory(game) {
-    const h = loadHistory().filter(g => gameKey(g) !== gameKey(game));
-    safeSet(KEY_HISTORY, [game, ...h].slice(0, 20));
-  }
-
-  function getDeck()  { return safeGet(KEY_DECK)  ?? []; }
-  function getSpent() { return safeGet(KEY_SPENT) ?? []; }
-
-  function popFromDeck() {
-    let deck = getDeck();
-    const spent = getSpent();
-    if (!deck.length && spent.length) {
-      deck = shuffle([...spent]);
-      safeSet(KEY_SPENT, []);
-      safeSet(KEY_DECK, deck);
-    }
-    if (!deck.length) return null;
-    const item = deck.shift();
-    safeSet(KEY_DECK, deck);
-    return item;
-  }
-
-  function addToDeck(game) {
-    const deck  = getDeck();
-    const spent = getSpent();
-    if ([...deck, ...spent].some(g => gameKey(g) === gameKey(game))) return;
-    safeSet(KEY_DECK, [...deck, game]);
-  }
-
-  function markSpent(game) {
-    safeSet(KEY_DECK, getDeck().filter(g => gameKey(g) !== gameKey(game)));
-    const spent = getSpent();
-    if (!spent.some(g => gameKey(g) === gameKey(game)))
-      safeSet(KEY_SPENT, [...spent, game]);
-  }
-
-  async function nextTopic() {
-    const deck  = getDeck();
-    const spent = getSpent();
-    const used  = new Set([...deck, ...spent].map(g => gameKey(g)));
-
-    if (deck.length) {
-      const pick = popFromDeck();
-      const remaining = SEEDS.filter(s => !used.has(gameKey(s)));
-      const pool = remaining.length ? remaining : SEEDS;
-      addToDeck(pool[Math.floor(Math.random() * pool.length)]);
-      return pick;
-    }
-
-    const remaining = SEEDS.filter(s => !used.has(gameKey(s)));
-    const pool = remaining.length ? remaining : shuffle([...SEEDS]);
-    const pick = pool[Math.floor(Math.random() * pool.length)];
-    addToDeck(pick);
-    return popFromDeck();
-  }
-
   // ==================== STATE PERSISTENCE ====================
   function saveState() {
-    if (!state.game) return;
+    if (!state.events.length) return;
     safeSet(KEY_STATE, {
-      gameValue:      state.game.value,
-      game:           state.game,
       events:         state.events,
       timeline:       state.timeline,
       stack:          state.stack,
@@ -1976,271 +1846,73 @@
   }
 
   // ==================== START GAME ====================
-  async function startGameFromWikidata(game, isResume = false) {
-    const btn = document.getElementById('btn-new-game');
-    btn.classList.add('loading');
-    btn.textContent = 'Loading…';
-    setMessage('');
+  function showGameScreen() {
+    document.getElementById('welcome-screen').classList.add('hidden');
+    const gameEl = document.getElementById('game-screen');
+    gameEl.style.display = 'block';
+    gameEl.classList.add('drag-mode');
+    document.getElementById('btn-help').classList.add('visible');
+    document.getElementById('btn-new-game-top').classList.add('visible');
+
+    renderProgress();
+    renderStack();
+    renderTimeline();
+
+    if (state.phase === 'done') {
+      finishGame();
+    }
+  }
+
+  function resumeGame() {
+    const saved = loadSavedState();
+    if (!saved) return false;
+    state.events         = saved.events;
+    state.timeline       = saved.timeline;
+    state.stack          = saved.stack;
+    state.anchorId       = saved.anchorId;
+    state.placedStatuses = saved.placedStatuses;
+    state.placementOrder = saved.placementOrder ?? [];
+    state.correctCount   = saved.correctCount;
+    state.phase          = saved.phase ?? 'game';
+    showGameScreen();
+    return true;
+  }
+
+  async function startMixedGame() {
+    state.phase = 'loading';
+    setMessage('Loading events…');
 
     try {
-      let events;
-      if (isResume) {
-        const saved = loadSavedState();
-        state.game           = saved.game;
-        state.events         = saved.events;
-        state.timeline       = saved.timeline;
-        state.stack          = saved.stack;
-        state.anchorId       = saved.anchorId;
-        state.placedStatuses = saved.placedStatuses;
-        state.placementOrder = saved.placementOrder ?? [];
-        state.correctCount   = saved.correctCount;
-        state.phase          = saved.phase ?? 'game';
-      } else {
-        clearState();
-        setMessage(`Loading ${game.label}…`);
-        events = await fetchGameEvents(game.value, game.prop ?? null);
-        setMessage('');
-
-        // Sort by year, pick middle as anchor
-        events.sort((a, b) => a.year - b.year);
-        const anchorIndex = Math.floor(events.length / 2);
-        const anchor = events[anchorIndex];
-        const rest   = events.filter((_, i) => i !== anchorIndex);
-
-        state.game           = game;
-        state.events         = events;
-        state.timeline       = [anchor];
-        state.stack          = shuffle(rest); // last item = current card
-        state.anchorId       = anchor.id;
-        state.placedStatuses = {};
-        state.placementOrder = [];
-        state.correctCount   = 0;
-        state.phase          = 'game';
-
-        pushHistory(game);
-        markSpent(game);
-        saveState();
-        setMessage('');
+      // Load item pool if not yet loaded
+      if (!ITEM_POOL.length) {
+        await loadItemPool();
       }
 
-      // Show game screen
-      document.getElementById('welcome-screen').classList.add('hidden');
-      const gameEl = document.getElementById('game-screen');
-      gameEl.style.display = 'block';
-      gameEl.classList.toggle('tap-mode',  tapMode);
-      gameEl.classList.toggle('drag-mode', !tapMode);
-      document.getElementById('btn-help').classList.add('visible');
+      const selected = selectGameItems(GAME_SIZE);
 
-      // Set category label
-      const topicLabelEl = document.getElementById('topic-label');
-      if (topicLabelEl) topicLabelEl.textContent = state.game?.label ?? '';
+      selected.sort((a, b) => a.year - b.year);
+      const anchorIndex = Math.floor(selected.length / 2);
+      const anchor = selected[anchorIndex];
+      const rest = selected.filter((_, i) => i !== anchorIndex);
 
-      renderProgress();
-      renderStack();
-      renderTimeline();
+      state.events         = selected;
+      state.timeline       = [anchor];
+      state.stack          = shuffle(rest);
+      state.anchorId       = anchor.id;
+      state.placedStatuses = {};
+      state.placementOrder = [];
+      state.correctCount   = 0;
+      state.phase          = 'game';
 
-      if (state.phase === 'done') {
-        finishGame();
-      }
-
+      saveState();
+      setMessage('');
+      showGameScreen();
     } catch (err) {
-      setMessage(err.message || 'Failed to load game. Try another topic.');
-      btn.classList.remove('loading');
-      btn.textContent = 'Start the quiz ›';
+      setMessage(err.message || 'Failed to load events. Please refresh.');
     }
   }
 
-  // ==================== WELCOME SCREEN LOGIC ====================
-  let searchDebounce = null;
-
-  function initWelcome() {
-    const input    = document.getElementById('welcome-search-input');
-    const spinner  = document.getElementById('welcome-spinner');
-    const dropList = document.getElementById('welcome-dropdown-list');
-    const topicDisplay = document.getElementById('topic-display');
-
-    // Purge stale deck/spent entries whose QIDs are no longer in SEEDS
-    const validKeys = new Set(SEEDS.map(s => gameKey(s)));
-    safeSet(KEY_DECK,  (safeGet(KEY_DECK)  ?? []).filter(g => validKeys.has(gameKey(g))));
-    safeSet(KEY_SPENT, (safeGet(KEY_SPENT) ?? []).filter(g => validKeys.has(gameKey(g))));
-
-    // Load persisted mode & size
-    const savedMode = safeGet(KEY_MODE);
-    if (savedMode === 'tap') tapMode = true;
-    const savedSize = safeGet(KEY_SIZE);
-    if (savedSize && Number.isInteger(savedSize) && savedSize >= 3) GAME_SIZE = savedSize;
-
-    const tapCheckbox = document.getElementById('mode-tap-checkbox');
-    const sizeSelect  = document.getElementById('cards-select');
-    if (tapCheckbox) tapCheckbox.checked = tapMode;
-    if (sizeSelect)  sizeSelect.value    = String(GAME_SIZE);
-
-    if (tapCheckbox) {
-      tapCheckbox.addEventListener('change', () => {
-        tapMode = tapCheckbox.checked;
-        safeSet(KEY_MODE, tapMode ? 'tap' : 'drag');
-      });
-    }
-    if (sizeSelect) {
-      sizeSelect.addEventListener('change', () => {
-        GAME_SIZE = parseInt(sizeSelect.value, 10);
-        safeSet(KEY_SIZE, GAME_SIZE);
-      });
-    }
-
-    state.history = loadHistory();
-
-    // Check for saved state
-    if (hasSavedState()) {
-      const saved = loadSavedState();
-      document.getElementById('resume-section').classList.add('show');
-      if (saved.game?.label) {
-        topicDisplay.textContent = saved.game.label;
-      }
-    }
-
-    // Pre-select a random topic
-    nextTopic().then(topic => {
-      if (topic && !input.value) {
-        state.pendingGame = topic;
-        topicDisplay.textContent = topic.label;
-      }
-    });
-
-    // Rotate topic button
-    const rotateBtn = document.getElementById('btn-rotate-topic');
-    if (rotateBtn) {
-      rotateBtn.addEventListener('click', async () => {
-        rotateBtn.classList.add('spinning');
-        setTimeout(() => rotateBtn.classList.remove('spinning'), 400);
-        const topic = await nextTopic();
-        if (topic) {
-          state.pendingGame = topic;
-          topicDisplay.textContent = topic.label;
-        }
-      });
-    }
-
-    // Search input — SEEDS autocomplete immediately, Wikidata fills in extras
-    input.addEventListener('input', () => {
-      const q = input.value.trim();
-      if (searchDebounce) clearTimeout(searchDebounce);
-      if (!q) {
-        spinner.style.display = 'none';
-        dropList.style.display = 'none';
-        if (state.pendingGame) topicDisplay.textContent = state.pendingGame.label;
-        return;
-      }
-      const ql = q.toLowerCase();
-      const seedMatches = SEEDS
-        .filter(s => s.label.toLowerCase().includes(ql))
-        .map(s => ({ id: gameKey(s), label: s.label, description: '' }));
-      state.searchResults = seedMatches;
-      renderWelcomeDropdown();
-
-      spinner.style.display = 'block';
-      searchDebounce = setTimeout(async () => {
-        try {
-          const wiki = await searchEntities(q);
-          const seedIds = new Set(seedMatches.map(r => r.id));
-          const extras = wiki.filter(r => !seedIds.has(r.id));
-          state.searchResults = [...seedMatches, ...extras];
-        } catch {
-          // keep seed results only
-        }
-        spinner.style.display = 'none';
-        renderWelcomeDropdown();
-      }, 300);
-    });
-
-    input.addEventListener('focus', () => {
-      if (state.searchResults.length) renderWelcomeDropdown();
-    });
-
-    document.addEventListener('click', e => {
-      if (!document.getElementById('welcome-search-wrap').contains(e.target) &&
-          !document.getElementById('welcome-dropdown').contains(e.target)) {
-        dropList.style.display = 'none';
-      }
-    });
-
-    // Start new game
-    document.getElementById('btn-new-game').addEventListener('click', async () => {
-      const game = state.pendingGame;
-      if (!game) {
-        // pick random
-        const topic = await nextTopic();
-        if (topic) {
-          state.pendingGame = topic;
-          startGameFromWikidata(topic, false);
-        }
-        return;
-      }
-      startGameFromWikidata(game, false);
-    });
-
-    // Resume
-    document.getElementById('btn-resume').addEventListener('click', () => {
-      startGameFromWikidata(null, true);
-    });
-
-    // Start over
-    document.getElementById('btn-start-over').addEventListener('click', async () => {
-      clearState();
-      document.getElementById('resume-section').classList.remove('show');
-      topicDisplay.textContent = '';
-      // pick new random topic
-      const topic = await nextTopic();
-      if (topic) {
-        state.pendingGame = topic;
-        topicDisplay.textContent = topic.label;
-      }
-    });
-  }
-
-  function renderWelcomeDropdown() {
-    const dropList = document.getElementById('welcome-dropdown-list');
-    const topicDisplay = document.getElementById('topic-display');
-
-    if (!state.searchResults.length) {
-      dropList.style.display = 'none';
-      return;
-    }
-
-    dropList.innerHTML = state.searchResults.map(r => `
-      <div class="w-drop-item" data-id="${escapeHtml(r.id)}" data-label="${escapeHtml(r.label)}">
-        ${escapeHtml(r.label)}
-        ${r.description ? `<span class="w-drop-desc">${escapeHtml(r.description)}</span>` : ''}
-      </div>
-    `).join('');
-    dropList.style.display = 'block';
-
-    dropList.querySelectorAll('.w-drop-item').forEach(item => {
-      item.addEventListener('mousedown', async e => {
-        e.preventDefault();
-        const id    = item.dataset.id;
-        const label = item.dataset.label;
-        dropList.style.display = 'none';
-        document.getElementById('welcome-search-input').value = '';
-        state.searchResults = [];
-
-        setMessage(`Resolving "${label}"…`);
-        let game = SEEDS.find(s => gameKey(s) === id);
-        if (!game) {
-          const resolved = await resolveToPlayableClass(id);
-          setMessage('');
-          game = resolved
-            ? { label: resolved.label, value: resolved.value }
-            : { label, value: id };
-        } else {
-          setMessage('');
-        }
-
-        state.pendingGame = game;
-        topicDisplay.textContent = game.label;
-      });
-    });
-  }
+  // (welcome screen logic removed — game auto-starts)
 
   // ==================== POINTER EVENTS DRAG (works on mouse + touch) ====================
   function initPointerDrag() {
@@ -2300,6 +1972,15 @@
       if (!active || e.pointerId !== active.pointerId) return;
       e.preventDefault();
       positionGhost(e.clientX, e.clientY);
+
+      // Auto-scroll when dragging near edges
+      const edgeZone = 80;
+      const speed = 12;
+      if (e.clientY > window.innerHeight - edgeZone) {
+        window.scrollBy(0, speed);
+      } else if (e.clientY < edgeZone) {
+        window.scrollBy(0, -speed);
+      }
 
       const zone = getZoneUnderPoint(e.clientX, e.clientY);
       if (zone !== active.currentZone) {
@@ -2369,14 +2050,13 @@
     document.getElementById('btn-share').addEventListener('click', () => {
       const total = state.events.length - 1;
       const correct = state.correctCount;
-      const topic = state.game?.label ?? 'history';
 
       const squares = state.events
         .filter(e => e.id !== state.anchorId)
         .map(e => state.placedStatuses[e.id] === 'correct' ? '🟩' : '🟥')
         .join('');
 
-      const text = `BackFlash — ${topic}\n${correct}/${total} correct\n${squares}\nPlay at ${location.href}`;
+      const text = `BackFlash\n${correct}/${total} correct\n${squares}\nPlay at ${location.href}`;
 
       if (navigator.clipboard) {
         navigator.clipboard.writeText(text).then(() => showShareToast());
@@ -2385,10 +2065,20 @@
       }
     });
 
-    document.getElementById('btn-new-game-2').addEventListener('click', () => {
+    async function resetAndStartNew() {
       clearState();
-      location.reload();
-    });
+      document.getElementById('results-container').classList.remove('show');
+      document.getElementById('game-screen').classList.remove('state-done');
+      document.getElementById('timeline-container').classList.remove('done');
+      document.getElementById('stack').className = '';
+      document.getElementById('stack-shadow').className = '';
+      document.getElementById('counter').className = '';
+      window.scrollTo(0, 0);
+      await startMixedGame();
+    }
+
+    document.getElementById('btn-new-game-2').addEventListener('click', resetAndStartNew);
+    document.getElementById('btn-new-game-top').addEventListener('click', resetAndStartNew);
   }
 
   function showShareToast() {
@@ -2434,10 +2124,10 @@
 
   // ==================== FIRST-LAUNCH TUTORIAL ====================
   const TUT_STEPS = [
-    { title: 'Welcome to BackFlash!', text: 'We picked a topic for you. If you don\u2019t like it, tap the \u21BB arrow to shuffle to a new one.' },
-    { title: 'We\u2019ll place one for you', text: 'One event is already on the timeline to get you started.' },
-    { title: 'Place the rest', text: 'New events appear at the top. Drag or tap to place each one in the right spot on the timeline.' },
-    { title: 'Good luck!', text: 'Try to get every event in the correct chronological order.' },
+    { title: 'Welcome to BackFlash!', text: 'Place historical events in chronological order. Each event comes from a different category.' },
+    { title: 'One is placed for you', text: 'One event is already on the timeline to get you started.' },
+    { title: 'Drag to place', text: 'New events appear at the top. Drag each one to the right spot on the timeline.' },
+    { title: 'Good luck!', text: 'You have 8 events to place. Try to get them all right!' },
   ];
   let tutStep = 0;
 
@@ -2470,12 +2160,18 @@
   }
 
   // ==================== INIT ====================
-  function init() {
-    initWelcome();
+  async function init() {
     initTimeline();
     initPointerDrag();
     initHelp();
     initShare();
+
+    if (hasSavedState()) {
+      resumeGame();
+    } else {
+      await startMixedGame();
+    }
+
     initTutorial();
   }
 

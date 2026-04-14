@@ -1306,7 +1306,7 @@
   'use strict';
 
   // ==================== CONSTANTS ====================
-  const KEY_STATE   = 'fbq_state_v5';
+  const KEY_STATE   = 'fbq_state_v6';
   const KEY_TUTORIAL = 'fbq_tutorial_seen';
 
   const GAME_SIZE = 9; // 1 anchor + 8 to place
@@ -1562,6 +1562,242 @@
     { label: 'Sydney Opera House opens', year: 1973, description: 'Australia\'s iconic performing arts venue', instance_of: ['tourist attraction'], date_prop_id: 'P1619', id: 'B303', page_views: 300000 },
     { label: 'Hoover Dam completed', year: 1936, description: 'Massive concrete dam on the Colorado River', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B304', page_views: 250000 },
     { label: 'Mount Rushmore completed', year: 1941, description: 'Giant presidential sculpture carved into South Dakota rock', instance_of: ['sculpture'], date_prop_id: 'P571', id: 'B305', page_views: 300000 },
+    // Crime, Scandals & Infamous Events
+    { label: 'Al Capone arrested for tax evasion', year: 1931, description: 'America\'s most notorious gangster finally brought down by the IRS', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B400', page_views: 400000 },
+    { label: 'Jack the Ripper murders', year: 1888, description: 'Unidentified serial killer terrorizes London\'s East End', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B401', page_views: 400000 },
+    { label: 'O.J. Simpson verdict', year: 1995, description: 'Former football star acquitted of double murder in "Trial of the Century"', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B402', page_views: 400000 },
+    { label: 'Watergate scandal breaks', year: 1972, description: 'Burglary at DNC headquarters leads to Nixon\'s downfall', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B403', page_views: 450000 },
+    { label: 'Nixon resigns', year: 1974, description: 'First US president to resign from office', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B404', page_views: 450000 },
+    { label: 'Bonnie and Clyde killed in ambush', year: 1934, description: 'Notorious outlaw couple gunned down by police in Louisiana', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B405', page_views: 350000 },
+    { label: 'Alcatraz prison closes', year: 1963, description: 'Infamous island prison in San Francisco Bay shut down', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B406', page_views: 300000 },
+    { label: 'Bernie Madoff arrested', year: 2008, description: 'Largest Ponzi scheme in history — $65 billion fraud exposed', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B407', page_views: 350000 },
+    { label: 'Lindbergh baby kidnapping', year: 1932, description: 'Famed aviator\'s infant son kidnapped and murdered', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B408', page_views: 300000 },
+    { label: 'Unabomber arrested', year: 1996, description: 'Ted Kaczynski caught after 17-year bombing campaign', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B409', page_views: 300000 },
+    { label: 'Enron scandal', year: 2001, description: 'Energy giant collapses in massive accounting fraud', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B410', page_views: 350000 },
+    { label: 'El Chapo escapes prison', year: 2015, description: 'Mexican drug lord tunnels out of maximum-security prison', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B411', page_views: 350000 },
+    { label: 'D.B. Cooper hijacks a plane', year: 1971, description: 'Mysterious hijacker parachutes out with $200,000 and vanishes', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B412', page_views: 300000 },
+    { label: 'Boston Marathon bombing', year: 2013, description: 'Two pressure cooker bombs explode near the finish line', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B413', page_views: 350000 },
+    { label: 'Oklahoma City bombing', year: 1995, description: 'Domestic terrorist attack kills 168 people', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B414', page_views: 350000 },
+    // Assassinations & Political Shocks
+    { label: 'Abraham Lincoln assassinated', year: 1865, description: 'President shot by John Wilkes Booth at Ford\'s Theatre', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B420', page_views: 500000 },
+    { label: 'Martin Luther King Jr. assassinated', year: 1968, description: 'Civil rights leader shot in Memphis, Tennessee', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B421', page_views: 450000 },
+    { label: 'Archduke Franz Ferdinand assassinated', year: 1914, description: 'Assassination that triggered World War I', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B422', page_views: 400000 },
+    { label: 'John Lennon shot', year: 1980, description: 'Beatles legend murdered outside his New York apartment', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B423', page_views: 400000 },
+    { label: 'Osama bin Laden killed', year: 2011, description: 'US Navy SEALs raid compound in Pakistan', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B424', page_views: 500000 },
+    { label: 'Princess Diana dies in car crash', year: 1997, description: 'Royal tragedy in a Paris tunnel shocks the world', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B425', page_views: 500000 },
+    // Natural Disasters
+    { label: 'Great San Francisco earthquake', year: 1906, description: 'Magnitude 7.9 quake and fires devastate the city', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B430', page_views: 350000 },
+    { label: 'Krakatoa erupts', year: 1883, description: 'Volcanic eruption heard 3,000 miles away, kills 36,000', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B431', page_views: 350000 },
+    { label: 'Pompeii destroyed by Vesuvius', year: 79, description: 'Roman city buried under volcanic ash', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B432', page_views: 400000 },
+    { label: 'Hurricane Katrina', year: 2005, description: 'Category 5 storm devastates New Orleans', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B433', page_views: 400000 },
+    { label: 'Fukushima nuclear disaster', year: 2011, description: 'Earthquake and tsunami cause nuclear meltdown in Japan', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B434', page_views: 400000 },
+    { label: 'Indian Ocean tsunami', year: 2004, description: 'Massive tsunami kills 230,000 across 14 countries', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B435', page_views: 400000 },
+    { label: 'Hindenburg disaster', year: 1937, description: 'Giant airship bursts into flames while landing in New Jersey', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B436', page_views: 350000 },
+    { label: 'Deepwater Horizon oil spill', year: 2010, description: 'Worst marine oil spill in history in the Gulf of Mexico', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B437', page_views: 350000 },
+    { label: 'Challenger explosion', year: 1986, description: 'Space Shuttle breaks apart 73 seconds after launch', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B438', page_views: 400000 },
+    { label: 'Bhopal gas tragedy', year: 1984, description: 'Chemical leak kills thousands in India\'s worst industrial disaster', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B439', page_views: 300000 },
+    // Wars & Military
+    { label: 'World War I begins', year: 1914, description: 'The Great War erupts across Europe', instance_of: ['war'], date_prop_id: 'P580', id: 'B450', page_views: 500000 },
+    { label: 'World War I ends', year: 1918, description: 'Armistice signed on the 11th hour of the 11th day', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B451', page_views: 450000 },
+    { label: 'World War II begins', year: 1939, description: 'Germany invades Poland, triggering global conflict', instance_of: ['war'], date_prop_id: 'P580', id: 'B452', page_views: 500000 },
+    { label: 'World War II ends', year: 1945, description: 'Japan surrenders after atomic bombings', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B453', page_views: 500000 },
+    { label: 'Battle of Gettysburg', year: 1863, description: 'Bloodiest battle of the American Civil War', instance_of: ['battle'], date_prop_id: 'P585', id: 'B455', page_views: 350000 },
+    { label: 'American Civil War begins', year: 1861, description: 'Confederate forces fire on Fort Sumter', instance_of: ['war'], date_prop_id: 'P580', id: 'B456', page_views: 400000 },
+    { label: 'Gulf War begins', year: 1991, description: 'US-led coalition attacks Iraq after invasion of Kuwait', instance_of: ['war'], date_prop_id: 'P580', id: 'B458', page_views: 350000 },
+    { label: 'US invades Iraq', year: 2003, description: 'Controversial "shock and awe" campaign begins', instance_of: ['war'], date_prop_id: 'P580', id: 'B459', page_views: 400000 },
+    // Exploration & Firsts
+    { label: 'Amelia Earhart disappears', year: 1937, description: 'Aviation pioneer vanishes over the Pacific Ocean', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B460', page_views: 350000 },
+    { label: 'Edmund Hillary summits Everest', year: 1953, description: 'First confirmed climbers to reach the peak of Mount Everest', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B461', page_views: 350000 },
+    { label: 'First human in space', year: 1961, description: 'Yuri Gagarin orbits Earth aboard Vostok 1', instance_of: ['space mission'], date_prop_id: 'P585', id: 'B462', page_views: 400000 },
+    { label: 'Charles Lindbergh crosses the Atlantic', year: 1927, description: 'First solo nonstop transatlantic flight', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B463', page_views: 350000 },
+    { label: 'SpaceX lands reusable rocket', year: 2015, description: 'Falcon 9 booster lands vertically for the first time', instance_of: ['space mission'], date_prop_id: 'P585', id: 'B464', page_views: 350000 },
+    { label: 'Mars Perseverance Rover lands', year: 2021, description: 'NASA rover with helicopter drone touches down on Mars', instance_of: ['space mission'], date_prop_id: 'P585', id: 'B465', page_views: 350000 },
+    { label: 'First photograph ever taken', year: 1826, description: 'Nicéphore Niépce captures the first permanent photograph', instance_of: ['invention'], date_prop_id: 'P575', id: 'B466', page_views: 300000 },
+    { label: 'First moving picture shown', year: 1895, description: 'Lumière brothers screen a film to a paying audience in Paris', instance_of: ['invention'], date_prop_id: 'P575', id: 'B467', page_views: 300000 },
+    // Major Political & Social Events
+    { label: 'Boston Tea Party', year: 1773, description: 'Colonists dump tea into Boston Harbor to protest British taxes', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B470', page_views: 350000 },
+    { label: 'Magna Carta signed', year: 1215, description: 'English charter limiting the king\'s power', instance_of: ['treaty'], date_prop_id: 'P585', id: 'B471', page_views: 400000 },
+    { label: 'Fall of Constantinople', year: 1453, description: 'Ottoman Turks capture the Byzantine capital', instance_of: ['battle'], date_prop_id: 'P585', id: 'B472', page_views: 350000 },
+    { label: 'Black Death reaches Europe', year: 1347, description: 'Bubonic plague kills a third of Europe\'s population', instance_of: ['pandemic'], date_prop_id: 'P580', id: 'B473', page_views: 400000 },
+    { label: 'Spanish Flu pandemic', year: 1918, description: 'Deadliest pandemic in modern history kills 50 million', instance_of: ['pandemic'], date_prop_id: 'P580', id: 'B474', page_views: 400000 },
+    { label: 'Emancipation Proclamation', year: 1863, description: 'Lincoln declares slaves in Confederate states free', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B475', page_views: 400000 },
+    { label: 'First atomic bomb tested', year: 1945, description: 'Trinity test in New Mexico ushers in the nuclear age', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B476', page_views: 400000 },
+    { label: 'Iran hostage crisis begins', year: 1979, description: '52 American diplomats held hostage for 444 days', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B477', page_views: 300000 },
+    { label: 'Tiananmen Square protests', year: 1989, description: 'Pro-democracy protests crushed by Chinese military', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B478', page_views: 400000 },
+    { label: 'Rwandan genocide', year: 1994, description: '800,000 Tutsis killed in 100 days', instance_of: ['genocide'], date_prop_id: 'P585', id: 'B479', page_views: 350000 },
+    { label: 'George Floyd protests', year: 2020, description: 'Global protests erupt after police killing in Minneapolis', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B481', page_views: 400000 },
+    { label: 'US Capitol stormed', year: 2021, description: 'Rioters breach the US Capitol during certification of election', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B482', page_views: 450000 },
+    { label: 'Russia invades Ukraine', year: 2022, description: 'Full-scale invasion sparks the largest European war since WWII', instance_of: ['war'], date_prop_id: 'P580', id: 'B483', page_views: 500000 },
+    // Viral Cultural Moments & Pop Culture
+    { label: 'Elvis Presley appears on Ed Sullivan Show', year: 1956, description: 'Rock and roll explodes on national TV', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B490', page_views: 350000 },
+    { label: 'Beatlemania hits America', year: 1964, description: 'The Beatles perform on the Ed Sullivan Show', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B491', page_views: 350000 },
+    { label: 'Michael Jackson moonwalks on TV', year: 1983, description: 'Iconic dance move debuts on Motown 25 TV special', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B492', page_views: 300000 },
+    { label: 'Tiger King goes viral', year: 2020, description: 'Netflix documentary about eccentric zoo owner captivates lockdown audiences', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B493', page_views: 300000 },
+    { label: 'Gangnam Style breaks YouTube', year: 2012, description: 'First YouTube video to reach 1 billion views', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B494', page_views: 350000 },
+    { label: 'Will Smith slaps Chris Rock at Oscars', year: 2022, description: 'Actor slaps presenter on live TV at the Academy Awards', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B495', page_views: 400000 },
+    { label: 'Oprah Winfrey Show debuts', year: 1986, description: 'Talk show that would become the highest-rated in TV history', instance_of: ['television series'], date_prop_id: 'P577', id: 'B496', page_views: 350000 },
+    { label: 'Harry Potter book published', year: 1997, description: 'J.K. Rowling\'s debut novel launches a global phenomenon', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B497', page_views: 400000 },
+    { label: 'Pokémon Go launches', year: 2016, description: 'AR mobile game causes worldwide frenzy', instance_of: ['video game'], date_prop_id: 'P577', id: 'B498', page_views: 400000 },
+    { label: 'First iPhone unveiled by Steve Jobs', year: 2007, description: '"An iPod, a phone, and an internet communicator" — three devices in one', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B499', page_views: 450000 },
+    { label: 'Woodstock \'99 riots', year: 1999, description: 'Music festival descends into chaos, fires, and destruction', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B500', page_views: 250000 },
+    { label: 'Y2K scare', year: 2000, description: 'World braces for computer meltdown at the millennium', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B501', page_views: 300000 },
+    { label: 'Roswell UFO incident', year: 1947, description: 'Alleged UFO crash in New Mexico sparks decades of conspiracy', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B502', page_views: 350000 },
+    { label: 'Wikileaks publishes war logs', year: 2010, description: 'Massive leak of classified US military documents', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B503', page_views: 350000 },
+    { label: 'Edward Snowden leaks NSA secrets', year: 2013, description: 'Former contractor reveals mass surveillance programs', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B504', page_views: 400000 },
+    { label: 'Panama Papers leak', year: 2016, description: 'Massive leak exposes offshore accounts of world leaders', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B505', page_views: 350000 },
+    { label: 'GameStop stock frenzy', year: 2021, description: 'Reddit traders send GameStop stock soaring 1,500%', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B506', page_views: 350000 },
+    { label: 'Ever Given blocks Suez Canal', year: 2021, description: 'Giant container ship jams the Suez Canal for 6 days', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B507', page_views: 300000 },
+    { label: 'Ice Bucket Challenge goes viral', year: 2014, description: 'ALS awareness campaign takes over social media worldwide', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B508', page_views: 300000 },
+    { label: 'Harlem Shake meme explodes', year: 2013, description: 'Dance meme spawns millions of copycat videos', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B509', page_views: 250000 },
+    { label: 'Fyre Festival disaster', year: 2017, description: 'Luxury music festival turns into a stranded nightmare in the Bahamas', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B510', page_views: 300000 },
+    { label: 'Janet Jackson Super Bowl wardrobe malfunction', year: 2004, description: 'Halftime show incident crashes the internet and changes TV', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B511', page_views: 300000 },
+    { label: 'Balloon Boy hoax', year: 2009, description: 'Nation watches a runaway balloon thinking a boy is inside', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B512', page_views: 250000 },
+    { label: '"The Dress" debate', year: 2015, description: 'Photo of a dress divides the internet — blue/black or white/gold?', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B513', page_views: 300000 },
+    { label: 'Kony 2012 video goes viral', year: 2012, description: 'Documentary about Ugandan warlord becomes fastest-spreading viral video', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B514', page_views: 300000 },
+    { label: 'Harambe the gorilla shot', year: 2016, description: 'Cincinnati Zoo kills gorilla after child falls into enclosure, spawning memes', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B515', page_views: 300000 },
+    { label: 'Baby Shark becomes #1 YouTube video', year: 2020, description: 'Children\'s song becomes the most-watched video in YouTube history', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B516', page_views: 300000 },
+    { label: 'Charlie Bit My Finger uploaded', year: 2007, description: 'Home video becomes one of the first viral YouTube sensations', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B517', page_views: 250000 },
+    { label: 'Flappy Bird removed from app stores', year: 2014, description: 'Creator pulls the addictive game at peak popularity', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B518', page_views: 250000 },
+    { label: 'Ellen\'s Oscar selfie breaks Twitter', year: 2014, description: 'Star-studded selfie becomes most retweeted tweet ever', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B519', page_views: 300000 },
+    { label: 'Planking craze peaks', year: 2011, description: 'Lying face-down in strange places becomes a global phenomenon', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B520', page_views: 200000 },
+    { label: 'Wordle goes viral', year: 2022, description: 'Simple word game captivates millions before NYT acquisition', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B521', page_views: 350000 },
+    { label: 'Netflix "Are you still watching?" becomes a meme', year: 2015, description: 'Binge-watching culture immortalized in internet humor', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B522', page_views: 200000 },
+    { label: 'Vine launches', year: 2013, description: '6-second video app creates a new generation of internet comedy', instance_of: ['mobile app'], date_prop_id: 'P571', id: 'B523', page_views: 300000 },
+    { label: 'AIM shuts down', year: 2017, description: 'AOL Instant Messenger signs off for the last time after 20 years', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B524', page_views: 250000 },
+    { label: 'MySpace loses to Facebook', year: 2008, description: 'Facebook overtakes MySpace as the world\'s most popular social network', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B525', page_views: 300000 },
+    { label: 'First tweet ever sent', year: 2006, description: 'Jack Dorsey posts "just setting up my twttr"', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B526', page_views: 300000 },
+    { label: 'Mars rover Opportunity declared dead', year: 2019, description: 'NASA\'s rover sends its last message: "My battery is low and it\'s getting dark"', instance_of: ['space mission'], date_prop_id: 'P585', id: 'B527', page_views: 350000 },
+    { label: 'Pluto demoted from planet status', year: 2006, description: 'International Astronomical Union reclassifies Pluto as a dwarf planet', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B528', page_views: 350000 },
+    { label: 'First black hole image captured', year: 2019, description: 'Event Horizon Telescope photographs a black hole in galaxy M87', instance_of: ['discovery'], date_prop_id: 'P585', id: 'B529', page_views: 400000 },
+    { label: 'Dolly the Sheep born', year: 1996, description: 'First mammal cloned from an adult cell shocks the world', instance_of: ['discovery'], date_prop_id: 'P585', id: 'B530', page_views: 350000 },
+    { label: 'Tesla Roadster launched into space', year: 2018, description: 'SpaceX sends a car into orbit around the Sun on Falcon Heavy', instance_of: ['space mission'], date_prop_id: 'P585', id: 'B531', page_views: 350000 },
+    { label: 'Concorde crashes in Paris', year: 2000, description: 'Supersonic jet disaster kills 113, leads to fleet retirement', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B532', page_views: 300000 },
+    { label: 'Malaysia Airlines Flight 370 vanishes', year: 2014, description: 'Plane with 239 people disappears — biggest aviation mystery ever', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B533', page_views: 400000 },
+    { label: 'Costa Concordia capsizes', year: 2012, description: 'Cruise ship runs aground off Italian coast, killing 32', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B534', page_views: 300000 },
+    { label: 'Three Mile Island nuclear accident', year: 1979, description: 'Partial meltdown at Pennsylvania nuclear plant', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B535', page_views: 300000 },
+    { label: 'Exxon Valdez oil spill', year: 1989, description: 'Oil tanker runs aground in Alaska, spilling 11 million gallons', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B536', page_views: 300000 },
+    { label: 'Notre-Dame Cathedral fire', year: 2019, description: 'Devastating fire destroys the spire of the Paris landmark', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B537', page_views: 400000 },
+    { label: 'Impossible Burger launches', year: 2016, description: 'Plant-based burger that "bleeds" hits restaurants', instance_of: ['invention'], date_prop_id: 'P575', id: 'B538', page_views: 250000 },
+    { label: 'Tesla Model S released', year: 2012, description: 'Electric luxury sedan proves EVs can be cool', instance_of: ['automobile'], date_prop_id: 'P577', id: 'B539', page_views: 350000 },
+    { label: 'Segway unveiled', year: 2001, description: 'Hyped personal transporter that was supposed to change cities', instance_of: ['invention'], date_prop_id: 'P575', id: 'B540', page_views: 250000 },
+    { label: 'Google Glass announced', year: 2013, description: 'Futuristic smart glasses that became a privacy controversy', instance_of: ['consumer electronics'], date_prop_id: 'P577', id: 'B541', page_views: 300000 },
+    { label: 'Theranos fraud exposed', year: 2015, description: 'Elizabeth Holmes\' blood-testing startup revealed as a scam', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B542', page_views: 350000 },
+    { label: 'WeWork IPO collapses', year: 2019, description: 'Co-working giant\'s $47B valuation implodes spectacularly', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B543', page_views: 300000 },
+    { label: 'FTX crypto exchange collapses', year: 2022, description: 'Sam Bankman-Fried\'s $32B exchange implodes overnight', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B544', page_views: 400000 },
+    { label: 'Silk Road shut down by FBI', year: 2013, description: 'Dark web marketplace and its founder Ross Ulbricht arrested', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B545', page_views: 300000 },
+    { label: 'Mt. Gox Bitcoin exchange hacked', year: 2014, description: '850,000 bitcoins vanish in largest crypto hack ever', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B546', page_views: 300000 },
+    { label: 'NFT mania peaks', year: 2021, description: 'Beeple sells a digital artwork for $69 million at Christie\'s', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B547', page_views: 350000 },
+    { label: 'Dogecoin surges after Elon Musk tweets', year: 2021, description: 'Meme cryptocurrency skyrockets 800% in a week', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B548', page_views: 300000 },
+    { label: 'Twitter bought by Elon Musk', year: 2022, description: 'Billionaire acquires the social network for $44 billion', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B549', page_views: 400000 },
+    { label: 'Facebook changes name to Meta', year: 2021, description: 'Mark Zuckerberg bets the company on the metaverse', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B550', page_views: 350000 },
+    // More Viral Moments & Internet Culture
+    { label: 'Numa Numa guy goes viral', year: 2004, description: 'Webcam lip-sync video becomes one of the first internet memes', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B551', page_views: 200000 },
+    { label: 'Keyboard Cat uploaded', year: 2007, description: 'Cat playing a keyboard becomes an iconic early meme', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B552', page_views: 200000 },
+    { label: 'Double Rainbow video goes viral', year: 2010, description: 'Man\'s ecstatic reaction to a rainbow becomes internet gold', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B553', page_views: 200000 },
+    { label: 'Rebecca Black releases "Friday"', year: 2011, description: 'Widely mocked music video becomes the most disliked on YouTube', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B554', page_views: 250000 },
+    { label: 'Grumpy Cat goes viral', year: 2012, description: 'Frowning cat becomes one of the internet\'s most beloved memes', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B555', page_views: 250000 },
+    { label: 'Damn Daniel goes viral', year: 2016, description: 'Teen\'s shoe compliment video gets 300 million loops on Vine', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B556', page_views: 200000 },
+    { label: 'Tide Pod Challenge', year: 2018, description: 'Dangerous internet challenge of eating laundry pods alarms nation', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B557', page_views: 250000 },
+    { label: 'Area 51 raid event goes viral', year: 2019, description: '"Storm Area 51" Facebook event draws 2 million RSVPs', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B558', page_views: 300000 },
+    { label: 'Bernie Sanders mittens meme', year: 2021, description: 'Senator\'s inauguration photo becomes the meme of the year', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B559', page_views: 250000 },
+    { label: 'Despacito becomes most-viewed YouTube video', year: 2017, description: 'Luis Fonsi\'s hit is the first video to reach 5 billion views', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B560', page_views: 350000 },
+    // True Crime & Heists
+    { label: 'Great Train Robbery', year: 1963, description: 'Gang steals £2.6 million from a Royal Mail train in England', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B561', page_views: 300000 },
+    { label: 'Brink\'s-Mat robbery', year: 1983, description: 'Thieves steal £26 million in gold from Heathrow Airport', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B562', page_views: 250000 },
+    { label: 'Zodiac Killer\'s first attack', year: 1968, description: 'Unidentified serial killer begins terrorizing Northern California', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B563', page_views: 350000 },
+    { label: 'Ted Bundy executed', year: 1989, description: 'One of America\'s most notorious serial killers put to death', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B564', page_views: 350000 },
+    { label: 'Jeffrey Dahmer arrested', year: 1991, description: 'Milwaukee cannibal serial killer captured after 13 murders', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B565', page_views: 350000 },
+    { label: 'Son of Sam arrested', year: 1977, description: 'David Berkowitz caught after terrorizing New York City', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B566', page_views: 300000 },
+    { label: 'Antwerp Diamond Heist', year: 2003, description: 'Thieves steal $100 million in diamonds from a vault in Belgium', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B567', page_views: 250000 },
+    { label: 'Isabella Stewart Gardner Museum heist', year: 1990, description: 'Thieves steal $500 million in art — still unsolved', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B568', page_views: 300000 },
+    { label: 'Catch Me If You Can — Frank Abagnale arrested', year: 1969, description: 'Con artist who impersonated a pilot and doctor finally caught', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B569', page_views: 250000 },
+    { label: 'BTK Killer caught', year: 2005, description: 'Dennis Rader arrested 30 years after his first murder', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B570', page_views: 300000 },
+    // Stunts, Records & Wild Moments
+    { label: 'Evel Knievel jumps Snake River Canyon', year: 1974, description: 'Daredevil attempts to rocket across Idaho canyon on live TV', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B571', page_views: 250000 },
+    { label: 'Felix Baumgartner skydives from space', year: 2012, description: 'Man breaks sound barrier in freefall from 128,000 feet', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B572', page_views: 350000 },
+    { label: 'Philippe Petit walks between Twin Towers', year: 1974, description: 'Tightrope walker crosses between the WTC towers 1,350 feet up', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B573', page_views: 300000 },
+    { label: 'Roger Bannister breaks the 4-minute mile', year: 1954, description: 'First person to run a mile in under four minutes', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B574', page_views: 300000 },
+    { label: 'Usain Bolt sets 100m world record', year: 2009, description: 'Jamaican sprinter runs 9.58 seconds — fastest human ever', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B575', page_views: 350000 },
+    { label: 'Michael Phelps wins 8 gold medals', year: 2008, description: 'Swimmer breaks record for most golds at a single Olympics', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B576', page_views: 350000 },
+    { label: 'Red Bull Stratos jump livestreamed', year: 2012, description: '8 million people watch Baumgartner\'s space jump live on YouTube', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B577', page_views: 300000 },
+    { label: 'Man lands on the Moon (live TV)', year: 1969, description: '600 million people watch Neil Armstrong\'s first steps live', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B578', page_views: 500000 },
+    // Political Scandals & Shockers
+    { label: 'Bill Clinton impeached', year: 1998, description: 'President impeached over the Monica Lewinsky scandal', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B580', page_views: 400000 },
+    { label: 'Donald Trump elected president', year: 2016, description: 'Reality TV star wins the presidency in a massive upset', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B581', page_views: 500000 },
+    { label: 'Barack Obama elected president', year: 2008, description: 'First African American president of the United States', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B582', page_views: 500000 },
+    { label: 'Saddam Hussein captured', year: 2003, description: 'Iraqi dictator found hiding in a spider hole', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B583', page_views: 350000 },
+    { label: 'Fall of the Berlin Wall broadcast live', year: 1989, description: 'World watches as Germans tear down the wall on live TV', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B584', page_views: 450000 },
+    { label: 'Edward VIII abdicates the throne', year: 1936, description: 'British king gives up the crown to marry an American divorcee', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B585', page_views: 350000 },
+    { label: 'Prohibition repealed', year: 1933, description: 'America ends its 13-year ban on alcohol', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B586', page_views: 300000 },
+    { label: 'Panama Canal Zone returned to Panama', year: 1999, description: 'US hands over control of the canal after 85 years', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B587', page_views: 200000 },
+    // Epidemics & Health Scares
+    { label: 'AIDS epidemic recognized', year: 1981, description: 'CDC reports first cases of a mysterious immune disease', instance_of: ['pandemic'], date_prop_id: 'P580', id: 'B590', page_views: 400000 },
+    { label: 'Ebola outbreak in West Africa', year: 2014, description: 'Largest Ebola epidemic kills over 11,000 people', instance_of: ['pandemic'], date_prop_id: 'P580', id: 'B591', page_views: 350000 },
+    { label: 'Mad cow disease panic', year: 1996, description: 'BSE crisis leads to mass cattle culling across Europe', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B592', page_views: 250000 },
+    { label: 'SARS outbreak', year: 2003, description: 'Respiratory virus spreads from China to 26 countries', instance_of: ['pandemic'], date_prop_id: 'P580', id: 'B593', page_views: 300000 },
+    { label: 'First COVID vaccine administered', year: 2020, description: 'UK begins vaccinating with Pfizer-BioNTech vaccine', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B594', page_views: 400000 },
+    // Sports Moments That Stopped the World
+    { label: 'Hand of God goal', year: 1986, description: 'Maradona punches the ball into the net against England at the World Cup', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B600', page_views: 350000 },
+    { label: 'Leicester City wins the Premier League', year: 2016, description: '5000-to-1 underdogs pull off the greatest upset in sports history', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B601', page_views: 350000 },
+    { label: 'Chicago Cubs win the World Series', year: 2016, description: 'Cubs end 108-year championship drought', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B602', page_views: 350000 },
+    { label: 'Michael Jordan\'s "Last Dance" shot', year: 1998, description: 'Jordan hits the game-winner to clinch his 6th NBA title', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B603', page_views: 350000 },
+    { label: 'Tonya Harding-Nancy Kerrigan scandal', year: 1994, description: 'Figure skater\'s rival attacked before the Olympics', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B604', page_views: 300000 },
+    { label: 'Lance Armstrong stripped of Tour de France titles', year: 2012, description: 'Cycling legend banned for life for doping', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B605', page_views: 300000 },
+    { label: 'Super Bowl XLII — Giants upset Patriots', year: 2008, description: 'New York Giants end New England\'s undefeated season', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B606', page_views: 300000 },
+    { label: '28-3 Super Bowl comeback', year: 2017, description: 'Patriots overcome 25-point deficit to beat Falcons in overtime', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B607', page_views: 350000 },
+    { label: 'Zinedine Zidane headbutt', year: 2006, description: 'French star headbutts opponent in the World Cup final', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B608', page_views: 350000 },
+    { label: 'Mike Tyson bites Evander Holyfield\'s ear', year: 1997, description: 'Boxing match descends into chaos on pay-per-view', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B609', page_views: 350000 },
+    { label: 'Kobe Bryant dies in helicopter crash', year: 2020, description: 'NBA legend killed in Calabasas crash that shocked the world', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B610', page_views: 500000 },
+    { label: 'Tiger Woods wins 1997 Masters', year: 1997, description: '21-year-old wins by 12 strokes in dominant performance', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B611', page_views: 300000 },
+    // Music Moments
+    { label: 'Kurt Cobain found dead', year: 1994, description: 'Nirvana frontman dies at 27, ending the grunge era', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B620', page_views: 400000 },
+    { label: 'Elvis Presley found dead', year: 1977, description: 'The King of Rock and Roll dies at Graceland, age 42', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B621', page_views: 400000 },
+    { label: 'Bob Marley dies', year: 1981, description: 'Reggae legend dies of cancer at 36', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B622', page_views: 350000 },
+    { label: 'Tupac Shakur shot and killed', year: 1996, description: 'Rapper murdered in a Las Vegas drive-by shooting', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B623', page_views: 400000 },
+    { label: 'Notorious B.I.G. shot and killed', year: 1997, description: 'Rapper murdered in a Los Angeles drive-by, six months after Tupac', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B624', page_views: 350000 },
+    { label: 'Beyoncé drops surprise album', year: 2013, description: 'Album released with zero promotion changes how music is sold', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B625', page_views: 350000 },
+    { label: 'Kanye West interrupts Taylor Swift at VMAs', year: 2009, description: '"Imma let you finish" becomes one of the most infamous moments in TV', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B626', page_views: 400000 },
+    { label: 'Nirvana\'s Nevermind released', year: 1991, description: 'Album kills hair metal and launches the grunge revolution', instance_of: ['album'], date_prop_id: 'P577', id: 'B627', page_views: 350000 },
+    { label: 'Live Aid concert', year: 1985, description: '1.9 billion people watch the biggest concert in history for famine relief', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B628', page_views: 350000 },
+    { label: 'Napster shut down', year: 2001, description: 'Music industry kills the file-sharing service that changed everything', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B629', page_views: 250000 },
+    { label: 'iTunes Store launches', year: 2003, description: 'Apple sells 1 million songs in the first week', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B630', page_views: 300000 },
+    // More Disasters & Accidents
+    { label: 'Titanic wreck discovered', year: 1985, description: 'Robert Ballard finds the ship 12,500 feet under the Atlantic', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B640', page_views: 350000 },
+    { label: 'Titan submersible implodes', year: 2023, description: 'Tourist sub to the Titanic wreck catastrophically fails', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B641', page_views: 400000 },
+    { label: 'Beirut port explosion', year: 2020, description: '2,750 tons of ammonium nitrate explode, devastating the city', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B642', page_views: 350000 },
+    { label: 'Mount St. Helens erupts', year: 1980, description: 'Volcanic eruption kills 57 people in Washington State', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B643', page_views: 300000 },
+    { label: 'Chernobyl Exclusion Zone established', year: 1986, description: '1,000 square miles evacuated after nuclear disaster', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B644', page_views: 300000 },
+    { label: 'Columbia Space Shuttle disintegrates', year: 2003, description: 'Shuttle breaks apart on re-entry, killing all 7 crew', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B645', page_views: 350000 },
+    { label: 'Hurricane Sandy hits New York', year: 2012, description: 'Superstorm floods Manhattan and knocks out power for millions', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B646', page_views: 300000 },
+    { label: 'Australian bushfire crisis', year: 2020, description: 'Fires burn 46 million acres and kill a billion animals', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B647', page_views: 300000 },
+    // Ancient & Medieval Bangers
+    { label: 'Julius Caesar assassinated', year: -44, description: 'Roman dictator stabbed 23 times by senators on the Ides of March', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B650', page_views: 500000 },
+    { label: 'Fall of Rome', year: 476, description: 'Western Roman Empire collapses after nearly 500 years', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B651', page_views: 400000 },
+    { label: 'Genghis Khan begins conquests', year: 1206, description: 'Mongol leader starts building the largest land empire in history', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B652', page_views: 400000 },
+    { label: 'Vikings reach North America', year: 1000, description: 'Leif Erikson lands in Newfoundland 500 years before Columbus', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B653', page_views: 300000 },
+    { label: 'Great Fire of London', year: 1666, description: 'Fire destroys 13,200 houses and 87 churches over 4 days', instance_of: ['disaster'], date_prop_id: 'P585', id: 'B654', page_views: 350000 },
+    { label: 'Spanish Armada defeated', year: 1588, description: 'England destroys Spain\'s "invincible" fleet', instance_of: ['battle'], date_prop_id: 'P585', id: 'B655', page_views: 300000 },
+    { label: 'Cleopatra dies', year: -30, description: 'Last pharaoh of Egypt takes her own life', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B656', page_views: 400000 },
+    { label: 'Spartacus leads slave revolt', year: -73, description: 'Gladiator leads 70,000 slaves against Rome', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B657', page_views: 300000 },
+    { label: 'Great Wall of China construction begins', year: -221, description: 'First Emperor Qin Shi Huang orders construction of the wall', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B658', page_views: 350000 },
+    { label: 'Alexander the Great conquers Persia', year: -331, description: 'Macedonian king defeats Darius III at the Battle of Gaugamela', instance_of: ['battle'], date_prop_id: 'P585', id: 'B659', page_views: 350000 },
+    { label: 'Trojan War (traditional date)', year: -1184, description: 'Greeks sack Troy after a 10-year siege using a wooden horse', instance_of: ['battle'], date_prop_id: 'P585', id: 'B660', page_views: 350000 },
+    { label: 'First Olympic Games in ancient Greece', year: -776, description: 'Athletic competition held at Olympia in honor of Zeus', instance_of: ['sporting event'], date_prop_id: 'P585', id: 'B661', page_views: 300000 },
+    { label: 'Battle of Thermopylae', year: -480, description: '300 Spartans make their famous last stand against Persia', instance_of: ['battle'], date_prop_id: 'P585', id: 'B662', page_views: 400000 },
+    { label: 'Crucifixion of Jesus (traditional date)', year: 33, description: 'Event that becomes the foundation of Christianity', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B663', page_views: 500000 },
+    { label: 'Muhammad\'s Hijra to Medina', year: 622, description: 'Migration that marks the start of the Islamic calendar', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B664', page_views: 350000 },
+    { label: 'Gutenberg Bible printed', year: 1455, description: 'First major book printed with movable type in Europe', instance_of: ['invention'], date_prop_id: 'P575', id: 'B665', page_views: 400000 },
+    // Reality TV & Celebrity Spectacles
+    { label: 'Survivor debuts', year: 2000, description: 'Reality TV show becomes a cultural phenomenon', instance_of: ['television series'], date_prop_id: 'P577', id: 'B670', page_views: 300000 },
+    { label: 'American Idol debuts', year: 2002, description: 'Singing competition launches Kelly Clarkson and changes TV', instance_of: ['television series'], date_prop_id: 'P577', id: 'B671', page_views: 300000 },
+    { label: 'Keeping Up with the Kardashians debuts', year: 2007, description: 'Reality show creates the most famous family in pop culture', instance_of: ['television series'], date_prop_id: 'P577', id: 'B672', page_views: 350000 },
+    { label: 'Britney Spears shaves her head', year: 2007, description: 'Pop star\'s public breakdown becomes a tabloid frenzy', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B673', page_views: 300000 },
+    { label: 'Paris Hilton sex tape leaked', year: 2003, description: 'Scandal launches the modern celebrity-influencer era', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B674', page_views: 250000 },
+    { label: 'The O.J. Simpson Bronco chase', year: 1994, description: '95 million watch the slow-speed police pursuit live on TV', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B675', page_views: 400000 },
+    { label: 'Royal Wedding — William and Kate', year: 2011, description: '2 billion people watch Prince William marry Catherine Middleton', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B676', page_views: 350000 },
+    { label: 'Royal Wedding — Harry and Meghan', year: 2018, description: 'Prince Harry marries Meghan Markle in a globally televised ceremony', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B677', page_views: 300000 },
+    { label: 'Queen Elizabeth II dies', year: 2022, description: 'Britain\'s longest-reigning monarch dies at 96 after 70 years', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B678', page_views: 500000 },
+    { label: 'Meghan and Harry\'s Oprah interview', year: 2021, description: 'Explosive royal interview watched by 50 million people worldwide', instance_of: ['historical event'], date_prop_id: 'P585', id: 'B679', page_views: 350000 },
   ];
 
   // ==================== STATE ====================
@@ -1653,20 +1889,14 @@
     const text = await res.text();
     const all = text.trim().split('\n').map(line => JSON.parse(line));
 
-    // Separate humans from non-humans
-    const humans = all.filter(i => i.instance_of?.includes('human'));
-    const others = all.filter(i => !i.instance_of?.includes('human'));
+    // Only use WikiTrivia for famous humans (born/died) — our curated BONUS_ITEMS
+    // are the sole source for non-human events. WikiTrivia has too much obscure junk.
+    const humans = all
+      .filter(i => i.instance_of?.includes('human') && (i.page_views || 0) >= 300000)
+      .sort((a, b) => (b.page_views || 0) - (a.page_views || 0))
+      .slice(0, 300);
 
-    // Sort each group by page_views
-    humans.sort((a, b) => (b.page_views || 0) - (a.page_views || 0));
-    others.sort((a, b) => (b.page_views || 0) - (a.page_views || 0));
-
-    // Keep ALL non-humans and top 500 most famous humans — maximize variety
-    // Merge in hand-curated bonus items
-    const bonusIds = new Set(BONUS_ITEMS.map(b => b.id));
-    const existingLabels = new Set(all.map(i => i.label.toLowerCase()));
-    const newBonus = BONUS_ITEMS.filter(b => !existingLabels.has(b.label.toLowerCase()));
-    ITEM_POOL = [...others, ...humans.slice(0, 500), ...newBonus];
+    ITEM_POOL = [...BONUS_ITEMS, ...humans];
   }
 
   function makeWikimediaUrl(filename) {
@@ -1772,7 +2002,7 @@
       'satellite':          'is launched into orbit',
       'treaty':             'is signed',
       'archaeological site': 'is discovered',
-      'fossil taxon':       'is discovered',
+      'fossil taxon':       'roams the Earth',
       'natural script':     'is developed',
       'alphabet':           'is developed',
       'religion':           'is founded',
@@ -1837,23 +2067,29 @@
     if (ITEM_POOL.length < size) throw new Error('Item pool too small');
 
     const playedIds = getPlayedIds();
+    const maxHumans = 2;
 
-    // Separate humans from interesting items
-    const nonHumans = ITEM_POOL.filter(i => !i.instance_of?.includes('human'));
+    // Separate bonus (curated) from WikiTrivia items, and humans
+    const isBonus = i => String(i.id).startsWith('B');
+    const bonusItems = ITEM_POOL.filter(i => isBonus(i) && !i.instance_of?.includes('human'));
+    const wikiItems = ITEM_POOL.filter(i => !isBonus(i) && !i.instance_of?.includes('human'));
     const humans = ITEM_POOL.filter(i => i.instance_of?.includes('human'));
 
-    // Prefer unplayed items, fall back to played if needed
-    const freshNonHumans = nonHumans.filter(i => !playedIds.has(i.id));
+    // Prefer unplayed items
+    const freshBonus = bonusItems.filter(i => !playedIds.has(i.id));
+    const freshWiki = wikiItems.filter(i => !playedIds.has(i.id));
     const freshHumans = humans.filter(i => !playedIds.has(i.id));
 
-    const maxHumans = 2;
-    const nhPool = freshNonHumans.length >= size ? freshNonHumans : nonHumans;
-    const hPool = freshHumans.length >= maxHumans ? freshHumans : humans;
+    const bPool = shuffle(freshBonus.length >= size ? freshBonus : bonusItems);
+    const wPool = shuffle(freshWiki.length >= 3 ? freshWiki : wikiItems);
+    const hPool = shuffle(freshHumans.length >= maxHumans ? freshHumans : humans);
 
-    const pool = shuffle([...nhPool]);
-    const humanPool = shuffle([...hPool]).slice(0, maxHumans);
-    for (const h of humanPool) {
-      pool.splice(Math.floor(Math.random() * pool.length), 0, h);
+    // Build pool: bonus items first (guaranteed priority), then wiki items, then humans mixed in
+    // This ensures most cards are curated bangers
+    const pool = [...bPool, ...wPool];
+    const humanPicks = hPool.slice(0, maxHumans);
+    for (const h of humanPicks) {
+      pool.splice(Math.floor(Math.random() * Math.min(pool.length, size * 2)), 0, h);
     }
 
     const picked = [];

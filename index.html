@@ -1973,7 +1973,8 @@
   }
 
   // ==================== ITEM POOL LOADING ====================
-  const ITEMS_URL = 'https://raw.githubusercontent.com/tom-james-watson/wikitrivia/master/public/items.json';
+  // Pinned to immutable commit SHA: WikiTrivia V2 refactor deleted public/items.json from master (now 404). ponytail: SHA never 404s on upstream churn; re-pin if data goes stale.
+  const ITEMS_URL = 'https://raw.githubusercontent.com/tom-james-watson/wikitrivia/b398872bcd231a8ead09fca39a8cbf3968894d6c/public/items.json';
 
   async function loadItemPool() {
     const res = await fetch(ITEMS_URL, { signal: AbortSignal.timeout(20000) });
